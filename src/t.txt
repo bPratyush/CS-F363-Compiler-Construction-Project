@@ -1,0 +1,16 @@
+begin program:
+begin VarDecl:
+(num1, int);
+(num2, int);
+(sum, int);
+6
+end VarDecl
+print("Enter the first number: ");
+scan("@", num1);
+print("Enter the second number: ");
+scan(num2);
+// Perform addition
+sum := num1 + num2;
+// Display the result
+Write("The sum = @ ", sum);
+end program
