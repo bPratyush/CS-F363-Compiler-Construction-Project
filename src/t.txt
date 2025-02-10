@@ -10,6 +10,11 @@ begin VarDecl:
 101
 0
 1
+a
+prat
+'a'
+'prat'
+"prat"
 end VarDecl
 print("Enter the first number: ");
 scan("@", num1);

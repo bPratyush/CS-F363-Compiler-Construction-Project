@@ -352,8 +352,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 16
-#define YY_END_OF_BUFFER 17
+#define YY_NUM_RULES 17
+#define YY_END_OF_BUFFER 18
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -363,12 +363,12 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[81] =
     {   0,
-        0,    0,   17,   15,   14,   14,   15,   10,   15,   13,
-       10,   10,   10,   10,   15,    6,   13,   11,   11,   11,
-        9,   15,    2,    2,    2,    2,    2,    2,    2,    2,
-        2,    2,    2,   14,    0,    8,   12,    0,    3,    5,
-        0,    6,   11,    0,    2,    2,    2,    2,    2,    2,
-        2,    1,    2,    2,    2,    2,    2,    7,    3,    4,
+        0,    0,   18,   16,   15,   15,   16,   11,   16,   14,
+       11,   11,   11,   11,    6,    7,   14,   12,   12,   12,
+       10,   16,    2,    2,    2,    2,    2,    2,    2,    2,
+        2,    2,    2,   15,    0,    9,   13,    0,    3,    5,
+        0,    7,   12,    0,    2,    2,    2,    2,    2,    2,
+        2,    1,    2,    2,    2,    2,    2,    8,    3,    4,
         0,    2,    2,    2,    2,    2,    2,    2,    2,    0,
         2,    2,    2,    2,    0,    2,    0,    2,    1,    0
     } ;
@@ -846,59 +846,64 @@ YY_RULE_SETUP
 { printf("INTEGER CONSTANT: (%s, 10)\n", yytext); }
 	YY_BREAK
 case 7:
-/* rule 7 can match eol */
 YY_RULE_SETUP
-#line 49 "v3.l"
-{ printf("CHARACTER CONSTANT: %s\n", yytext); }
+#line 48 "v3.l"
+{ printf("INTEGER CONSTANT: (%s, 10)\n", yytext); }
 	YY_BREAK
 case 8:
 /* rule 8 can match eol */
 YY_RULE_SETUP
-#line 51 "v3.l"
-{ process_string(yytext + 1); } // Remove first and last quotes
+#line 50 "v3.l"
+{ printf("CHARACTER CONSTANT: %s\n", yytext); }
 	YY_BREAK
 case 9:
+/* rule 9 can match eol */
 YY_RULE_SETUP
-#line 53 "v3.l"
-{ printf("SEPARATOR: %s\n", yytext); }
+#line 52 "v3.l"
+{ process_string(yytext + 1); } // Remove first and last quotes
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 55 "v3.l"
-{ printf("ARITHMETIC OPERATOR: %s\n", yytext); }
+#line 54 "v3.l"
+{ printf("SEPARATOR: %s\n", yytext); }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 56 "v3.l"
-{ printf("RELATIONAL OPERATOR: %s\n", yytext); }
+{ printf("ARITHMETIC OPERATOR: %s\n", yytext); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 57 "v3.l"
-{ printf("ASSIGNMENT OPERATOR: %s\n", yytext); }
+{ printf("RELATIONAL OPERATOR: %s\n", yytext); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 59 "v3.l"
-{ printf("SEPARATOR: %s\n", yytext); }
+#line 58 "v3.l"
+{ printf("ASSIGNMENT OPERATOR: %s\n", yytext); }
 	YY_BREAK
 case 14:
-/* rule 14 can match eol */
 YY_RULE_SETUP
-#line 61 "v3.l"
-; // ignoring whitespace
+#line 60 "v3.l"
+{ printf("SEPARATOR: %s\n", yytext); }
 	YY_BREAK
 case 15:
+/* rule 15 can match eol */
 YY_RULE_SETUP
-#line 63 "v3.l"
-{ printf("UNKNOWN TOKEN: %s\n", yytext); }
+#line 62 "v3.l"
+; // ignoring whitespace
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 65 "v3.l"
+#line 64 "v3.l"
+{ printf("UNKNOWN TOKEN: %s\n", yytext); }
+	YY_BREAK
+case 17:
+YY_RULE_SETUP
+#line 66 "v3.l"
 ECHO;
 	YY_BREAK
-#line 901 "lex.yy.c"
+#line 906 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1903,10 +1908,11 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 65 "v3.l"
+#line 66 "v3.l"
 
 
 int main(int argc, char **argv) {
     yylex();
     return 0;
 }
+
