@@ -833,17 +833,17 @@ YY_RULE_SETUP
 case 4:
 YY_RULE_SETUP
 #line 45 "v3.l"
-{ printf("BINARY CONSTANT: %s (base 2)\n", yytext); }
+{ printf("INTEGER CONSTANT: (%s, 2)\n", yytext); }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 46 "v3.l"
-{ printf("OCTAL CONSTANT: %s (base 8)\n", yytext); }
+{ printf("INTEGER CONSTANT: (%s, 8)\n", yytext); }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 47 "v3.l"
-{ printf("DECIMAL CONSTANT: %s (base 10)\n", yytext); }
+{ printf("INTEGER CONSTANT: (%s, 10)\n", yytext); }
 	YY_BREAK
 case 7:
 /* rule 7 can match eol */

@@ -4,6 +4,12 @@ begin VarDecl:
 (num2, int);
 (sum, int);
 6
+03
+001
+01
+101
+0
+1
 end VarDecl
 print("Enter the first number: ");
 scan("@", num1);
