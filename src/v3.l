@@ -6,21 +6,17 @@
 void process_string(const char *text) {
     int len = strlen(text);
     int i = 0, start = 0;
-    
     while (i < len) {
         if (text[i] == '@') {
-            if (i > start) {
+            if (i > start)
                 printf("STRING CONSTANT: \"%.*s\"\n", i - start, text + start);
-            }
             printf("SEPARATOR: @\n");
             start = i + 1;
         }
         i++;
     }
-    
-    if (start < len) {
+    if (start < len)
         printf("STRING CONSTANT: \"%s\"\n", text + start);
-    }
 }
 
 int validate_binary(const char *text) {
@@ -52,10 +48,20 @@ int validate_base_format(const char *text) {
 }
 
 int validate_identifier(const char *text) {
-    int underscore_count = 0;
+    if (text[0] < 'a' || text[0] > 'z') {
+        printf("INVALID IDENTIFIER: %s\n", text);
+        return 0;
+    }
+    int underscore = 0;
     for (int i = 0; text[i] != '\0'; i++) {
-        if (text[i] == '_') underscore_count++;
-        if (underscore_count > 1) {
+        char c = text[i];
+        if (c == '_') {
+            underscore++;
+            if (underscore > 1) {
+                printf("INVALID IDENTIFIER: %s\n", text);
+                return 0;
+            }
+        } else if (!(c >= 'a' && c <= 'z') && !(c >= '0' && c <= '9')) {
             printf("INVALID IDENTIFIER: %s\n", text);
             return 0;
         }
@@ -80,10 +86,9 @@ int validate_char_const(const char *text) {
 
 "int"|"char"|"if"|"else"|"while"|"for"|"main"|"begin"|"end"|"print"|"scan"|"program"|"VarDecl"|"inc"|"dec" { printf("KEYWORD: %s\n", yytext); }
 
-[a-z][a-z0-9_]* { 
-    if (validate_identifier(yytext)) {
+[a-z][a-z0-9_]* {
+    if (validate_identifier(yytext))
         printf("IDENTIFIER: %s\n", yytext);
-    }
 }
 
 \/\/.*                 { printf("COMMENT: %s\n", yytext); }
@@ -124,9 +129,17 @@ int validate_char_const(const char *text) {
 
 "@"                    { printf("SEPARATOR: %s\n", yytext); }
 
-"+"|"-"|"*"|"/"|"%"    { printf("ARITHMETIC OPERATOR: %s\n", yytext); }
-"="|">"|"<"|">="|"<="|"<>" { printf("RELATIONAL OPERATOR: %s\n", yytext); }
-":="|"+="|"-="|"*="|"/="|"%=" { printf("ASSIGNMENT OPERATOR: %s\n", yytext); }
+"+"|"-"|"*"|"/"|"%" {
+    printf("ARITHMETIC OPERATOR (INTEGER): %s\n", yytext);
+}
+
+"="|">"|"<"|">="|"<="|"<>" {
+    printf("RELATIONAL OPERATOR (INTEGER): %s\n", yytext);
+}
+
+":="|"+="|"-="|"*="|"/="|"%=" {
+    printf("ASSIGNMENT OPERATOR (INTEGER): %s\n", yytext);
+}
 
 "("|")"|","|";"|"{"|"}"|":"  { printf("SEPARATOR: %s\n", yytext); }
 
