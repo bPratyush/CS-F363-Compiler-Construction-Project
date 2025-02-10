@@ -62,6 +62,18 @@ int validate_identifier(const char *text) {
     }
     return 1;
 }
+
+int validate_char_const(const char *text) {
+    int len = strlen(text);
+    if (text[0] == '\'' && text[len - 1] == '\'') {
+        if (text[1] == '\\' && len == 4) {
+            return 1;
+        } else if (text[1] != '\\' && len == 3) {
+            return 1;
+        }
+    }
+    return 0;
+}
 %}
 
 %%
@@ -101,7 +113,12 @@ int validate_identifier(const char *text) {
     printf("INVALID INTEGER CONSTANT: Missing base in %s\n", yytext); 
 }
 
-'(\\.|[^\\'])' { printf("CHARACTER CONSTANT: %s\n", yytext); }
+'([^']|\\.)+' {
+    if (validate_char_const(yytext))
+        printf("CHARACTER CONSTANT: %s\n", yytext);
+    else
+        printf("INVALID CHARACTER CONSTANT: %s\n", yytext);
+}
 
 \"[^\"]*\"             { process_string(yytext + 1); }
 
