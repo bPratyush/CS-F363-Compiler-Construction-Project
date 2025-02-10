@@ -22,6 +22,46 @@ void process_string(const char *text) {
         printf("STRING CONSTANT: \"%s\"\n", text + start);
     }
 }
+
+int validate_binary(const char *text) {
+    for (int i = 0; text[i] != ','; i++) {
+        if (text[i] != '0' && text[i] != '1') {
+            printf("INVALID BINARY CONSTANT: %s\n", text);
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int validate_octal(const char *text) {
+    for (int i = 0; text[i] != ','; i++) {
+        if (text[i] < '0' || text[i] > '7') {
+            printf("INVALID OCTAL CONSTANT: %s\n", text);
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int validate_base_format(const char *text) {
+    if (strchr(text, ',') == NULL) {
+        printf("INVALID INTEGER CONSTANT: Missing base in %s\n", text);
+        return 0;
+    }
+    return 1;
+}
+
+int validate_identifier(const char *text) {
+    int underscore_count = 0;
+    for (int i = 0; text[i] != '\0'; i++) {
+        if (text[i] == '_') underscore_count++;
+        if (underscore_count > 1) {
+            printf("INVALID IDENTIFIER: %s\n", text);
+            return 0;
+        }
+    }
+    return 1;
+}
 %}
 
 %%
@@ -29,26 +69,41 @@ void process_string(const char *text) {
 "int"|"char"|"if"|"else"|"while"|"for"|"main"|"begin"|"end"|"print"|"scan"|"program"|"VarDecl"|"inc"|"dec" { printf("KEYWORD: %s\n", yytext); }
 
 [a-z][a-z0-9_]* { 
-    int underscore_count = 0;
-    for (int i = 0; yytext[i] != '\0'; i++) {
-        if (yytext[i] == '_') underscore_count++;
-        if (underscore_count > 1) {
-            printf("INVALID IDENTIFIER: %s\n", yytext);
-            return 0;
-        }
+    if (validate_identifier(yytext)) {
+        printf("IDENTIFIER: %s\n", yytext);
     }
-    printf("IDENTIFIER: %s\n", yytext); 
 }
 
 \/\/.*                 { printf("COMMENT: %s\n", yytext); }
 
-(0[01]+,2)                { printf("BINARY INTEGER CONSTANT: (%.*s, 2)\n", (int)(strchr(yytext, ',') - yytext), yytext); }
-(0[0-7]+,8)                { printf("OCTAL INTEGER CONSTANT: (%.*s, 8)\n", (int)(strchr(yytext, ',') - yytext), yytext); }
-([0-9][0-9]*,10)            { printf("DECIMAL INTEGER CONSTANT: (%.*s, 10)\n", (int)(strchr(yytext, ',') - yytext), yytext); }
+([0-9]+,[ \t]+2) {
+    if (validate_binary(yytext)) {
+        printf("BINARY INTEGER CONSTANT: (%.*s, 2)\n", 
+               (int)(strchr(yytext, ',') - yytext), yytext);
+    }
+}
+
+([0-9]+,[ \t]+8) {
+    if (validate_octal(yytext)) {
+        printf("OCTAL INTEGER CONSTANT: (%.*s, 8)\n", 
+               (int)(strchr(yytext, ',') - yytext), yytext);
+    }
+}
+
+([0-9]+,[ \t]+10) {
+    if (validate_base_format(yytext)) {
+        printf("DECIMAL INTEGER CONSTANT: (%.*s, 10)\n", 
+               (int)(strchr(yytext, ',') - yytext), yytext);
+    }
+}
+
+([0-9]+) { 
+    printf("INVALID INTEGER CONSTANT: Missing base in %s\n", yytext); 
+}
 
 '[^']'                 { printf("CHARACTER CONSTANT: %s\n", yytext); }
 
-\"[^\"]*\"             { process_string(yytext + 1); } // Remove first and last quotes
+\"[^\"]*\"             { process_string(yytext + 1); }
 
 "@"                    { printf("SEPARATOR: %s\n", yytext); }
 
