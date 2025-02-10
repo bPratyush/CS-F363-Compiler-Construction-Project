@@ -42,10 +42,9 @@ void process_string(const char *text) {
 
 \/\/.*                 { printf("COMMENT: %s\n", yytext); }
 
-0b[01]+                { printf("INTEGER CONSTANT: (%s, 2)\n", yytext); }
-0[0-7]+                { printf("INTEGER CONSTANT: (%s, 8)\n", yytext); }
-0                      { printf("INTEGER CONSTANT: (%s, 10)\n", yytext); }
-[1-9][0-9]*            { printf("INTEGER CONSTANT: (%s, 10)\n", yytext); }
+(0[01]+,2)                { printf("BINARY INTEGER CONSTANT: (%.*s, 2)\n", (int)(strchr(yytext, ',') - yytext), yytext); }
+(0[0-7]+,8)                { printf("OCTAL INTEGER CONSTANT: (%.*s, 8)\n", (int)(strchr(yytext, ',') - yytext), yytext); }
+([0-9][0-9]*,10)            { printf("DECIMAL INTEGER CONSTANT: (%.*s, 10)\n", (int)(strchr(yytext, ',') - yytext), yytext); }
 
 '[^']'                 { printf("CHARACTER CONSTANT: %s\n", yytext); }
 
