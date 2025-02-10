@@ -101,7 +101,7 @@ int validate_identifier(const char *text) {
     printf("INVALID INTEGER CONSTANT: Missing base in %s\n", yytext); 
 }
 
-'[^']'                 { printf("CHARACTER CONSTANT: %s\n", yytext); }
+'(\\.|[^\\'])' { printf("CHARACTER CONSTANT: %s\n", yytext); }
 
 \"[^\"]*\"             { process_string(yytext + 1); }
 

@@ -21,6 +21,8 @@ prat
 'a'
 'prat'
 "prat"
+'\n'
+'\t'
 end VarDecl
 print("Enter the first number: ");
 scan("@", num1);
