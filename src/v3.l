@@ -48,6 +48,14 @@ int validate_base_format(const char *text) {
 }
 
 int validate_identifier(const char *text) {
+    const char *keywords[] = {"int", "char", "if", "else", "while", "for", "main", "begin", "end", "print", "scan", "program", "VarDecl", "inc", "dec", NULL};
+    for (int i = 0; keywords[i] != NULL; i++) {
+        if (strcmp(text, keywords[i]) == 0) {
+            printf("INVALID IDENTIFIER (keyword reserved): %s\n", text);
+            return 0;
+        }
+    }
+
     if (text[0] < 'a' || text[0] > 'z') {
         printf("INVALID IDENTIFIER: %s\n", text);
         return 0;
