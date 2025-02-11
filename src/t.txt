@@ -16,8 +16,6 @@ begin VarDecl:
 (1010, 2) 
 (131, 2) 
 (124, )
-(int, int)
-(char, for)
 a
 prat
 'a'
