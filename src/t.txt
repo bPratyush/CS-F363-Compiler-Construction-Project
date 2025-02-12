@@ -18,6 +18,13 @@ begin program:
 'a'
 'prat'
 "prat"
+'\n'
+'\t'
+for
+while
+forwhile
+int 
+intch
 begin VarDecl:
 (num1, int);
 (num2, int);
