@@ -90,8 +90,32 @@ int validate_char_const(const char *text) {
 }
 %}
 
+%x VARDECL
+
 %%
 
+^begin[ \t]+VarDecl:    { BEGIN(VARDECL); printf("BEGIN VARIABLE DECLARATION\n"); }
+
+<VARDECL>[ \t]*\([ \t]*[a-z][a-z0-9_]*[ \t]*,[ \t]*(int|char)[ \t]*\)[ \t]*; {
+    char id[64], typ[16];
+    if (sscanf(yytext, " ( %63[^,] , %15[^)] ) ;", id, typ) == 2) {
+        char *nl = strpbrk(typ, " \t");
+        if(nl) *nl = '\0';
+        if (validate_identifier(id))
+            printf("VALID VARIABLE DECLARATION: (%s, %s)\n", id, typ);
+        else
+            printf("INVALID VARIABLE DECLARATION: %s\n", yytext);
+    } else {
+        printf("INVALID VARIABLE DECLARATION: %s\n", yytext);
+    }
+}
+<VARDECL>. {
+    printf("INVALID VARIABLE DECLARATION: %s\n", yytext);
+}
+<VARDECL>^end[ \t]+VarDecl[ \t]*\n? {
+    BEGIN(INITIAL);
+    printf("END VARIABLE DECLARATION\n");
+}
 "int"|"char"|"if"|"else"|"while"|"for"|"main"|"begin"|"end"|"print"|"scan"|"program"|"VarDecl"|"inc"|"dec" { printf("KEYWORD: %s\n", yytext); }
 
 [a-z][a-z0-9_]* {

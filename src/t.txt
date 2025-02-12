@@ -1,8 +1,4 @@
 begin program:
-begin VarDecl:
-(num1, int);
-(num2, int);
-(sum, int);
 (6, 10)
 (03, 8)
 (001, 2)
@@ -15,6 +11,21 @@ begin VarDecl:
 (129, 8) 
 (1010, 2) 
 (131, 2) 
+(124, )
+'a'
+'prat'
+"prat"
+begin VarDecl:
+(num1, int);
+(num2, int);
+(sum, int);
+(for, int);
+(while, int);
+(int, char);
+(char, int);
+(6, 10)
+(03, 8)
+(001, 2)
 (124, )
 a
 prat
