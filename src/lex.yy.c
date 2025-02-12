@@ -999,25 +999,25 @@ YY_RULE_SETUP
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 127 "v3.l"
+#line 128 "v3.l"
 
 	YY_BREAK
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 128 "v3.l"
+#line 130 "v3.l"
 {
     printf("INVALID VARIABLE DECLARATION: %s", yytext);
 }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 131 "v3.l"
+#line 133 "v3.l"
 { printf("KEYWORD: %s\n", yytext); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 133 "v3.l"
+#line 135 "v3.l"
 {
     if (validate_identifier(yytext))
         printf("IDENTIFIER: %s\n", yytext);
@@ -1025,12 +1025,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 138 "v3.l"
+#line 140 "v3.l"
 { printf("COMMENT: %s\n", yytext); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 140 "v3.l"
+#line 142 "v3.l"
 {
     char tmp[128];
     char *start = yytext + 1;
@@ -1044,7 +1044,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 151 "v3.l"
+#line 153 "v3.l"
 {
     char tmp[128];
     char *start = yytext + 1;
@@ -1058,7 +1058,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 162 "v3.l"
+#line 164 "v3.l"
 {
     char tmp[128];
     char *start = yytext + 1;
@@ -1072,7 +1072,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 173 "v3.l"
+#line 175 "v3.l"
 { 
     printf("INVALID INTEGER CONSTANT: Missing base in %s\n", yytext); 
 }
@@ -1080,7 +1080,7 @@ YY_RULE_SETUP
 case 13:
 /* rule 13 can match eol */
 YY_RULE_SETUP
-#line 177 "v3.l"
+#line 179 "v3.l"
 {
     if (validate_char_const(yytext))
         printf("CHARACTER CONSTANT: %s\n", yytext);
@@ -1091,54 +1091,54 @@ YY_RULE_SETUP
 case 14:
 /* rule 14 can match eol */
 YY_RULE_SETUP
-#line 184 "v3.l"
+#line 186 "v3.l"
 { process_string(yytext + 1); }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 186 "v3.l"
+#line 188 "v3.l"
 { printf("SEPARATOR: %s\n", yytext); }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 188 "v3.l"
+#line 190 "v3.l"
 {
     printf("ARITHMETIC OPERATOR (INTEGER): %s\n", yytext);
 }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 192 "v3.l"
+#line 194 "v3.l"
 {
     printf("RELATIONAL OPERATOR (INTEGER): %s\n", yytext);
 }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 196 "v3.l"
+#line 198 "v3.l"
 {
     printf("ASSIGNMENT OPERATOR (INTEGER): %s\n", yytext);
 }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 200 "v3.l"
+#line 202 "v3.l"
 { printf("SEPARATOR: %s\n", yytext); }
 	YY_BREAK
 case 20:
 /* rule 20 can match eol */
 YY_RULE_SETUP
-#line 202 "v3.l"
+#line 204 "v3.l"
 ; // ignoring whitespace
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 204 "v3.l"
+#line 206 "v3.l"
 { printf("UNKNOWN TOKEN: %s\n", yytext); }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 206 "v3.l"
+#line 208 "v3.l"
 ECHO;
 	YY_BREAK
 #line 1144 "lex.yy.c"
@@ -2150,7 +2150,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 206 "v3.l"
+#line 208 "v3.l"
 
 
 int main(int argc, char **argv) {

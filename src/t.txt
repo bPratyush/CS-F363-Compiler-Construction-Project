@@ -32,6 +32,8 @@ num1, int
 (num2, int);
 (sum, int);
 (for, int);
+(begin, int);
+(begin, int)
 (num1, int)
 ()
 (while, int);
