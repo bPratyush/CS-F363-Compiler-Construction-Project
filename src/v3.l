@@ -124,7 +124,9 @@ int validate_char_const(const char *text) {
         printf("INVALID VARIABLE DECLARATION: %s\n", yytext);
     }
 }
+
 <VARDECL>[ \t]*\n  
+
 <VARDECL>.*\n {
     printf("INVALID VARIABLE DECLARATION: %s", yytext);
 }

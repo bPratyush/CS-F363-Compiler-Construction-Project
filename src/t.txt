@@ -27,6 +27,7 @@ int
 intch
 begin VarDecl:
 (num1, int);
+num1, int
 (num2, int);
 (sum, int);
 (for, int);
