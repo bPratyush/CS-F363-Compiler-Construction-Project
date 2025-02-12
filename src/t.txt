@@ -16,6 +16,11 @@ begin program:
 1010,
  , 2
 1001
+(1010, 
+(123, 
+, 123
+ , 111
+,101
 'a'
 'prat'
 "prat"
@@ -34,7 +39,8 @@ num1, int
 (for, int);
 (begin, int);
 (begin, int)
-(num1, int)
+(num1, int
+num1, int)
 ()
 (while, int);
 (int, char);
