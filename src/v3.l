@@ -94,9 +94,14 @@ int validate_char_const(const char *text) {
 
 %%
 
-^begin[ \t]+VarDecl:    { BEGIN(VARDECL); printf("BEGIN VARIABLE DECLARATION\n"); }
+^begin[ \t]+VarDecl: { BEGIN(VARDECL); printf("BEGIN VARIABLE DECLARATION\n"); }
 
-<VARDECL>[ \t]*\([ \t]*[a-z][a-z0-9_]*[ \t]*,[ \t]*(int|char)[ \t]*\)[ \t]*; {
+<VARDECL>^end[ \t]+VarDecl[ \t]*\n? {
+    BEGIN(INITIAL);
+    printf("END VARIABLE DECLARATION\n");
+}
+
+<VARDECL>[ \t]*\([ \t]*[a-z][a-z0-9_]*[ \t]*,[ \t]*(int|char)[ \t]*\)[ \t]*;[ \t]*\n {
     char id[64], typ[16];
     if (sscanf(yytext, " ( %63[^,] , %15[^)] ) ;", id, typ) == 2) {
         char *nl = strpbrk(typ, " \t");
@@ -109,12 +114,9 @@ int validate_char_const(const char *text) {
         printf("INVALID VARIABLE DECLARATION: %s\n", yytext);
     }
 }
-<VARDECL>. {
-    printf("INVALID VARIABLE DECLARATION: %s\n", yytext);
-}
-<VARDECL>^end[ \t]+VarDecl[ \t]*\n? {
-    BEGIN(INITIAL);
-    printf("END VARIABLE DECLARATION\n");
+
+<VARDECL>.*\n {
+    printf("INVALID VARIABLE DECLARATION: %s", yytext);
 }
 "int"|"char"|"if"|"else"|"while"|"for"|"main"|"begin"|"end"|"print"|"scan"|"program"|"VarDecl"|"inc"|"dec" { printf("KEYWORD: %s\n", yytext); }
 

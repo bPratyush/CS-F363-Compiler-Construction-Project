@@ -23,6 +23,9 @@ begin VarDecl:
 (while, int);
 (int, char);
 (char, int);
+(num1, );
+( , int);
+( ,123)
 (6, 10)
 (03, 8)
 (001, 2)
