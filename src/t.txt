@@ -12,6 +12,9 @@ begin program:
 (1010, 2) 
 (131, 2) 
 (124, )
+1010, 2
+1010,
+ , 2
 'a'
 'prat'
 "prat"
@@ -20,6 +23,8 @@ begin VarDecl:
 (num2, int);
 (sum, int);
 (for, int);
+(num1, int)
+()
 (while, int);
 (int, char);
 (char, int);

@@ -20,7 +20,7 @@ void process_string(const char *text) {
 }
 
 int validate_binary(const char *text) {
-    for (int i = 0; text[i] != ','; i++) {
+    for (int i = 0; text[i] != '\0'; i++) {
         if (text[i] != '0' && text[i] != '1') {
             printf("INVALID BINARY CONSTANT: %s\n", text);
             return 0;
@@ -30,9 +30,19 @@ int validate_binary(const char *text) {
 }
 
 int validate_octal(const char *text) {
-    for (int i = 0; text[i] != ','; i++) {
+    for (int i = 0; text[i] != '\0'; i++) {
         if (text[i] < '0' || text[i] > '7') {
             printf("INVALID OCTAL CONSTANT: %s\n", text);
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int validate_decimal(const char *text) {
+    for (int i = 0; text[i] != '\0'; i++) {
+        if (text[i] < '0' || text[i] > '9') {
+            printf("INVALID DECIMAL CONSTANT: %s\n", text);
             return 0;
         }
     }
@@ -127,25 +137,37 @@ int validate_char_const(const char *text) {
 
 \/\/.*                 { printf("COMMENT: %s\n", yytext); }
 
-([0-9]+,[ \t]+2) {
-    if (validate_binary(yytext)) {
-        printf("BINARY INTEGER CONSTANT: (%.*s, 2)\n", 
-               (int)(strchr(yytext, ',') - yytext), yytext);
-    }
+\([ \t]*[0-9]+[ \t]*,[ \t]*2[ \t]*\) {
+    char tmp[128];
+    char *start = yytext + 1;
+    while (*start == ' ' || *start == '\t') start++;
+    int value_len = (int)(strchr(yytext, ',') - start);
+    strncpy(tmp, start, value_len);
+    tmp[value_len] = '\0';
+    if (validate_binary(tmp))
+        printf("BINARY INTEGER CONSTANT: (%s, 2)\n", tmp);
 }
 
-([0-9]+,[ \t]+8) {
-    if (validate_octal(yytext)) {
-        printf("OCTAL INTEGER CONSTANT: (%.*s, 8)\n", 
-               (int)(strchr(yytext, ',') - yytext), yytext);
-    }
+\([ \t]*[0-9]+[ \t]*,[ \t]*8[ \t]*\) {
+    char tmp[128];
+    char *start = yytext + 1;
+    while (*start == ' ' || *start == '\t') start++;
+    int value_len = (int)(strchr(yytext, ',') - start);
+    strncpy(tmp, start, value_len);
+    tmp[value_len] = '\0';
+    if (validate_octal(tmp))
+        printf("OCTAL INTEGER CONSTANT: (%s, 8)\n", tmp);
 }
 
-([0-9]+,[ \t]+10) {
-    if (validate_base_format(yytext)) {
-        printf("DECIMAL INTEGER CONSTANT: (%.*s, 10)\n", 
-               (int)(strchr(yytext, ',') - yytext), yytext);
-    }
+\([ \t]*[0-9]+[ \t]*,[ \t]*10[ \t]*\) {
+    char tmp[128];
+    char *start = yytext + 1;
+    while (*start == ' ' || *start == '\t') start++;
+    int value_len = (int)(strchr(yytext, ',') - start);
+    strncpy(tmp, start, value_len);
+    tmp[value_len] = '\0';
+    if (validate_decimal(tmp))
+        printf("DECIMAL INTEGER CONSTANT: (%s, 10)\n", tmp);
 }
 
 ([0-9]+) { 
