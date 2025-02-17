@@ -317,4 +317,5 @@ int validate_binary(const char *text) {
 int main(int argc, char **argv) {
     yylex();
     return 0;
+
 }
