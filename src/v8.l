@@ -208,8 +208,10 @@ void check_while_condition(){
         if (sscanf(lineCopy, " ( %63[^[]%*c%d%*c , %15[^)] ) ;", id, &size, typ) == 3) {
             char *nl = strpbrk(typ, " \t");
             if (nl) *nl = '\0';
-            if (size > 0 && validate_array_identifier(id))
+            if (size > 0 && validate_array_identifier(id)) {
                 printf("VALID ARRAY DECLARATION: (%s[%d], %s)\n", id, size, typ);
+                symbolTable[symbolCount++] = strdup(id);
+            }
             else
                 printf("INVALID ARRAY DECLARATION: %s\n", yytext);
         } else {
@@ -220,8 +222,10 @@ void check_while_condition(){
         if (sscanf(lineCopy, " ( %63[^,] , %15[^)] ) ;", id, typ) == 2) {
             char *nl = strpbrk(typ, " \t");
             if(nl) *nl = '\0';
-            if (validate_identifier(id))
+            if (validate_identifier(id)) {
                 printf("VALID VARIABLE DECLARATION: (%s, %s)\n", id, typ);
+                symbolTable[symbolCount++] = strdup(id);
+            }
             else
                 printf("INVALID VARIABLE DECLARATION: %s\n", yytext);
         } else {
@@ -389,6 +393,7 @@ void check_while_condition(){
 <WHILE>"\n" {
     BEGIN(INITIAL);
 }
+
 <WHILE>"(" {
  reset_while_stats();
  while_parantheses_count++;
@@ -408,8 +413,10 @@ void check_while_condition(){
 
 
 <WHILE>"begin" {
+    printf("KEYWORD: %s\n", yytext);
     while_parantheses_count++;
 }
+
 <WHILE>"end;" {
     while_parantheses_count--;
     if(while_parantheses_count){
