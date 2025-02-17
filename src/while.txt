@@ -1,0 +1,5 @@
+while (number>0)
+begin
+sum := sum + number;
+number := number - 1;
+end;
