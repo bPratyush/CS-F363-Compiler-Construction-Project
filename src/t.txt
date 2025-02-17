@@ -22,6 +22,7 @@ begin program:
  , 111
 ,101
 'a'
+'A'
 'prat'
 "prat"
 '\n'
@@ -52,6 +53,8 @@ num1, int)
 (03, 8)
 (001, 2)
 (124, )
+(A[6], int); 
+(B[12], char); //Inline Comments not handled
 a
 prat
 'a'
