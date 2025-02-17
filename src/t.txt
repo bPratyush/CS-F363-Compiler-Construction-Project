@@ -35,8 +35,8 @@ intch
 begin VarDecl:
 (num1, int);
 num1, int
-(num2, int);
-(sum, int);
+(num2, int); //Inline Comments handled
+(sum, int); //Inline Comments handled
 (for, int);
 (begin, int);
 (begin, int)
@@ -54,7 +54,7 @@ num1, int)
 (001, 2)
 (124, )
 (A[6], int); 
-(B[12], char); //Inline Comments not handled
+(B[12], char); //Inline Comments handled
 a
 prat
 'a'
@@ -75,7 +75,7 @@ end VarDecl
 (12, 10) + (11, 2) = (15, 8)
 (12, 10) + (11, 2) = (10, 2)
 (10, 2) + (11, 2) = (10, 2)
-(12, 10) - (11, 2) = (10, 2)
+(12, 10) - (11, 2) = (10, 2) //Inline Comments handled
 (12, 10) * (11, 2) = (15, 10)
 (12, 10) * (11, 2) = (15, 8)
 (12, 10) > (11, 2) = (15, 8)

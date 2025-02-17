@@ -20,8 +20,7 @@ static int symbolCount = 0;
 int isDeclared(const char* id) {
     int i;
     for(i = 0; i < symbolCount; i++){
-        if(strcmp(symbolTable[i], id) == 0)
-            return 1;
+        if(strcmp(symbolTable[i], id) == 0) return 1;
     }
     return 0;
 }
@@ -38,8 +37,7 @@ void reset_print_buffers() {
 void count_at_symbols(const char* s) {
     int i;
     for (i = 0; s[i]; i++) {
-        if (s[i] == '@')
-            at_count++;
+        if (s[i] == '@') at_count++;
     }
 }
 
@@ -62,13 +60,9 @@ int validate_identifier(const char *text) {
     };
     int i;
     for (i = 0; keywords[i] != NULL; i++) {
-        if (strcmp(text, keywords[i]) == 0) {
-            return 0;
-        }
+        if (strcmp(text, keywords[i]) == 0) return 0;
     }
-    if (text[0] < 'a' || text[0] > 'z') {
-        return 0;
-    }
+    if (text[0] < 'a' || text[0] > 'z') return 0;
     {
         int underscore = 0;
         int j;
@@ -76,9 +70,7 @@ int validate_identifier(const char *text) {
             char c = text[j];
             if (c == '_') {
                 underscore++;
-                if (underscore > 1) {
-                    return 0;
-                }
+                if (underscore > 1) return 0;
             } else if (!(c >= 'a' && c <= 'z') && !(c >= '0' && c <= '9')) {
                 return 0;
             }
@@ -90,10 +82,8 @@ int validate_identifier(const char *text) {
 int validate_char_const(const char *text) {
     int len = strlen(text);
     if (text[0] == '\'' && text[len - 1] == '\'') {
-        if (text[1] == '\\' && len == 4)
-            return 1;
-        else if (text[1] != '\\' && len == 3)
-            return 1;
+        if (text[1] == '\\' && len == 4) return 1;
+        else if (text[1] != '\\' && len == 3) return 1;
     }
     return 0;
 }
@@ -101,9 +91,7 @@ int validate_char_const(const char *text) {
 int validate_decimal(const char *text) {
     int i;
     for (i = 0; text[i] != '\0'; i++) {
-        if (text[i] < '0' || text[i] > '9') {
-            return 0;
-        }
+        if (text[i] < '0' || text[i] > '9') return 0;
     }
     return 1;
 }
@@ -111,8 +99,7 @@ int validate_decimal(const char *text) {
 int validate_octal(const char *text) {
     int i;
     for (i = 0; text[i] != '\0'; i++) {
-        if (text[i] < '0' || text[i] > '7')
-            return 0;
+        if (text[i] < '0' || text[i] > '7') return 0;
     }
     return 1;
 }
@@ -120,9 +107,7 @@ int validate_octal(const char *text) {
 int validate_binary(const char *text) {
     int i;
     for (i = 0; text[i] != '\0'; i++) {
-        if (text[i] != '0' && text[i] != '1') {
-            return 0;
-        }
+        if (text[i] != '0' && text[i] != '1') return 0;
     }
     return 1;
 }
@@ -134,23 +119,20 @@ int validate_array_identifier(const char *text) {
     };
     int i;
     for (i = 0; keywords[i] != NULL; i++) {
-        if (strcmp(text, keywords[i]) == 0) {
-            return 0;
-        }
+        if (strcmp(text, keywords[i]) == 0) return 0;
     }
-    if (!((text[0] >= 'a' && text[0] <= 'z') || (text[0] >= 'A' && text[0] <= 'Z'))) {
-        return 0;
-    }
-    int underscore = 0;
-    int j;
-    for (j = 0; text[j] != '\0'; j++) {
-        char c = text[j];
-        if (c == '_') {
-            underscore++;
-            if (underscore > 1)
+    if (!((text[0] >= 'a' && text[0] <= 'z') || (text[0] >= 'A' && text[0] <= 'Z'))) return 0;
+    {
+        int underscore = 0;
+        int j;
+        for (j = 0; text[j] != '\0'; j++) {
+            char c = text[j];
+            if (c == '_') {
+                underscore++;
+                if (underscore > 1) return 0;
+            } else if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))) {
                 return 0;
-        } else if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))) {
-            return 0;
+            }
         }
     }
     return 1;
@@ -171,14 +153,23 @@ int validate_array_identifier(const char *text) {
     printf("END VARIABLE DECLARATION\n");
 }
 
-<VARDECL>[ \t]*\([ \t]*[a-zA-Z][a-z0-9_]*[ \t]*(\[[ \t]*[0-9]+\s*\])?[ \t]*,[ \t]*(int|char)[ \t]*\)[ \t]*;[ \t]*\n {
-    if (strchr(yytext, '[')) {
+<VARDECL>[ \t]*\([ \t]*[a-zA-Z][a-z0-9_]*[ \t]*(\[[ \t]*[0-9]+\s*\])?[ \t]*,[ \t]*(int|char)[ \t]*\)[ \t]*;[ \t]*(\/\/.*)?[ \t]*\n {
+    char lineCopy[1024];
+    strncpy(lineCopy, yytext, 1023);
+    lineCopy[1023] = '\0';
+    {
+        char *commentStart = strstr(lineCopy, "//");
+        if(commentStart) {
+            printf("COMMENT: %s\n", commentStart);
+            *commentStart = '\0';
+        }
+    }
+    if (strchr(lineCopy, '[')) {
         char id[64], typ[16];
         int size;
-        if (sscanf(yytext, " ( %63[^[]%*c%d%*c , %15[^)] ) ;", id, &size, typ) == 3) {
+        if (sscanf(lineCopy, " ( %63[^[]%*c%d%*c , %15[^)] ) ;", id, &size, typ) == 3) {
             char *nl = strpbrk(typ, " \t");
-            if (nl)
-                *nl = '\0';
+            if (nl) *nl = '\0';
             if (size > 0 && validate_array_identifier(id))
                 printf("VALID ARRAY DECLARATION: (%s[%d], %s)\n", id, size, typ);
             else
@@ -188,10 +179,9 @@ int validate_array_identifier(const char *text) {
         }
     } else {
         char id[64], typ[16];
-        if (sscanf(yytext, " ( %63[^,] , %15[^)] ) ;", id, typ) == 2) {
+        if (sscanf(lineCopy, " ( %63[^,] , %15[^)] ) ;", id, typ) == 2) {
             char *nl = strpbrk(typ, " \t");
-            if(nl)
-                *nl = '\0';
+            if(nl) *nl = '\0';
             if (validate_identifier(id))
                 printf("VALID VARIABLE DECLARATION: (%s, %s)\n", id, typ);
             else
@@ -202,8 +192,12 @@ int validate_array_identifier(const char *text) {
     }
 }
 
+<VARDECL>"//".* {
+    printf("COMMENT: %s\n", yytext);
+}
 
-<VARDECL>[ \t]*\n      { }
+<VARDECL>[ \t]*\n {
+}
 
 <VARDECL>.*\n {
     printf("INVALID VARIABLE DECLARATION: %s", yytext);
@@ -225,10 +219,8 @@ int validate_array_identifier(const char *text) {
 
 [a-z][a-z0-9_]* {
     if (validate_identifier(yytext)) {
-        if (isDeclared(yytext))
-            printf("IDENTIFIER: %s\n", yytext);
-        else
-            printf("UNDEFINED IDENTIFIER: %s\n", yytext);
+        if (isDeclared(yytext)) printf("IDENTIFIER: %s\n", yytext);
+        else printf("UNDEFINED IDENTIFIER: %s\n", yytext);
     }
 }
 
@@ -321,13 +313,20 @@ int validate_array_identifier(const char *text) {
     }
 }
 
-<PRINT>"," { }
+<PRINT>"," {
+}
 
-<PRINT>\([ \t]*[0-9]+[ \t]*,[ \t]*(2|8|10)[ \t]*\) { arg_count++; }
+<PRINT>\([ \t]*[0-9]+[ \t]*,[ \t]*(2|8|10)[ \t]*\) {
+    arg_count++;
+}
 
-<PRINT>\'([^']|\\.)+\' { arg_count++; }
+<PRINT>\'([^']|\\.)+\' {
+    arg_count++;
+}
 
-<PRINT>[a-z][a-z0-9_]* { arg_count++; }
+<PRINT>[a-z][a-z0-9_]* {
+    arg_count++;
+}
 
 <PRINT>")" {
     if (parentheses_count > 0) parentheses_count--;
@@ -347,7 +346,9 @@ int validate_array_identifier(const char *text) {
     BEGIN(INITIAL);
 }
 
-"@" { printf("SEPARATOR: %s\n", yytext); }
+"@" {
+    printf("SEPARATOR: %s\n", yytext);
+}
 
 "+"|"-"|"*"|"/"|"%" {
     printf("ARITHMETIC OPERATOR (INTEGER): %s\n", yytext);
@@ -365,7 +366,8 @@ int validate_array_identifier(const char *text) {
     printf("SEPARATOR: %s\n", yytext);
 }
 
-[ \t\n]+ { }
+[ \t\n]+ {
+}
 
 . {
     if (YYSTATE == PRINT) printf("INVALID PRINT STATEMENT: Unexpected token '%s'\n", yytext);
