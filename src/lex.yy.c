@@ -1309,34 +1309,32 @@ case 9:
 /* rule 9 can match eol */
 YY_RULE_SETUP
 #line 259 "v9.l"
-{
-    /* Skip whitespace and newlines */
-}
+{}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 263 "v9.l"
+#line 261 "v9.l"
 {
     printf("FOR-DO KEYWORD: to\n");
 }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 267 "v9.l"
+#line 265 "v9.l"
 {
     printf("FOR-DO KEYWORD: inc\n");
 }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 271 "v9.l"
+#line 269 "v9.l"
 {
     printf("FOR-DO KEYWORD: dec\n");
 }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 275 "v9.l"
+#line 273 "v9.l"
 {
     printf("FOR-DO KEYWORD: do\n");
     BEGIN(INITIAL); 
@@ -1344,56 +1342,56 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 280 "v9.l"
+#line 278 "v9.l"
 {
     printf("FOR-DO INDEX VARIABLE: %s\n", yytext);
 }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 284 "v9.l"
+#line 282 "v9.l"
 {
     printf("ASSIGNMENT OPERATOR (FOR-DO): %s\n", yytext);
 }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 288 "v9.l"
+#line 286 "v9.l"
 {
     printf("FOR-DO CONSTANT: %s\n", yytext);
 }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 292 "v9.l"
+#line 290 "v9.l"
 {
     printf("FOR-DO INTEGER CONSTANT: %s\n", yytext);
 }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 296 "v9.l"
+#line 294 "v9.l"
 {
     printf("FOR-DO ARITHMETIC OPERATOR: %s\n", yytext);
 }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 300 "v9.l"
+#line 298 "v9.l"
 {
     printf("FOR-DO TOKEN: %s\n", yytext);
 }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 304 "v9.l"
+#line 302 "v9.l"
 {
     printf("KEYWORD: %s\n", yytext);
 }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 308 "v9.l"
+#line 306 "v9.l"
 {
     printf("KEYWORD: %s\n", yytext);
     reset_print_buffers();
@@ -1402,14 +1400,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 314 "v9.l"
+#line 312 "v9.l"
 {
     printf("KEYWORD: %s\n", yytext);
 }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 318 "v9.l"
+#line 316 "v9.l"
 {
     printf("KEYWORD: %s\n",yytext);
     BEGIN(WHILE);
@@ -1417,14 +1415,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 323 "v9.l"
+#line 321 "v9.l"
 {
     printf("KEYWORD: %s\n", yytext);
 }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 327 "v9.l"
+#line 325 "v9.l"
 {
     if (validate_identifier(yytext)) {
         if (isDeclared(yytext)) printf("IDENTIFIER: %s\n", yytext);
@@ -1434,14 +1432,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 334 "v9.l"
+#line 332 "v9.l"
 {
     printf("COMMENT: %s\n", yytext);
 }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 338 "v9.l"
+#line 336 "v9.l"
 {
     BEGIN(COMMENT);
     comment_index = 0;
@@ -1450,7 +1448,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 344 "v9.l"
+#line 342 "v9.l"
 {
     printf("COMMENT (multiline): /*%s*/\n", comment_buffer);
     BEGIN(INITIAL);
@@ -1459,7 +1457,7 @@ YY_RULE_SETUP
 case 29:
 /* rule 29 can match eol */
 YY_RULE_SETUP
-#line 349 "v9.l"
+#line 347 "v9.l"
 {
     if(comment_index < MAX_COMMENT_SIZE - 1) {
         comment_buffer[comment_index++] = '\n';
@@ -1469,7 +1467,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 356 "v9.l"
+#line 354 "v9.l"
 {
     if(comment_index < MAX_COMMENT_SIZE - 1) {
         comment_buffer[comment_index++] = yytext[0];
@@ -1479,7 +1477,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 363 "v9.l"
+#line 361 "v9.l"
 {
     char tmp[128];
     char *start = yytext + 1;
@@ -1495,7 +1493,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 376 "v9.l"
+#line 374 "v9.l"
 {
     char tmp[128];
     char *start = yytext + 1;
@@ -1513,7 +1511,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 391 "v9.l"
+#line 389 "v9.l"
 {
     char tmp[128];
     char *start = yytext + 1;
@@ -1529,7 +1527,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 404 "v9.l"
+#line 402 "v9.l"
 {
     printf("INVALID INTEGER CONSTANT: Missing base in %s\n", yytext);
 }
@@ -1537,7 +1535,7 @@ YY_RULE_SETUP
 case 35:
 /* rule 35 can match eol */
 YY_RULE_SETUP
-#line 408 "v9.l"
+#line 406 "v9.l"
 {
     if (validate_char_const(yytext)) printf("CHARACTER CONSTANT: %s\n", yytext);
     else printf("INVALID CHARACTER CONSTANT: %s\n", yytext);
@@ -1545,13 +1543,13 @@ YY_RULE_SETUP
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 413 "v9.l"
+#line 411 "v9.l"
 { parentheses_count++; }
 	YY_BREAK
 case 37:
 /* rule 37 can match eol */
 YY_RULE_SETUP
-#line 415 "v9.l"
+#line 413 "v9.l"
 {
     if(!print_state_string_captured) {
         strncpy(print_string, yytext, sizeof(print_string)-1);
@@ -1562,13 +1560,13 @@ YY_RULE_SETUP
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 423 "v9.l"
+#line 421 "v9.l"
 {
 }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 426 "v9.l"
+#line 424 "v9.l"
 {
     arg_count++;
 }
@@ -1576,21 +1574,21 @@ YY_RULE_SETUP
 case 40:
 /* rule 40 can match eol */
 YY_RULE_SETUP
-#line 430 "v9.l"
+#line 428 "v9.l"
 {
     arg_count++;
 }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 434 "v9.l"
+#line 432 "v9.l"
 {
     arg_count++;
 }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 438 "v9.l"
+#line 436 "v9.l"
 {
     if (parentheses_count > 0) parentheses_count--;
     else printf("INVALID PRINT STATEMENT: Unmatched closing parenthesis.\n");
@@ -1598,7 +1596,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 443 "v9.l"
+#line 441 "v9.l"
 {
     if (parentheses_count != 0) printf("INVALID PRINT STATEMENT: Parentheses not closed.\n");
     else finalize_print_statement();
@@ -1608,7 +1606,7 @@ YY_RULE_SETUP
 case 44:
 /* rule 44 can match eol */
 YY_RULE_SETUP
-#line 449 "v9.l"
+#line 447 "v9.l"
 {
     if (parentheses_count != 0) printf("INVALID PRINT STATEMENT: Missing closing parenthesis and semicolon.\n");
     else printf("INVALID PRINT STATEMENT: Missing semicolon.\n");
@@ -1619,14 +1617,14 @@ YY_RULE_SETUP
 case 45:
 /* rule 45 can match eol */
 YY_RULE_SETUP
-#line 455 "v9.l"
+#line 453 "v9.l"
 {
     BEGIN(INITIAL);
 }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 459 "v9.l"
+#line 457 "v9.l"
 {
  reset_while_stats();
  while_parantheses_count++;
@@ -1635,7 +1633,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 464 "v9.l"
+#line 462 "v9.l"
 {
     printf("VALID CONDITION IDENTIFIED INSIDE WHILE LOOP: %s\n",yytext);
  }
@@ -1643,7 +1641,7 @@ YY_RULE_SETUP
 case 48:
 /* rule 48 can match eol */
 YY_RULE_SETUP
-#line 467 "v9.l"
+#line 465 "v9.l"
 {
     while_parantheses_count--;
     if(while_parantheses_count!=0){
@@ -1655,7 +1653,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 477 "v9.l"
+#line 475 "v9.l"
 {
     printf("KEYWORD: %s\n", yytext);
     while_parantheses_count++;
@@ -1663,7 +1661,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 482 "v9.l"
+#line 480 "v9.l"
 {
     while_parantheses_count--;
     if(while_parantheses_count){
@@ -1677,35 +1675,35 @@ YY_RULE_SETUP
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 493 "v9.l"
+#line 491 "v9.l"
 {
     printf("SEPARATOR: %s\n", yytext);
 }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 497 "v9.l"
+#line 495 "v9.l"
 {
     printf("ARITHMETIC OPERATOR (INTEGER): %s\n", yytext);
 }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 501 "v9.l"
+#line 499 "v9.l"
 {
     printf("RELATIONAL OPERATOR (INTEGER): %s\n", yytext);
 }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 505 "v9.l"
+#line 503 "v9.l"
 {
     printf("ASSIGNMENT OPERATOR (INTEGER): %s\n", yytext);
 }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 509 "v9.l"
+#line 507 "v9.l"
 {
     printf("SEPARATOR: %s\n", yytext);
 }
@@ -1713,13 +1711,13 @@ YY_RULE_SETUP
 case 56:
 /* rule 56 can match eol */
 YY_RULE_SETUP
-#line 513 "v9.l"
+#line 511 "v9.l"
 {
 }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 516 "v9.l"
+#line 514 "v9.l"
 {
     if (YYSTATE == PRINT) printf("INVALID PRINT STATEMENT: Unexpected token '%s'\n", yytext);
     else printf("UNKNOWN TOKEN: %s\n", yytext);
@@ -1727,10 +1725,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 521 "v9.l"
+#line 519 "v9.l"
 ECHO;
 	YY_BREAK
-#line 1733 "lex.yy.c"
+#line 1731 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(VARDECL):
 case YY_STATE_EOF(NUMRELATIONS):
@@ -2742,7 +2740,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 521 "v9.l"
+#line 519 "v9.l"
 
 
 int main(int argc, char **argv) {

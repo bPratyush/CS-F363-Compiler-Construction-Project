@@ -256,9 +256,7 @@ void check_while_condition(){
     BEGIN(WHILE);
 }
 
-<FOR>[ \t\n]+ {
-    /* Skip whitespace and newlines */
-}
+<FOR>[ \t\n]+ {}
 
 <FOR>"to" {
     printf("FOR-DO KEYWORD: to\n");
