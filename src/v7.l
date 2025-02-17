@@ -13,12 +13,6 @@ static int print_state_string_captured = 0;
 static int at_count = 0;
 static int arg_count = 0;
 static int parentheses_count = 0;
-<<<<<<< HEAD
-int while_parantheses_count = 0;
-    char while_condition_buffer[1024];
-    int while_condition_index = 0;
-=======
->>>>>>> a439ee8598715e0d37c32a1f3136515289c6c374
 
 static char* symbolTable[256];
 static int symbolCount = 0;
@@ -26,12 +20,7 @@ static int symbolCount = 0;
 int isDeclared(const char* id) {
     int i;
     for(i = 0; i < symbolCount; i++){
-<<<<<<< HEAD
-        if(strcmp(symbolTable[i], id) == 0)
-            return 1;
-=======
         if(strcmp(symbolTable[i], id) == 0) return 1;
->>>>>>> a439ee8598715e0d37c32a1f3136515289c6c374
     }
     return 0;
 }
@@ -45,24 +34,10 @@ void reset_print_buffers() {
     parentheses_count = 0;
 }
 
-<<<<<<< HEAD
-void reset_while_stats(){
-        memset(while_condition_buffer, 0, sizeof(while_condition_buffer));
-        while_parantheses_count = 0;
-
-    }
-
-void count_at_symbols(const char* s) {
-    int i;
-    for (i = 0; s[i]; i++) {
-        if (s[i] == '@')
-            at_count++;
-=======
 void count_at_symbols(const char* s) {
     int i;
     for (i = 0; s[i]; i++) {
         if (s[i] == '@') at_count++;
->>>>>>> a439ee8598715e0d37c32a1f3136515289c6c374
     }
 }
 
@@ -80,22 +55,6 @@ void finalize_print_statement() {
 
 int validate_identifier(const char *text) {
     const char *keywords[] = {
-<<<<<<< HEAD
-        "int","char","if","else","while","for","main","begin","end","print","scan",
-        "program","VarDecl","inc","dec", NULL
-    };
-    int i;
-    for (i = 0; keywords[i] != NULL; i++) {
-        if (strcmp(text, keywords[i]) == 0) {
-            printf("INVALID IDENTIFIER (keyword reserved): %s\n", text);
-            return 0;
-        }
-    }
-    if (text[0] < 'a' || text[0] > 'z') {
-        printf("INVALID IDENTIFIER: %s\n", text);
-        return 0;
-    }
-=======
         "int","char","if","else","while","for","main","begin","end",
         "print","scan","program","VarDecl","inc","dec", NULL
     };
@@ -104,7 +63,6 @@ int validate_identifier(const char *text) {
         if (strcmp(text, keywords[i]) == 0) return 0;
     }
     if (text[0] < 'a' || text[0] > 'z') return 0;
->>>>>>> a439ee8598715e0d37c32a1f3136515289c6c374
     {
         int underscore = 0;
         int j;
@@ -112,17 +70,8 @@ int validate_identifier(const char *text) {
             char c = text[j];
             if (c == '_') {
                 underscore++;
-<<<<<<< HEAD
-                if (underscore > 1) {
-                    printf("INVALID IDENTIFIER: %s\n", text);
-                    return 0;
-                }
-            } else if (!(c >= 'a' && c <= 'z') && !(c >= '0' && c <= '9')) {
-                printf("INVALID IDENTIFIER: %s\n", text);
-=======
                 if (underscore > 1) return 0;
             } else if (!(c >= 'a' && c <= 'z') && !(c >= '0' && c <= '9')) {
->>>>>>> a439ee8598715e0d37c32a1f3136515289c6c374
                 return 0;
             }
         }
@@ -133,15 +82,8 @@ int validate_identifier(const char *text) {
 int validate_char_const(const char *text) {
     int len = strlen(text);
     if (text[0] == '\'' && text[len - 1] == '\'') {
-<<<<<<< HEAD
-        if (text[1] == '\\' && len == 4)
-            return 1;
-        else if (text[1] != '\\' && len == 3)
-            return 1;
-=======
         if (text[1] == '\\' && len == 4) return 1;
         else if (text[1] != '\\' && len == 3) return 1;
->>>>>>> a439ee8598715e0d37c32a1f3136515289c6c374
     }
     return 0;
 }
@@ -149,13 +91,7 @@ int validate_char_const(const char *text) {
 int validate_decimal(const char *text) {
     int i;
     for (i = 0; text[i] != '\0'; i++) {
-<<<<<<< HEAD
-        if (text[i] < '0' || text[i] > '9') {
-            return 0;
-        }
-=======
         if (text[i] < '0' || text[i] > '9') return 0;
->>>>>>> a439ee8598715e0d37c32a1f3136515289c6c374
     }
     return 1;
 }
@@ -163,12 +99,7 @@ int validate_decimal(const char *text) {
 int validate_octal(const char *text) {
     int i;
     for (i = 0; text[i] != '\0'; i++) {
-<<<<<<< HEAD
-        if (text[i] < '0' || text[i] > '7')
-            return 0;
-=======
         if (text[i] < '0' || text[i] > '7') return 0;
->>>>>>> a439ee8598715e0d37c32a1f3136515289c6c374
     }
     return 1;
 }
@@ -176,45 +107,11 @@ int validate_octal(const char *text) {
 int validate_binary(const char *text) {
     int i;
     for (i = 0; text[i] != '\0'; i++) {
-<<<<<<< HEAD
-        if (text[i] != '0' && text[i] != '1') {
-            return 0;
-        }
-=======
         if (text[i] != '0' && text[i] != '1') return 0;
->>>>>>> a439ee8598715e0d37c32a1f3136515289c6c374
     }
     return 1;
 }
 
-<<<<<<< HEAD
-int validate_relational_expression(char * condition){
-        char id1[256],op[3],id2[256];
-        if(sscanf(condition,"%s %s %s",id1,op,id2)==3){
-            if(!validate_identifier(id1) || !validate_identifier(id2)){
-                return 0;
-            }
-            if(!(strcmp(op,"=")||strcmp(op,"<>")||strcmp(op,">")||strcmp(op,"<")||strcmp(op,">=")||strcmp(op,"<="))){
-                return 0;
-            }
-            return 1;
-        }
-        else if(sscanf(condition,"%s",id1)==1){
-            return validate_identifier(id1);
-        }
-        return 0;
-    }
-
-    void check_while_condition(){
-        while_condition_buffer[while_condition_index] = '\0';
-        if(validate_relational_expression(while_condition_buffer)){
-            printf("VALID CONDITION IN WHILE LOOP\n");
-        }
-        else{
-            printf("INVALID CONDITION IN WHILE LOOP\n");
-        }
-    }
-=======
 int validate_array_identifier(const char *text) {
     const char *keywords[] = {
         "int","char","if","else","while","for","main","begin","end",
@@ -240,19 +137,13 @@ int validate_array_identifier(const char *text) {
     }
     return 1;
 }
->>>>>>> a439ee8598715e0d37c32a1f3136515289c6c374
 %}
 
 %x VARDECL
 %x NUMRELATIONS
 %x COMMENT
 %x PRINT
-<<<<<<< HEAD
-%x WHILE
-%x CONDITION
-=======
 
->>>>>>> a439ee8598715e0d37c32a1f3136515289c6c374
 %%
 
 "begin"[ \t]+"VarDecl:"   { BEGIN(VARDECL); printf("BEGIN VARIABLE DECLARATION\n"); }
@@ -262,31 +153,6 @@ int validate_array_identifier(const char *text) {
     printf("END VARIABLE DECLARATION\n");
 }
 
-<<<<<<< HEAD
-\(\s*[0-9]+\s*,\s*(2|8|10)\s*\)\s*[\+\-\*/%<>=!]=?\s*\(\s*[0-9]+\s*,\s*(2|8|10)\s*\) {
-    BEGIN(NUMRELATIONS);
-    printf("BEGIN EQUATION HANDLING\n");
-}
-
-<VARDECL>[ \t]*\([ \t]*[a-z][a-z0-9_]*[ \t]*,[ \t]*(int|char)[ \t]*\)[ \t]*;[ \t]*\n? {
-    char id[64], typ[16];
-    if (sscanf(yytext, " ( %63[^,] , %15[^)] ) ;", id, typ) == 2) {
-        char *nl = strpbrk(typ, " \t");
-        if (nl)
-            *nl = '\0';
-        if (validate_identifier(id)) {
-            symbolTable[symbolCount++] = strdup(id);
-            printf("VALID VARIABLE DECLARATION: (%s, %s)\n", id, typ);
-        } else {
-            printf("INVALID VARIABLE DECLARATION: %s\n", yytext);
-        }
-    } else {
-        printf("INVALID VARIABLE DECLARATION: %s\n", yytext);
-    }
-}
-
-<VARDECL>[ \t]*\n      { }
-=======
 <VARDECL>[ \t]*\([ \t]*[a-zA-Z][a-z0-9_]*[ \t]*(\[[ \t]*[0-9]+\s*\])?[ \t]*,[ \t]*(int|char)[ \t]*\)[ \t]*;[ \t]*(\/\/.*)?[ \t]*\n {
     char lineCopy[1024];
     strncpy(lineCopy, yytext, 1023);
@@ -332,17 +198,12 @@ int validate_array_identifier(const char *text) {
 
 <VARDECL>[ \t]*\n {
 }
->>>>>>> a439ee8598715e0d37c32a1f3136515289c6c374
 
 <VARDECL>.*\n {
     printf("INVALID VARIABLE DECLARATION: %s", yytext);
 }
 
-<<<<<<< HEAD
-"int"|"char"|"if"|"else"|"for"|"main"|"begin"|"end"|"program"|"VarDecl"|"inc"|"dec" {
-=======
 "int"|"char"|"if"|"else"|"while"|"for"|"main"|"begin"|"end"|"program"|"VarDecl"|"inc"|"dec" {
->>>>>>> a439ee8598715e0d37c32a1f3136515289c6c374
     printf("KEYWORD: %s\n", yytext);
 }
 
@@ -356,24 +217,10 @@ int validate_array_identifier(const char *text) {
     printf("KEYWORD: %s\n", yytext);
 }
 
-<<<<<<< HEAD
-"while" {
-    printf("KEYWORD: %s\n",yytext);
-    BEGIN(WHILE);
-}
-
-[a-z][a-z0-9_]* {
-    if (validate_identifier(yytext)) {
-        if (isDeclared(yytext))
-            printf("IDENTIFIER: %s\n", yytext);
-        else
-            printf("UNDEFINED IDENTIFIER: %s\n", yytext);
-=======
 [a-z][a-z0-9_]* {
     if (validate_identifier(yytext)) {
         if (isDeclared(yytext)) printf("IDENTIFIER: %s\n", yytext);
         else printf("UNDEFINED IDENTIFIER: %s\n", yytext);
->>>>>>> a439ee8598715e0d37c32a1f3136515289c6c374
     }
 }
 
@@ -466,15 +313,6 @@ int validate_array_identifier(const char *text) {
     }
 }
 
-<<<<<<< HEAD
-<PRINT>"," { }
-
-<PRINT>\([ \t]*[0-9]+[ \t]*,[ \t]*(2|8|10)[ \t]*\) { arg_count++; }
-
-<PRINT>\'([^']|\\.)+\' { arg_count++; }
-
-<PRINT>[a-z][a-z0-9_]* { arg_count++; }
-=======
 <PRINT>"," {
 }
 
@@ -489,7 +327,6 @@ int validate_array_identifier(const char *text) {
 <PRINT>[a-z][a-z0-9_]* {
     arg_count++;
 }
->>>>>>> a439ee8598715e0d37c32a1f3136515289c6c374
 
 <PRINT>")" {
     if (parentheses_count > 0) parentheses_count--;
@@ -509,45 +346,9 @@ int validate_array_identifier(const char *text) {
     BEGIN(INITIAL);
 }
 
-<<<<<<< HEAD
-<WHILE>"(" {
- reset_while_stats();
- while_parantheses_count++;
- BEGIN(CONDITION);
-}
-<CONDITION>[\s]*[a-z][a-z0-9]*[\s]*((<|>|<=|>=|<>)[\s]*(([a-z][a-z0-9]*)|[0-9]*)[\s]*)? {
-    printf("VALID CONDITION IDENTIFIED INSIDE WHILE LOOP: %s\n",yytext);
- }
-<CONDITION>")\n" {
-    while_parantheses_count--;
-    if(while_parantheses_count!=0){
-        printf("INVALID WHILE LOOP STATEMENT: MISSING MATCHING PARANTHESES\n");
-        while_parantheses_count = 0;
-    }
-    BEGIN(WHILE);
-}
-
-
-<WHILE>"begin" {
-    while_parantheses_count++;
-}
-<WHILE>"end;" {
-    while_parantheses_count--;
-    if(while_parantheses_count){
-        printf("ERROR: you have entered end without a matching begin\n");
-    }
-    else{
-        printf("CORRECT WHILE LOOP\n");
-    }
-    BEGIN(INITIAL);
-}
-
-"@" { printf("SEPARATOR: %s\n", yytext); }
-=======
 "@" {
     printf("SEPARATOR: %s\n", yytext);
 }
->>>>>>> a439ee8598715e0d37c32a1f3136515289c6c374
 
 "+"|"-"|"*"|"/"|"%" {
     printf("ARITHMETIC OPERATOR (INTEGER): %s\n", yytext);
@@ -565,12 +366,8 @@ int validate_array_identifier(const char *text) {
     printf("SEPARATOR: %s\n", yytext);
 }
 
-<<<<<<< HEAD
-[ \t\n]+ { }
-=======
 [ \t\n]+ {
 }
->>>>>>> a439ee8598715e0d37c32a1f3136515289c6c374
 
 . {
     if (YYSTATE == PRINT) printf("INVALID PRINT STATEMENT: Unexpected token '%s'\n", yytext);
@@ -582,8 +379,4 @@ int validate_array_identifier(const char *text) {
 int main(int argc, char **argv) {
     yylex();
     return 0;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> a439ee8598715e0d37c32a1f3136515289c6c374
