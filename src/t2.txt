@@ -1,2 +1,7 @@
+begin program:
+begin VarDecl:
+(a,int);
+end VarDecl
 for a:=
 while(a)
+end program

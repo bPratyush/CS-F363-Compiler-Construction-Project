@@ -251,6 +251,11 @@ void check_while_condition(){
     BEGIN(FOR);
 }
 
+<FOR>"while" {
+    yyless(0);
+    BEGIN(WHILE);
+}
+
 <FOR>[ \t\n]+ {
     /* Skip whitespace and newlines */
 }
@@ -313,6 +318,10 @@ void check_while_condition(){
 "while" {
     printf("KEYWORD: %s\n",yytext);
     BEGIN(WHILE);
+}
+
+<WHILE>"while" {
+    printf("KEYWORD: %s\n", yytext);
 }
 
 [a-z][a-z0-9_]* {
