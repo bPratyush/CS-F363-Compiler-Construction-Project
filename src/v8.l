@@ -386,7 +386,9 @@ void check_while_condition(){
     reset_print_buffers();
     BEGIN(INITIAL);
 }
-
+<WHILE>"\n" {
+    BEGIN(INITIAL);
+}
 <WHILE>"(" {
  reset_while_stats();
  while_parantheses_count++;
