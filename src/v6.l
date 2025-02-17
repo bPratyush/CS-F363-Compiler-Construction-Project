@@ -57,18 +57,16 @@ void finalize_print_statement() {
 
 int validate_identifier(const char *text) {
     const char *keywords[] = {
-        "int","char","if","else","while","for","main","begin","end","print","scan",
-        "program","VarDecl","inc","dec", NULL
+        "int","char","if","else","while","for","main","begin","end",
+        "print","scan","program","VarDecl","inc","dec", NULL
     };
     int i;
     for (i = 0; keywords[i] != NULL; i++) {
         if (strcmp(text, keywords[i]) == 0) {
-            printf("INVALID IDENTIFIER (keyword reserved): %s\n", text);
             return 0;
         }
     }
     if (text[0] < 'a' || text[0] > 'z') {
-        printf("INVALID IDENTIFIER: %s\n", text);
         return 0;
     }
     {
@@ -79,11 +77,9 @@ int validate_identifier(const char *text) {
             if (c == '_') {
                 underscore++;
                 if (underscore > 1) {
-                    printf("INVALID IDENTIFIER: %s\n", text);
                     return 0;
                 }
             } else if (!(c >= 'a' && c <= 'z') && !(c >= '0' && c <= '9')) {
-                printf("INVALID IDENTIFIER: %s\n", text);
                 return 0;
             }
         }
@@ -130,6 +126,35 @@ int validate_binary(const char *text) {
     }
     return 1;
 }
+
+int validate_array_identifier(const char *text) {
+    const char *keywords[] = {
+        "int","char","if","else","while","for","main","begin","end",
+        "print","scan","program","VarDecl","inc","dec", NULL
+    };
+    int i;
+    for (i = 0; keywords[i] != NULL; i++) {
+        if (strcmp(text, keywords[i]) == 0) {
+            return 0;
+        }
+    }
+    if (!((text[0] >= 'a' && text[0] <= 'z') || (text[0] >= 'A' && text[0] <= 'Z'))) {
+        return 0;
+    }
+    int underscore = 0;
+    int j;
+    for (j = 0; text[j] != '\0'; j++) {
+        char c = text[j];
+        if (c == '_') {
+            underscore++;
+            if (underscore > 1)
+                return 0;
+        } else if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))) {
+            return 0;
+        }
+    }
+    return 1;
+}
 %}
 
 %x VARDECL
@@ -146,27 +171,37 @@ int validate_binary(const char *text) {
     printf("END VARIABLE DECLARATION\n");
 }
 
-\(\s*[0-9]+\s*,\s*(2|8|10)\s*\)\s*[\+\-\*/%<>=!]=?\s*\(\s*[0-9]+\s*,\s*(2|8|10)\s*\) {
-    BEGIN(NUMRELATIONS);
-    printf("BEGIN EQUATION HANDLING\n");
-}
-
-<VARDECL>[ \t]*\([ \t]*[a-z][a-z0-9_]*[ \t]*,[ \t]*(int|char)[ \t]*\)[ \t]*;[ \t]*\n? {
-    char id[64], typ[16];
-    if (sscanf(yytext, " ( %63[^,] , %15[^)] ) ;", id, typ) == 2) {
-        char *nl = strpbrk(typ, " \t");
-        if (nl)
-            *nl = '\0';
-        if (validate_identifier(id)) {
-            symbolTable[symbolCount++] = strdup(id);
-            printf("VALID VARIABLE DECLARATION: (%s, %s)\n", id, typ);
+<VARDECL>[ \t]*\([ \t]*[a-zA-Z][a-z0-9_]*[ \t]*(\[[ \t]*[0-9]+\s*\])?[ \t]*,[ \t]*(int|char)[ \t]*\)[ \t]*;[ \t]*\n {
+    if (strchr(yytext, '[')) {
+        char id[64], typ[16];
+        int size;
+        if (sscanf(yytext, " ( %63[^[]%*c%d%*c , %15[^)] ) ;", id, &size, typ) == 3) {
+            char *nl = strpbrk(typ, " \t");
+            if (nl)
+                *nl = '\0';
+            if (size > 0 && validate_array_identifier(id))
+                printf("VALID ARRAY DECLARATION: (%s[%d], %s)\n", id, size, typ);
+            else
+                printf("INVALID ARRAY DECLARATION: %s\n", yytext);
+        } else {
+            printf("INVALID ARRAY DECLARATION: %s\n", yytext);
+        }
+    } else {
+        char id[64], typ[16];
+        if (sscanf(yytext, " ( %63[^,] , %15[^)] ) ;", id, typ) == 2) {
+            char *nl = strpbrk(typ, " \t");
+            if(nl)
+                *nl = '\0';
+            if (validate_identifier(id))
+                printf("VALID VARIABLE DECLARATION: (%s, %s)\n", id, typ);
+            else
+                printf("INVALID VARIABLE DECLARATION: %s\n", yytext);
         } else {
             printf("INVALID VARIABLE DECLARATION: %s\n", yytext);
         }
-    } else {
-        printf("INVALID VARIABLE DECLARATION: %s\n", yytext);
     }
 }
+
 
 <VARDECL>[ \t]*\n      { }
 
