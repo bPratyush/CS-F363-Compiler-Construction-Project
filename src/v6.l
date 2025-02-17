@@ -26,50 +26,6 @@ int isDeclared(const char* id) {
     return 0;
 }
 
-char* arithmeticOperators[] = { "+", "-", "*", "/", "%", NULL };
-
-int isArithmeticOperator(const char *op) {
-    int i;
-    for(i = 0; arithmeticOperators[i] != NULL; i++) {
-        if(strcmp(op, arithmeticOperators[i]) == 0)
-            return 1;
-    }
-    return 0;
-}
-
-char* relationalOperators[] = { "=", ">", "<", ">=", "<=", "<>", NULL };
-
-int isRelationalOperator(const char *op) {
-    int i;
-    for(i = 0; relationalOperators[i] != NULL; i++) {
-        if(strcmp(op, relationalOperators[i]) == 0)
-            return 1;
-    }
-    return 0;
-}
-
-char* assignmentOperators[] = { ":=", "+=", "-=", "*=", "/=", "%=", NULL };
-
-int isAssignmentOperator(const char *op) {
-    int i;
-    for(i = 0; assignmentOperators[i] != NULL; i++) {
-        if(strcmp(op, assignmentOperators[i]) == 0)
-            return 1;
-    }
-    return 0;
-}
-
-char* separators[] = { "(", ")", ",", ";", "{", "}", ":", "@", NULL };
-
-int isSeparator(const char *sep) {
-    int i;
-    for(i = 0; separators[i] != NULL; i++) {
-        if(strcmp(sep, separators[i]) == 0)
-            return 1;
-    }
-    return 0;
-}
-
 void reset_print_buffers() {
     memset(print_string, 0, sizeof(print_string));
     memset(print_args, 0, sizeof(print_args));
@@ -356,39 +312,22 @@ int validate_binary(const char *text) {
     BEGIN(INITIAL);
 }
 
-"@" { 
-    if(isSeparator(yytext))
-        printf("SEPARATOR: %s\n", yytext);
-    else
-        printf("UNKNOWN SEPARATOR: %s\n", yytext);
+"@" { printf("SEPARATOR: %s\n", yytext); }
+
+"+"|"-"|"*"|"/"|"%" {
+    printf("ARITHMETIC OPERATOR (INTEGER): %s\n", yytext);
 }
 
-"+"|"-"|"*"|"/"|"%" { 
-    if(isArithmeticOperator(yytext))
-        printf("ARITHMETIC OPERATOR (INTEGER): %s\n", yytext);
-    else
-        printf("UNKNOWN ARITHMETIC OPERATOR: %s\n", yytext);
-}
-
-"="|">"|"<"|">="|"<="|"<>" { 
-    if(isRelationalOperator(yytext))
-        printf("RELATIONAL OPERATOR (INTEGER): %s\n", yytext);
-    else
-        printf("UNKNOWN RELATIONAL OPERATOR: %s\n", yytext);
+"="|">"|"<"|">="|"<="|"<>" {
+    printf("RELATIONAL OPERATOR (INTEGER): %s\n", yytext);
 }
 
 ":="|"+="|"-="|"*="|"/="|"%=" {
-    if(isAssignmentOperator(yytext))
-        printf("ASSIGNMENT OPERATOR (INTEGER): %s\n", yytext);
-    else
-        printf("UNKNOWN ASSIGNMENT OPERATOR: %s\n", yytext);
+    printf("ASSIGNMENT OPERATOR (INTEGER): %s\n", yytext);
 }
 
 "("|")"|","|";"|"{"|"}"|":" {
-    if(isSeparator(yytext))
-        printf("SEPARATOR: %s\n", yytext);
-    else
-        printf("UNKNOWN SEPARATOR: %s\n", yytext);
+    printf("SEPARATOR: %s\n", yytext);
 }
 
 [ \t\n]+ { }
