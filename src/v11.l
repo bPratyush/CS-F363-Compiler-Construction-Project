@@ -554,35 +554,24 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
         }
 
 
-<WHILE>[ \t\n]* {
-    //ignore whitespaces and blanks
+<WHILE>"\n" {
+    BEGIN(INITIAL);
 }
 
 <WHILE>"(" {
  reset_while_stats();
- printf("WHILE OPENING BRACE: %s\n",yytext);
  while_parantheses_count++;
  BEGIN(CONDITION);
 }
-<CONDITION>[a-z][a-z0-9_]* {
-    printf("IDENTIFIER IN WHILE CONDITION: %s\n", yytext);
-}
-<CONDITION>"<="|">="|"<>"|"="|"<"|">" {
-    printf("RELATIONAL OPERATOR IN WHILE CONDITION: %s\n", yytext);
-    
-}
-<CONDITION>[0-9]+ {
-    printf("CONSTANT IN WHILE CONDITION: %s\n", yytext);
-    
-}
-
+<CONDITION>[\s]*[a-z][a-z0-9]*[\s]*((<|>|<=|>=|<>)[\s]*(([a-z][a-z0-9]*)|[0-9]*)[\s]*)? {
+    printf("VALID CONDITION IDENTIFIED INSIDE WHILE LOOP: %s\n",yytext);
+ }
 <CONDITION>")\n" {
     while_parantheses_count--;
     if(while_parantheses_count!=0){
         printf("INVALID WHILE LOOP STATEMENT: MISSING MATCHING PARANTHESES\n");
         while_parantheses_count = 0;
     }
-    printf("WHILE CLOSING BRACE: %s\n",yytext);
     BEGIN(WHILE);
 }
 
@@ -592,17 +581,14 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     while_parantheses_count++;
 }
 
-<WHILE>"end" {
+<WHILE>"end;" {
     while_parantheses_count--;
     if(while_parantheses_count){
         printf("ERROR: you have entered end without a matching begin\n");
     }
     else{
-        printf("KEYWORD: %s\n",yytext);
+        printf("CORRECT WHILE LOOP\n");
     }
-}
-<WHILE>";" {
-    printf("SEMICOLON: %s\n",yytext);
     BEGIN(INITIAL);
 }
 
@@ -645,8 +631,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     printf("SEPARATOR: %s\n", yytext);
 }
 
-[ \t\n]+ {
-}
+[ \t\n]+ {}
 
 . {
     if (YYSTATE == PRINT) printf("INVALID PRINT STATEMENT: Unexpected token '%s'\n", yytext);
@@ -661,5 +646,5 @@ int main(int argc, char **argv) {
 }
 
 int yywrap(){
-    return 0;
+    return 1;
 }

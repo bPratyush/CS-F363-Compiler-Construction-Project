@@ -81,6 +81,10 @@ end VarDecl
 (12, 10) * (11, 2) = (15, 8)
 (12, 10) > (11, 2) = (15, 8)
 (12, 10) := (11, 2) = (15, 8)
+scan("@, @, @", a, b, c); //Valid
+scan("@, @", a, b); //Valid
+scan("@, @", a, b) //Invalid since ; is missing at the end.
+scan("@, @", a); //Invalid since only one variable is given in the list, but there are 2 @ symbols in the formatted string.
 while (number>0)
 begin
 sum := sum + number;
