@@ -502,7 +502,7 @@ void check_while_condition(){
     }
 }
 <WHILE>";" {
-    printf("SEPERATOR: %s\n",yytext);
+    printf("SEMICOLON: %s\n",yytext);
     BEGIN(INITIAL);
 }
 
