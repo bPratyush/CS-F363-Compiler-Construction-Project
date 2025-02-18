@@ -85,6 +85,26 @@ scan("@, @, @", a, b, c); //Valid
 scan("@, @", a, b); //Valid
 scan("@, @", a, b) //Invalid since ; is missing at the end.
 scan("@, @", a); //Invalid since only one variable is given in the list, but there are 2 @ symbols in the formatted string.
+i:= (10, 2);
+if i > (20, 10) then
+4
+begin
+i :=(1, 10);
+i := i - (1, 10);
+print("@", i);
+end;
+i:= (10, 2);
+if i > (20, 10) then
+begin
+i :=(1, 10);
+i -= (1, 10);
+print("@", i);
+end
+else
+begin
+i:=(20, 2);
+print("@", i);
+end;
 while (number>0)
 begin
 sum := sum + number;
@@ -106,5 +126,5 @@ scan(num2);
 // Perform addition
 sum := num1 + num2;
 // Display the result
-Write("The sum = @ ", sum);
+print("The sum = @ ", sum);
 end program
