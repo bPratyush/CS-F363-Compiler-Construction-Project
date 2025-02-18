@@ -558,6 +558,9 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     BEGIN(INITIAL);
 }
 
+<WHILE>[\t\n]* {
+    //ignore
+}
 <WHILE>"(" {
  reset_while_stats();
  printf("WHILE OPENING BRACE: %s\n",yytext);
@@ -576,7 +579,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     
 }
 
-<CONDITION>")\n" {
+<CONDITION>")" {
     while_parantheses_count--;
     if(while_parantheses_count!=0){
         printf("INVALID WHILE LOOP STATEMENT: MISSING MATCHING PARANTHESES\n");
