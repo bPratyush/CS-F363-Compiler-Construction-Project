@@ -2,6 +2,10 @@ begin program:
 begin VarDecl:
 (a,int);
 end VarDecl
+scan("@, @, @", a, b, c); //Valid
+scan("@, @", a, b); //Valid
+scan("@, @", a, b) //Invalid since ; is missing at the end.
+scan("@, @", a); //Invalid since only one variable is given in the list, but there are 2 @ symbols in the formatted string.
 for a:=
 while(a)
 end;
