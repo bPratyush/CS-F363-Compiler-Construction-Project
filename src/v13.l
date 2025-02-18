@@ -480,11 +480,12 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     else printf("INVALID CHARACTER CONSTANT: %s\n", yytext);
 }
 
-<PRINT>"(" { parentheses_count++;
-  if(parentheses_count > 1) {
+<PRINT>"(" { 
+ if(parentheses_count > 1) {
     printf("INVALID PRINT STATEMENT: parenthesis count exceeds 1.\n");
-    return 0;
-} }
+}
+parentheses_count++;
+ }
 
 <PRINT>"\"" { BEGIN(STRING); }
 
@@ -513,12 +514,12 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 }
 
 <PRINT>")" {
+     if(parentheses_count > 1) {
+    printf("INVALID PRINT STATEMENT: parenthesis count exceeds 1.\n");
+    }
     if (parentheses_count > 0) parentheses_count--;
     else printf("INVALID PRINT STATEMENT: Unmatched closing parenthesis.\n");
-     if(parentheses_count > 0) {
-    printf("INVALID PRINT STATEMENT: parenthesis count exceeds 1.\n");
-    return 0;
-}
+
 }
 
 <PRINT>";" {
