@@ -1,0 +1,79 @@
+        begin                           keyword
+        program                         keyword
+        :                               separator
+
+        begin                           keyword
+        VarDecl                         keyword
+        :                               separator
+ 
+        (                               separator
+        num1                            identifier
+        ,                               separator
+        int                             keyword
+        )                               separator
+        ;                               separator
+
+        (                               separator
+        print                           keyword
+        ,                               separator
+        char                            keyword
+        )                               separator
+        ;                               separator
+
+        (                               separator
+        num2                            identifier
+        ,                               separator
+        int                             keyword
+        )                               separator
+        ;                               separator
+
+        (                               separator
+        sum_tem_123                     error: invalid identifier
+        ,                               separator
+        int                             keyword
+        )                               separator
+        ;                               separator
+
+        end                             keyword
+        VarDecl                         keyword
+        num1                            identifier
+        :=                              assignment operator
+        (10, 2)                         integer constant
+        ;                               separator
+        scan("@, @", num1, num2);               Valid input statement
+        if                              keyword
+        num1                            identifier
+        >                               relational operator
+        (20, 2)                         error: invalid binary constant
+        then                            keyword
+        begin                           keyword
+        num1                            identifier
+        :=                              assignment operator
+        (1, 10)                         integer constant
+        ;                               separator
+        num2                            identifier
+        -=                              assignment operator
+        (99, 8)                         error: invalid octal constant
+        ;                               separator
+        num1                            identifier
+        num2                            identifier
+        print("num1 = @, num2 = @");            Valid print statement
+        end                             keyword
+        else                            keyword
+        begin                           keyword
+        num1                            identifier
+        /=                              assignment operator
+        (10, 2)                         integer constant
+        ;                               separator
+        num1                            identifier
+        print("num1 = @, num2 = @");            invalid print statement: @ count (2) != argument count (1).
+        end                             keyword
+        ;                               separator
+        num3                            undefined identifier
+        :=                              assignment operator
+        num1                            identifier
+        +                               arithmetic operator
+        num2                            identifier
+        ;                               separator
+        end                             keyword
+        program                         keyword

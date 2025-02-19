@@ -13,7 +13,7 @@ static int print_state_string_captured = 0;
 static int at_count = 0;
 static int arg_count = 0;
 static int parentheses_count = 0;
-
+static int varDeclPos = 0;
 static char* symbolTable[256];
 static int symbolCount = 0;
 
@@ -279,23 +279,41 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     BEGIN(INITIAL);
 }
 
+
 <VARDECL>{
-    "(" { printf("\t%-20s\t\t%s\t\n", yytext, "separator"); }
-    ")" { printf("\t%-20s\t\t%s\t\n", yytext, "separator"); }
-    "," { printf("\t%-20s\t\t%s\t\n", yytext, "separator"); }
-    ";" { printf("\t%-20s\t\t%s\t\n", yytext, "separator"); }
-    "//".* { printf("\t%-20s\t\t%s\t\n", yytext, "comment"); }
+    "(" { 
+         varDeclPos = 0;
+         printf("\t%-20s\t\t%s\t\n", yytext, "separator");
+    }
+    ")" { 
+         printf("\t%-20s\t\t%s\t\n", yytext, "separator");
+         varDeclPos = 0; 
+    }
+    "," { 
+         printf("\t%-20s\t\t%s\t\n", yytext, "separator");
+    }
+    ";" { 
+         printf("\t%-20s\t\t%s\t\n", yytext, "separator");
+    }
+    "//".* { 
+         printf("\t%-20s\t\t%s\t\n", yytext, "comment");
+    }
     [A-Za-z][A-Za-z0-9_]* {
-         if (isKeyword(yytext)) {
-             printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
-         } else if (validate_identifier(yytext)) {
-             printf("\t%-20s\t\t%s\t\n", yytext, "identifier");
-             if (!isDeclared(yytext)) {
-                 symbolTable[symbolCount++] = strdup(yytext);
+         if (varDeclPos == 0) {    
+             if (isKeyword(yytext)) {
+                 printf("\t%-20s\t\t%s\t\n", yytext, "Error: Keyword is used as an identifier");
+             } else if (validate_identifier(yytext)) {
+                 printf("\t%-20s\t\t%s\t\n", yytext, "identifier");
+                 if (!isDeclared(yytext)) {
+                     symbolTable[symbolCount++] = strdup(yytext);
+                 }
+             } else {
+                 printf("\t%-20s\t\t%s\t\n", yytext, "error: invalid identifier");
              }
-         } else {
-             printf("\t%-20s\t\t%s\t\n", yytext, "error: invalid identifier");
+         } else {                  
+             printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
          }
+         varDeclPos++;
     }
 }
 
