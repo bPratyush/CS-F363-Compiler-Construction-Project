@@ -59,7 +59,7 @@ void finalize_print_statement() {
         printf("INVALID PRINT STATEMENT: @ count (%d) != argument count (%d).\n", at_count, arg_count);
         return;
     }
-    printf("VALID PRINT STATEMENT: %s\n", print_string);
+    printf("VALID PRINT STATEMENT\n");
 }
 
 int validate_identifier(const char *text) {
@@ -224,6 +224,19 @@ int check_for_no_declaration(char*str){
 
 }
 
+int isKeyword(const char *word) {
+    const char *keywords[] = {
+        "begin", "end", "VarDecl", "int", "char", "if", "else", "while",
+        "for", "print", "scan", "program", "inc", "dec", NULL
+    };
+    int i;
+    for (i = 0; keywords[i] != NULL; i++) {
+        if (strcmp(word, keywords[i]) == 0)
+            return 1;
+    }
+    return 0;
+}
+
 %}
 
 %x VARDECL
@@ -235,73 +248,46 @@ int check_for_no_declaration(char*str){
 %x FOR
 %x SCAN
 %x STRING
-%s ASSIGN
 
 rel_op ("="|">"|"<"|">="|"<="|"<>")
 assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 %%
 
-"begin"[ \t]+"VarDecl:"   { BEGIN(VARDECL); printf("BEGIN VARIABLE DECLARATION\n"); }
+"begin"[ \t]+"VarDecl:" {
+    printf("BEGIN VARIABLE DECLARATION\n");
+    BEGIN(VARDECL);
+}
 
-<VARDECL>"end"[ \t]+"VarDecl"[ \t]*\n? {
-    BEGIN(INITIAL);
+<VARDECL>"end"[ \t]+"VarDecl"(\n)? {
     printf("END VARIABLE DECLARATION\n");
+    BEGIN(INITIAL);
 }
 
-
-
-<VARDECL>[ \t]*\([ \t]*[a-zA-Z][a-z0-9_]*[ \t]*(\[[ \t]*[0-9]+\s*\])?[ \t]*,[ \t]*(int|char)[ \t]*\)[ \t]*;[ \t]*(\/\/.*)?[ \t]*\n {
-    char lineCopy[1024];
-    strncpy(lineCopy, yytext, 1023);
-    lineCopy[1023] = '\0';
-    {
-        char *commentStart = strstr(lineCopy, "//");
-        if(commentStart) {
-            printf("COMMENT: %s\n", commentStart);
-            *commentStart = '\0';
-        }
-    }
-    if (strchr(lineCopy, '[')) {
-        char id[64], typ[16];
-        int size;
-        if (sscanf(lineCopy, " ( %63[^[]%*c%d%*c , %15[^)] ) ;", id, &size, typ) == 3) {
-            char *nl = strpbrk(typ, " \t");
-            if (nl) *nl = '\0';
-            if (size > 0 && validate_array_identifier(id)) {
-                printf("VALID ARRAY DECLARATION: (%s[%d], %s)\n", id, size, typ);
-                symbolTable[symbolCount++] = strdup(id);
-            }
-            else
-                printf("INVALID ARRAY DECLARATION: %s\n", yytext);
-        } else {
-            printf("INVALID ARRAY DECLARATION: %s\n", yytext);
-        }
-    } else {
-        char id[64], typ[16];
-        if (sscanf(lineCopy, " ( %63[^,] , %15[^)] ) ;", id, typ) == 2) {
-            char *nl = strpbrk(typ, " \t");
-            if(nl) *nl = '\0';
-            if (validate_identifier(id)) {
-                printf("VALID VARIABLE DECLARATION: (%s, %s)\n", id, typ);
-                symbolTable[symbolCount++] = strdup(id);
-            }
-            else
-                printf("INVALID VARIABLE DECLARATION: %s\n", yytext);
-        } else {
-            printf("INVALID VARIABLE DECLARATION: %s\n", yytext);
-        }
-    }
+<VARDECL>{
+    "("             { printf("( Separator\n"); }
+    ")"             { printf(") Separator\n"); }
+    ","             { printf(", Separator\n"); }
+    ";"             { printf("; Separator\n"); }
+    "//".*         { printf("COMMENT: %s\n", yytext); }
+    [A-Za-z][A-Za-z0-9_]* {
+     if(isKeyword(yytext)) {
+         if (strcmp(yytext, "int") == 0 || strcmp(yytext, "char") == 0) {
+             printf("%s Keyword\n", yytext);
+         }
+         else {
+             printf("%s Error: Keyword is used as an identifier\n", yytext);
+         }
+     }
+     else if (validate_identifier(yytext)) {
+         printf("%s Identifier\n", yytext);
+         if(!isDeclared(yytext)) {
+             symbolTable[symbolCount++] = strdup(yytext);
+         }
+     }
+     else {
+         printf("%s Error: invalid identifier\n", yytext);
+     }
 }
-
-<VARDECL>"//".* {
-    printf("COMMENT: %s\n", yytext);
-}
-
-<VARDECL>[ \t]*\n {
-}
-
-<VARDECL>.*\n {
-    printf("INVALID VARIABLE DECLARATION: %s", yytext);
 }
 
 "for"/[ \t]+[a-z][a-z0-9_]*[ \t]*":=" {
@@ -362,7 +348,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 }
 
 "print" {
-    printf("KEYWORD: %s\n", yytext);
+   // printf("KEYWORD: %s\n", yytext);
     reset_print_buffers();
     BEGIN(PRINT);
 }
@@ -388,21 +374,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
         else printf("UNDEFINED IDENTIFIER: %s\n", yytext);
     }
 }
-[ \t]*[a-z][a-z0-9_]*[ \t]*{assign_op}[ \t]* {
 
-    BEGIN(ASSIGN);
-    char var_name[64], assign_op[3];  
-    sscanf(yytext, " %63[a-zA-Z0-9_] %2s", var_name, assign_op);
-   
-
-    if(!validate_identifier(var_name)) statement_fl=1;
-     else {
-        printf("IDENTIFIER: %s\n",var_name);
-        printf("ASSIGN OPERATOR: %s\n", assign_op);
-        statement_fl=(check_for_no_declaration(var_name)==0)?1:statement_fl;
-    }
-
-}
 "//".* {
     printf("COMMENT: %s\n", yytext);
 }
@@ -569,9 +541,8 @@ parentheses_count++;
     BEGIN(INITIAL);
 }
 
-<WHILE>[\t\n]* {
-    //ignore
-}
+<WHILE>[\t\n]* {}
+
 <WHILE>"(" {
  reset_while_stats();
  printf("WHILE OPENING BRACE: %s\n",yytext);
@@ -636,25 +607,6 @@ parentheses_count++;
     printf("ASSIGNMENT OPERATOR (INTEGER): %s\n", yytext);
 }
 
-
-<ASSIGN>";" {   
-                printf("SEPERATOR: ;\n");
-                if(!statement_fl)
-                     printf("VALID ASSIGN STATEMENT\n");
-                 else printf("INVALID ASSIGN STATEMENT\n");
-                reset_statement();
-                BEGIN(INITIAL);
-            }   
-
-<ASSIGN>[ \t]+ { }
-<ASSIGN>.|[\n] {
-            
-            printf("INVALID ASSIGN STATEMENT\n");
-            reset_statement();
-            BEGIN(INITIAL);
-        
-         }
-
 "("|")"|","|";"|"{"|"}"|":" {
     printf("SEPARATOR: %s\n", yytext);
 }
@@ -677,3 +629,4 @@ int main(int argc, char **argv) {
 int yywrap(){
     return 1;
 }
+
