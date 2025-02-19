@@ -16,7 +16,7 @@ static int parentheses_count = 0;
 static int varDeclPos = 0;
 static char* symbolTable[256];
 static int symbolCount = 0;
-
+static int varDeclFlag = 0;
 int while_parantheses_count = 0;
     char while_condition_buffer[1024];
     int while_condition_index = 0;
@@ -263,11 +263,15 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 
 "VarDecl" {
     printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
+    varDeclFlag = 1;
 }
 
 ":" {
     printf("\t%-20s\t\t%s\t\n", yytext, "separator");
-    BEGIN(VARDECL);
+    if (varDeclFlag) {
+         BEGIN(VARDECL);
+         varDeclFlag = 0;
+    }
 }
 
 <VARDECL>"end" {
@@ -299,7 +303,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
          printf("\t%-20s\t\t%s\t\n", yytext, "comment");
     }
     [A-Za-z][A-Za-z0-9_]* {
-         if (varDeclPos == 0) {    
+         if (varDeclPos == 0) { 
              if (isKeyword(yytext)) {
                  printf("\t%-20s\t\t%s\t\n", yytext, "Error: Keyword is used as an identifier");
              } else if (validate_identifier(yytext)) {
@@ -308,9 +312,9 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
                      symbolTable[symbolCount++] = strdup(yytext);
                  }
              } else {
-                 printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid identifier");
+                 printf("\t%-20s\t\t%s\t\n", yytext, "error: invalid identifier");
              }
-         } else {                  
+         } else {  
              printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
          }
          varDeclPos++;
