@@ -2,7 +2,7 @@
         program                         keyword
         :                               separator
 
-        begin                           keyword
+        begin                           Error: Keyword is used as an identifier
         VarDecl                         keyword
         :                               separator
  
@@ -14,7 +14,7 @@
         ;                               separator
 
         (                               separator
-        print                           keyword
+        print                           Error: Keyword is used as an identifier
         ,                               separator
         char                            keyword
         )                               separator
@@ -28,7 +28,7 @@
         ;                               separator
 
         (                               separator
-        sum_tem_123                     error: invalid identifier
+        sum_tem_123                     Error: invalid identifier
         ,                               separator
         int                             keyword
         )                               separator
@@ -44,7 +44,7 @@
         if                              keyword
         num1                            identifier
         >                               relational operator
-        (20, 2)                         error: invalid binary constant
+        (20, 2)                         Error: invalid binary integer constant
         then                            keyword
         begin                           keyword
         num1                            identifier
@@ -53,23 +53,27 @@
         ;                               separator
         num2                            identifier
         -=                              assignment operator
-        (99, 8)                         error: invalid octal constant
+        (99, 8)                         Error: invalid octal integer constant
         ;                               separator
         num1                            identifier
         num2                            identifier
-        print("num1 = @, num2 = @");            Valid print statement
+        print("num1 = @, num2 = @");            Valid output statement
         end                             keyword
         else                            keyword
         begin                           keyword
+        num                             Error: undefined identifier
+        /=                              assignment operator
+        (10,2)                          integer constant
+        ;                               separator
         num1                            identifier
         /=                              assignment operator
         (10, 2)                         integer constant
         ;                               separator
         num1                            identifier
-        print("num1 = @, num2 = @");            invalid print statement: @ count (2) != argument count (1).
+        print("num1 = @, num2 = @");            Invalid output statement: @ count (2) != argument count (1).
         end                             keyword
         ;                               separator
-        num3                            undefined identifier
+        num3                            Error: undefined identifier
         :=                              assignment operator
         num1                            identifier
         +                               arithmetic operator

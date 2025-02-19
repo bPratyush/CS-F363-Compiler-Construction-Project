@@ -797,17 +797,17 @@ void finalize_print_statement() {
     snprintf(temp, sizeof(temp), "print(\"%s\");", print_string);
     
     if (!print_state_string_captured) {
-         printf("\t%-20s\t\t%s\t\n", temp, "invalid print statement: Missing double quotes.");
+         printf("\t%-20s\t\t%s\t\n", temp, "Invalid output statement: Missing double quotes.");
          return;
     }
     if (at_count != arg_count) {
          char err_msg[256];
-         snprintf(err_msg, sizeof(err_msg), "invalid print statement: @ count (%d) != argument count (%d).", at_count, arg_count);
+         snprintf(err_msg, sizeof(err_msg), "Invalid output statement: @ count (%d) != argument count (%d).", at_count, arg_count);
          printf("\t%-20s\t\t%s\t\n", temp, err_msg);
          return;
     }
     
-    printf("\t%-20s\t\t%s\t\n", temp, "Valid print statement");
+    printf("\t%-20s\t\t%s\t\n", temp, "Valid output statement");
 }
 
 int validate_identifier(const char *text) {
@@ -1362,7 +1362,7 @@ YY_RULE_SETUP
                      symbolTable[symbolCount++] = strdup(yytext);
                  }
              } else {
-                 printf("\t%-20s\t\t%s\t\n", yytext, "error: invalid identifier");
+                 printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid identifier");
              }
          } else {                  
              printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
@@ -1513,7 +1513,7 @@ YY_RULE_SETUP
         if (isDeclared(yytext))
             printf("\t%-20s\t\t%s\t\n", yytext, "identifier");
         else 
-            printf("\t%-20s\t\t%s\t\n", yytext, "undefined identifier");
+            printf("\t%-20s\t\t%s\t\n", yytext, "Error: undefined identifier");
     }
 }
 	YY_BREAK
@@ -1575,7 +1575,7 @@ YY_RULE_SETUP
     if (validate_binary(tmp))
          printf("\t%-20s\t\t%s\t\n", yytext, "integer constant");
     else 
-         printf("\t%-20s\t\t%s\t\n", yytext, "error: invalid binary constant");
+         printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid binary integer constant");
 }
 	YY_BREAK
 case 38:
@@ -1593,7 +1593,7 @@ YY_RULE_SETUP
     if (validate_octal(tmp))
          printf("\t%-20s\t\t%s\t\n", yytext, "integer constant");
     else 
-         printf("\t%-20s\t\t%s\t\n", yytext, "error: invalid octal constant");
+         printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid octal integer constant");
 }
 	YY_BREAK
 case 39:
@@ -1611,14 +1611,14 @@ YY_RULE_SETUP
     if (validate_decimal(tmp))
          printf("\t%-20s\t\t%s\t\n", yytext, "integer constant");
     else 
-         printf("\t%-20s\t\t%s\t\n", yytext, "error: invalid decimal constant");
+         printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid decimal integer constant");
 }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
 #line 478 "v17.l"
 {
-    printf("\t%-20s\t\t%s\t\n", yytext, "error: invalid integer constant, missing base");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid integer constant, missing base");
 }
 	YY_BREAK
 case 41:
@@ -1629,7 +1629,7 @@ YY_RULE_SETUP
     if (validate_char_const(yytext))
          printf("\t%-20s\t\t%s\t\n", yytext, "character constant");
     else 
-         printf("\t%-20s\t\t%s\t\n", yytext, "error: invalid character constant");
+         printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid character constant");
 }
 	YY_BREAK
 case 42:
@@ -1637,7 +1637,7 @@ YY_RULE_SETUP
 #line 489 "v17.l"
 { 
     if (parentheses_count > 1) {
-         printf("\t%-20s\t\t%s\t\n", "(", "error: parenthesis count exceeds 1");
+         printf("\t%-20s\t\t%s\t\n", "(", "Error: parenthesis count exceeds 1");
     }
     parentheses_count++;
 }
@@ -1670,7 +1670,7 @@ YY_RULE_SETUP
 { 
     char temp[1204];
     snprintf(temp, sizeof(temp), "print(\"%s\");", print_string);
-    printf("\t%-20s\t\t%s\t\n", temp, "invalid print statement: missing closing double quotes");
+    printf("\t%-20s\t\t%s\t\n", temp, "Invalid output statement: missing closing double quotes");
     reset_print_buffers();
     BEGIN(INITIAL);
 }
@@ -1700,7 +1700,7 @@ YY_RULE_SETUP
 #line 526 "v17.l"
 {
     if (!isDeclared(yytext))
-        printf("\t%-20s\t\t%s\t\n", yytext, "error: variable not declared");
+        printf("\t%-20s\t\t%s\t\n", yytext, "Error: variable not declared");
     else
         printf("\t%-20s\t\t%s\t\n", yytext, "identifier");
     arg_count++;
@@ -1711,11 +1711,11 @@ YY_RULE_SETUP
 #line 534 "v17.l"
 {
     if (parentheses_count > 1)
-        printf("\t%-20s\t\t%s\t\n", ")", "error: parenthesis count exceeds 1");
+        printf("\t%-20s\t\t%s\t\n", ")", "Error: parenthesis count exceeds 1");
     if (parentheses_count > 0)
         parentheses_count--;
     else
-        printf("\t%-20s\t\t%s\t\n", ")", "error: unmatched closing parenthesis");
+        printf("\t%-20s\t\t%s\t\n", ")", "Error: unmatched closing parenthesis");
 }
 	YY_BREAK
 case 52:
@@ -1723,7 +1723,7 @@ YY_RULE_SETUP
 #line 543 "v17.l"
 {
     if (parentheses_count != 0)
-        printf("\t%-20s\t\t%s\t\n", ";", "error: parentheses not closed");
+        printf("\t%-20s\t\t%s\t\n", ";", "Error: parentheses not closed");
     else
         finalize_print_statement();
     BEGIN(INITIAL);
@@ -1863,7 +1863,7 @@ YY_RULE_SETUP
 {
     while_parantheses_count--;
     if(while_parantheses_count != 0) {
-        printf("\t%-20s\t\t%s\t\n", ")", "error: missing matching parentheses");
+        printf("\t%-20s\t\t%s\t\n", ")", "Error: missing matching parentheses");
         while_parantheses_count = 0;
     }
     printf("\t%-20s\t\t%s\t\n", ")", "while closing brace");
@@ -1884,7 +1884,7 @@ YY_RULE_SETUP
 {
     while_parantheses_count--;
     if(while_parantheses_count)
-        printf("\t%-20s\t\t%s\t\n", yytext, "error: unmatched begin");
+        printf("\t%-20s\t\t%s\t\n", yytext, "Error: unmatched begin");
     else
         printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
 }
@@ -1943,7 +1943,7 @@ YY_RULE_SETUP
 #line 668 "v17.l"
 {
     if(YYSTATE == PRINT)
-        printf("\t%-20s\t\t%s\t\n", yytext, "error: unexpected token");
+        printf("\t%-20s\t\t%s\t\n", yytext, "Error: unexpected token");
     else
         printf("\t%-20s\t\t%s\t\n", yytext, "unknown token");
 }
