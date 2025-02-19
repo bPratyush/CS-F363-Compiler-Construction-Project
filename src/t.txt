@@ -55,7 +55,7 @@ num1, int)
 (001, 2)
 (124, )
 (A[6], int); 
-(B[12], char); //Inline Comments handled
+(b[12], char); //Inline Comments handled
 a
 prat
 'a'
@@ -83,7 +83,7 @@ end VarDecl
 (12, 10) := (11, 2) = (15, 8)
 scan("@, @, @", a, b, c); //Valid
 scan("@, @", a, b); //Valid
-scan("@, @", a, b) //Invalid since ; is missing at the end.
+scan("@, @", a, b); //Invalid since ; is missing at the end.
 scan("@, @", a); //Invalid since only one variable is given in the list, but there are 2 @ symbols in the formatted string.
 i:= (10, 2);
 if i > (20, 10) then

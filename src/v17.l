@@ -283,7 +283,6 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     BEGIN(INITIAL);
 }
 
-
 <VARDECL>{
     "(" { 
          varDeclPos = 0;
@@ -302,6 +301,35 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     "//".* { 
          printf("\t%-20s\t\t%s\t\n", yytext, "comment");
     }
+    /* Array declaration rule: match something like B[12] */
+    [A-Za-z][A-Za-z0-9_]*\[[0-9]+\] {
+         char arrName[256], sizeStr[64];
+         if (sscanf(yytext, "%[^[][%[0-9]]", arrName, sizeStr) == 2) {
+             if (varDeclPos == 0) {
+                 if (isKeyword(arrName)) {
+                     printf("\t%-20s\t\t%s\t\n", yytext, "Error: Keyword is used as an identifier");
+                 } else if (validate_identifier(arrName)) {
+                     int size = atoi(sizeStr);
+                     if (size > 0) {
+                         printf("\t%-20s\t\t%s\t\n", yytext, "array declaration");
+                         if (!isDeclared(arrName)) {
+                             symbolTable[symbolCount++] = strdup(arrName);
+                         }
+                     } else {
+                         printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid array size");
+                     }
+                 } else {
+                     printf("\t%-20s\t\t%s\t\n", yytext, "error: invalid identifier");
+                 }
+             } else {  /* In later positions (e.g. datatype), treat it as keyword */
+                 printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
+             }
+             varDeclPos++;
+         } else {
+             printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid array declaration");
+         }
+    }
+    /* General identifier rule */
     [A-Za-z][A-Za-z0-9_]* {
          if (varDeclPos == 0) { 
              if (isKeyword(yytext)) {
