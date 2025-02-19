@@ -51,16 +51,20 @@ void count_at_symbols(const char* s) {
 }
 
 void finalize_print_statement() {
-    if (!print_state_string_captured) {
-        printf("invalid print statement: Missing double quotes.\n");
-        return;
-    }
-    if (at_count != arg_count) {
-        printf("invalid print statement: @ count (%d) != argument count (%d).\n", at_count, arg_count);
-        return;
-    }
     char temp[1204];
     snprintf(temp, sizeof(temp), "print(\"%s\");", print_string);
+    
+    if (!print_state_string_captured) {
+         printf("\t%-20s\t\t%s\t\n", temp, "invalid print statement: Missing double quotes.");
+         return;
+    }
+    if (at_count != arg_count) {
+         char err_msg[256];
+         snprintf(err_msg, sizeof(err_msg), "invalid print statement: @ count (%d) != argument count (%d).", at_count, arg_count);
+         printf("\t%-20s\t\t%s\t\n", temp, err_msg);
+         return;
+    }
+    
     printf("\t%-20s\t\t%s\t\n", temp, "Valid print statement");
 }
 
@@ -167,15 +171,11 @@ int validate_relational_expression(char * condition){
 }
 
 void check_while_condition(){
-        while_condition_buffer[while_condition_index] = '\0';
-        if(validate_relational_expression(while_condition_buffer)){
-            printf("VALID CONDITION IN WHILE LOOP\n");
-        }
-        else{
-            printf("INVALID CONDITION IN WHILE LOOP\n");
-        }
-
-
+    while_condition_buffer[while_condition_index] = '\0';
+    if (validate_relational_expression(while_condition_buffer))
+         printf("\t%-20s\t\t%s\t\n", while_condition_buffer, "VALID CONDITION IN WHILE LOOP");
+    else
+         printf("\t%-20s\t\t%s\t\n", while_condition_buffer, "INVALID CONDITION IN WHILE LOOP");
 }
 
 
@@ -488,7 +488,9 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 }
 
 <STRING>\n { 
-    printf("invalid print statement: missing closing double quotes\n");
+    char temp[1204];
+    snprintf(temp, sizeof(temp), "print(\"%s\");", print_string);
+    printf("\t%-20s\t\t%s\t\n", temp, "invalid print statement: missing closing double quotes");
     reset_print_buffers();
     BEGIN(INITIAL);
 }
@@ -529,10 +531,12 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 }
 
 <PRINT>\n { 
+    char temp[1204];
+    snprintf(temp, sizeof(temp), "print(\"%s\");", print_string);
     if (parentheses_count != 0)
-        printf("\t%-20s\t\t%s\t\n", "invalid print", "missing closing parenthesis and semicolon");
+         printf("\t%-20s\t\t%s\t\n", temp, "missing closing parenthesis and semicolon");
     else
-        printf("\t%-20s\t\t%s\t\n", "invalid print", "missing semicolon");
+         printf("\t%-20s\t\t%s\t\n", temp, "missing semicolon");
     reset_print_buffers();
     BEGIN(INITIAL);
 }
@@ -555,16 +559,16 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     if (scan_paranthesis_count == 0 && scan_arg_count == scan_symbol_count && !scan_fl)
          printf("\t%-20s\t\t%s\t\n", temp, "Valid input statement");
     else if (scan_paranthesis_count != 0)
-         printf("\t%-20s\t\t%s\t\n", temp, "Error: invalid input (parenthesis mismatch)");
+         printf("\t%-20s\t\t%s\t\n", temp, "Error: invalid input statement (parenthesis mismatch)");
     else if (scan_arg_count != scan_symbol_count)
-         printf("\t%-20s\t\t%s\t\n", temp, "Error: invalid input (argument count mismatch)");
+         printf("\t%-20s\t\t%s\t\n", temp, "Error: invalid input statement (argument count mismatch)");
     else
          printf("\t%-20s\t\t%s\t\n", temp, "Error: invalid input statement");
     BEGIN(INITIAL);
 }
 <SCAN>"," {}
 <SCAN>\n {
-            printf("Error: Invalid input Statement\n"); 
+            printf("Error: invalid input statement\n"); 
             BEGIN(INITIAL); 
         }
 
