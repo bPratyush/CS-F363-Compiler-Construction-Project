@@ -55,12 +55,12 @@ void finalize_print_statement() {
     snprintf(temp, sizeof(temp), "print(\"%s\");", print_string);
     
     if (!print_state_string_captured) {
-         printf("\t%-20s\t\t%s\t\n", temp, "Invalid output statement");
+         printf("\t%-20s\t\t%s\t\n", temp, "Error: Invalid output statement");
          return;
     }
     if (at_count != arg_count) {
          char err_msg[256];
-         snprintf(err_msg, sizeof(err_msg), "Invalid output statement");
+         snprintf(err_msg, sizeof(err_msg), "Error: Invalid output statement");
          printf("\t%-20s\t\t%s\t\n", temp, err_msg);
          return;
     }
@@ -547,7 +547,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 <STRING>\n { 
     char temp[1204];
     snprintf(temp, sizeof(temp), "print(\"%s\");", print_string);
-    printf("\t%-20s\t\t%s\t\n", temp, "Invalid output statement: missing closing double quotes");
+    printf("\t%-20s\t\t%s\t\n", temp, "Error: Invalid output statement");
     reset_print_buffers();
     BEGIN(INITIAL);
 }
@@ -616,16 +616,16 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     if (scan_paranthesis_count == 0 && scan_arg_count == scan_symbol_count && !scan_fl)
          printf("\t%-20s\t\t%s\t\n", temp, "Valid input statement");
     else if (scan_paranthesis_count != 0)
-         printf("\t%-20s\t\t%s\t\n", temp, "invalid input statement");
+         printf("\t%-20s\t\t%s\t\n", temp, "Error: invalid input statement");
     else if (scan_arg_count != scan_symbol_count)
-         printf("\t%-20s\t\t%s\t\n", temp, "invalid input statement");
+         printf("\t%-20s\t\t%s\t\n", temp, "Error: invalid input statement");
     else
-         printf("\t%-20s\t\t%s\t\n", temp, "invalid input statement");
+         printf("\t%-20s\t\t%s\t\n", temp, "Error: invalid input statement");
     BEGIN(INITIAL);
 }
 <SCAN>"," {}
 <SCAN>\n {
-            printf("invalid input statement\n"); 
+            printf("Error: invalid input statement\n"); 
             BEGIN(INITIAL); 
         }
 
