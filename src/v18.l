@@ -708,7 +708,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     if(YYSTATE == PRINT)
         printf("\t%-20s\t\t%s\t\n", yytext, "Error: unexpected token");
     else
-        printf("\t%-20s\t\t%s\t\n", yytext, "unknown token");
+        printf("\t%-20s\t\t%s\t\n", yytext, "Error: unknown token");
 }
 
 %%
