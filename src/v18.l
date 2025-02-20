@@ -175,7 +175,7 @@ void check_while_condition(){
     if (validate_relational_expression(while_condition_buffer))
          printf("\t%-20s\t\t%s\t\n", while_condition_buffer, "valid condition in while loop");
     else
-         printf("\t%-20s\t\t%s\t\n", while_condition_buffer, "invalid condition in while loop");
+         printf("\t%-20s\t\t%s\t\n", while_condition_buffer, "Error: invalid condition in while loop");
 }
 
 
