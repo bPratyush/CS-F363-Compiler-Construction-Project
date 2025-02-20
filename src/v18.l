@@ -616,16 +616,16 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     if (scan_paranthesis_count == 0 && scan_arg_count == scan_symbol_count && !scan_fl)
          printf("\t%-20s\t\t%s\t\n", temp, "Valid input statement");
     else if (scan_paranthesis_count != 0)
-         printf("\t%-20s\t\t%s\t\n", temp, "Error: invalid input statement");
+         printf("\t%-20s\t\t%s\t\n", temp, "invalid input statement");
     else if (scan_arg_count != scan_symbol_count)
-         printf("\t%-20s\t\t%s\t\n", temp, "Error: invalid input statement");
+         printf("\t%-20s\t\t%s\t\n", temp, "invalid input statement");
     else
-         printf("\t%-20s\t\t%s\t\n", temp, "Error: invalid input statement");
+         printf("\t%-20s\t\t%s\t\n", temp, "invalid input statement");
     BEGIN(INITIAL);
 }
 <SCAN>"," {}
 <SCAN>\n {
-            printf("Error: invalid input statement\n"); 
+            printf("invalid input statement\n"); 
             BEGIN(INITIAL); 
         }
 
