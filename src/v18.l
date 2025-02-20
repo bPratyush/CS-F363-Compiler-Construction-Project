@@ -173,9 +173,9 @@ int validate_relational_expression(char * condition){
 void check_while_condition(){
     while_condition_buffer[while_condition_index] = '\0';
     if (validate_relational_expression(while_condition_buffer))
-         printf("\t%-20s\t\t%s\t\n", while_condition_buffer, "VALID CONDITION IN WHILE LOOP");
+         printf("\t%-20s\t\t%s\t\n", while_condition_buffer, "valid condition in while loop");
     else
-         printf("\t%-20s\t\t%s\t\n", while_condition_buffer, "INVALID CONDITION IN WHILE LOOP");
+         printf("\t%-20s\t\t%s\t\n", while_condition_buffer, "invalid condition in while loop");
 }
 
 
@@ -616,9 +616,9 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     if (scan_paranthesis_count == 0 && scan_arg_count == scan_symbol_count && !scan_fl)
          printf("\t%-20s\t\t%s\t\n", temp, "Valid input statement");
     else if (scan_paranthesis_count != 0)
-         printf("\t%-20s\t\t%s\t\n", temp, "Error: invalid input statement (parenthesis mismatch)");
+         printf("\t%-20s\t\t%s\t\n", temp, "Error: invalid input statement");
     else if (scan_arg_count != scan_symbol_count)
-         printf("\t%-20s\t\t%s\t\n", temp, "Error: invalid input statement (argument count mismatch)");
+         printf("\t%-20s\t\t%s\t\n", temp, "Error: invalid input statement");
     else
          printf("\t%-20s\t\t%s\t\n", temp, "Error: invalid input statement");
     BEGIN(INITIAL);
