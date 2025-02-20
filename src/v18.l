@@ -394,11 +394,11 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 }
 
 <FOR>\([ \t]*[0-9]+[ \t]*,[ \t]*(2|8|10)[ \t]*\) {
-    printf("\t%-20s\t\t%s\t\n", yytext, "integer constant");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Integer constant");
 }
 
 <FOR>[0-9]+ {
-    printf("\t%-20s\t\t%s\t\n", yytext, "integer constant");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Integer constant");
 }
 
 <FOR>"+"|"-"|"*"|"/"|"%" {
@@ -479,9 +479,9 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     strncpy(tmp, start, value_len);
     tmp[value_len] = '\0';
     if (validate_binary(tmp))
-         printf("\t%-20s\t\t%s\t\n", yytext, "integer constant");
+         printf("\t%-20s\t\t%s\t\n", yytext, "Integer constant");
     else 
-         printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid binary integer constant");
+         printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid integer constant");
 }
 
 \([ \t]*[0-9]+[ \t]*,[ \t]*8[ \t]*\) {
@@ -494,9 +494,9 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     strncpy(tmp, start, value_len);
     tmp[value_len] = '\0';
     if (validate_octal(tmp))
-         printf("\t%-20s\t\t%s\t\n", yytext, "integer constant");
+         printf("\t%-20s\t\t%s\t\n", yytext, "Integer constant");
     else 
-         printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid octal integer constant");
+         printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid integer constant");
 }
 
 \([ \t]*[0-9]+[ \t]*,[ \t]*10[ \t]*\) {
@@ -509,13 +509,13 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     strncpy(tmp, start, value_len);
     tmp[value_len] = '\0';
     if (validate_decimal(tmp))
-         printf("\t%-20s\t\t%s\t\n", yytext, "integer constant");
+         printf("\t%-20s\t\t%s\t\n", yytext, "Integer constant");
     else 
-         printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid decimal integer constant");
+         printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid integer constant");
 }
 
 ([0-9]+) {
-    printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid integer constant, missing base");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid integer constant");
 }
 
 '([^']|\\.)+' {

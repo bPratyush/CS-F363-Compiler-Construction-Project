@@ -1513,14 +1513,14 @@ case 24:
 YY_RULE_SETUP
 #line 396 "v18.l"
 {
-    printf("\t%-20s\t\t%s\t\n", yytext, "integer constant");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Integer constant");
 }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 400 "v18.l"
 {
-    printf("\t%-20s\t\t%s\t\n", yytext, "integer constant");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Integer constant");
 }
 	YY_BREAK
 case 26:
@@ -1643,9 +1643,9 @@ YY_RULE_SETUP
     strncpy(tmp, start, value_len);
     tmp[value_len] = '\0';
     if (validate_binary(tmp))
-         printf("\t%-20s\t\t%s\t\n", yytext, "integer constant");
+         printf("\t%-20s\t\t%s\t\n", yytext, "Integer constant");
     else 
-         printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid binary integer constant");
+         printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid integer constant");
 }
 	YY_BREAK
 case 40:
@@ -1661,9 +1661,9 @@ YY_RULE_SETUP
     strncpy(tmp, start, value_len);
     tmp[value_len] = '\0';
     if (validate_octal(tmp))
-         printf("\t%-20s\t\t%s\t\n", yytext, "integer constant");
+         printf("\t%-20s\t\t%s\t\n", yytext, "Integer constant");
     else 
-         printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid octal integer constant");
+         printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid integer constant");
 }
 	YY_BREAK
 case 41:
@@ -1679,16 +1679,16 @@ YY_RULE_SETUP
     strncpy(tmp, start, value_len);
     tmp[value_len] = '\0';
     if (validate_decimal(tmp))
-         printf("\t%-20s\t\t%s\t\n", yytext, "integer constant");
+         printf("\t%-20s\t\t%s\t\n", yytext, "Integer constant");
     else 
-         printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid decimal integer constant");
+         printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid integer constant");
 }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
 #line 517 "v18.l"
 {
-    printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid integer constant, missing base");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid integer constant");
 }
 	YY_BREAK
 case 43:
