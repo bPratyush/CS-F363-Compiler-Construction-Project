@@ -366,7 +366,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     BEGIN(WHILE);
 }
 
-<FOR>[ \t\n]+ { /* ignore whitespace */ }
+<FOR>[ \t\n]+ {}
 
 <FOR>"to" {
     printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
@@ -552,7 +552,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     BEGIN(INITIAL);
 }
 
-<PRINT>"," { /* you can ignore or mark as separator if required */ }
+<PRINT>"," { /* ignore or mark as separator if required */ }
 
 <PRINT>\([ \t]*[0-9]+[ \t]*,[ \t]*(2|8|10)[ \t]*\) {
     arg_count++;

@@ -1464,7 +1464,7 @@ case 17:
 /* rule 17 can match eol */
 YY_RULE_SETUP
 #line 369 "v18.l"
-{ /* ignore whitespace */ }
+{}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
@@ -1748,7 +1748,7 @@ YY_RULE_SETUP
 case 49:
 YY_RULE_SETUP
 #line 555 "v18.l"
-{ /* you can ignore or mark as separator if required */ }
+{ /* ignore or mark as separator if required */ }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
@@ -2015,7 +2015,7 @@ YY_RULE_SETUP
     if(YYSTATE == PRINT)
         printf("\t%-20s\t\t%s\t\n", yytext, "Error: unexpected token");
     else
-        printf("\t%-20s\t\t%s\t\n", yytext, "unknown token");
+        printf("\t%-20s\t\t%s\t\n", yytext, "Error: unknown token");
 }
 	YY_BREAK
 case 82:
