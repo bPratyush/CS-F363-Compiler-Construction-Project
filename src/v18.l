@@ -702,7 +702,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     printf("\t%-20s\t\t%s\t\n", yytext, "separator");
 }
 
-[ \t\n]+ { /* ignore whitespace */ }
+[ \t\n]+ {}
 
 . {
     if(YYSTATE == PRINT)
@@ -714,6 +714,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 %%
 
 int main(int argc, char **argv) {
+    printf("\t%-20s\t\t%s\t\n", "LEXEMME", "TOKEN");
     yylex();
     return 0;
 }

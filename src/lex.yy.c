@@ -2006,7 +2006,7 @@ case 80:
 /* rule 80 can match eol */
 YY_RULE_SETUP
 #line 705 "v18.l"
-{ /* ignore whitespace */ }
+{}
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
@@ -3041,6 +3041,7 @@ void yyfree (void * ptr )
 
 
 int main(int argc, char **argv) {
+    printf("\t%-20s\t\t%s\t\n", "LEXEMME", "TOKEN");
     yylex();
     return 0;
 }
