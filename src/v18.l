@@ -207,6 +207,23 @@ void count_all_symbols(char*str)
 
 }
 
+int validate_scan_placeholders(const char *s) {
+    int atCount = 0, commaCount = 0;
+    const char *p = s;
+    while (*p) {
+         if (*p == '"') {  
+             return 0;
+         }
+         if (*p == '@')
+             atCount++;
+         else if (*p == ',')
+             commaCount++;
+         p++;
+    }
+    if (atCount > 1 && commaCount != atCount - 1)
+         return 0;
+    return 1;
+}
 
 int statement_fl=0;
 void reset_statement(){
@@ -613,14 +630,14 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 <SCAN>[ \t]*";"[ \t]* {
     char temp[1204];
     snprintf(temp, sizeof(temp), "scan(%s, num1, num2);", scan_string);
-    if (scan_paranthesis_count == 0 && scan_arg_count == scan_symbol_count && !scan_fl)
-         printf("\t%-20s\t\t%s\t\n", temp, "Valid input statement");
+    if (!validate_scan_placeholders(scan_string))
+         printf("\t%-20s\t\t%s\t\n", temp, "Error: invalid input statement");
     else if (scan_paranthesis_count != 0)
          printf("\t%-20s\t\t%s\t\n", temp, "Error: invalid input statement");
     else if (scan_arg_count != scan_symbol_count)
          printf("\t%-20s\t\t%s\t\n", temp, "Error: invalid input statement");
     else
-         printf("\t%-20s\t\t%s\t\n", temp, "Error: invalid input statement");
+         printf("\t%-20s\t\t%s\t\n", temp, "Valid input statement");
     BEGIN(INITIAL);
 }
 <SCAN>"," {}
