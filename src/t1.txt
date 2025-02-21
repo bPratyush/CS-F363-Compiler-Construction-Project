@@ -10,7 +10,7 @@ num1:= (10, 2);
 scan("@, @", num1, num2);
 scan("b, t", num1, num2);
 scan("@ @", num1, num2);
-scan("@, @" num1, num2);
+scan("@ @" num1, num2);
 scan("@ @", num1, num2);
 scan(":", num1);
 num1 = num1 + begin;

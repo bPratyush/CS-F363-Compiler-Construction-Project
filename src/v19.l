@@ -209,18 +209,22 @@ void count_all_symbols(char*str)
 
 int validate_scan_placeholders(const char *s) {
     int atCount = 0, commaCount = 0;
-    const char *p = s;
-    while (*p) {
-         if (*p == '"') {  
-             return 0;
-         }
-         if (*p == '@')
-             atCount++;
-         else if (*p == ',')
-             commaCount++;
-         p++;
+    int len = strlen(s);
+    int start = 0, end = len;
+
+    if (len >= 2 && s[0] == '\"' && s[len - 1] == '\"') {
+        start = 1;
+        end = len - 1;
     }
-    if (atCount > 1 && commaCount != atCount - 1)
+    for (int i = start; i < end; i++) {
+         if (s[i] == '\"')
+             return 0;
+         if (s[i] == '@')
+             atCount++;
+         else if (s[i] == ',')
+             commaCount++;
+    }
+    if (atCount < 1 || commaCount != atCount - 1)
          return 0;
     return 1;
 }
