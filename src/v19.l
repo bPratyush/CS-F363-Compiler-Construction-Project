@@ -666,7 +666,10 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 }
 
 <CONDITION>[a-z][a-z0-9_]* {
-    printf("\t%-20s\t\t%s\t\n", yytext, "identifier");
+    if (isDeclared(yytext))
+        printf("\t%-20s\t\t%s\t\n", yytext, "identifier");
+    else
+        printf("\t%-20s\t\t%s\t\n", yytext, "Error: undefined identifier");
 }
 
 <CONDITION>"<="|">="|"<>"|"="|"<"|">" {
