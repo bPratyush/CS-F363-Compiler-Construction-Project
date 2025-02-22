@@ -660,21 +660,25 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 
 <WHILE>"(" {
     reset_while_stats();
-    printf("\t%-20s\t\t%s\t\n", "(", "while opening brace");
+    printf("\t%-20s\t\t%s\t\n", "(", "separator");
     while_parantheses_count++;
     BEGIN(CONDITION);
 }
 
 <CONDITION>[a-z][a-z0-9_]* {
-    printf("\t%-20s\t\t%s\t\n", yytext, "identifier in while condition");
+    printf("\t%-20s\t\t%s\t\n", yytext, "identifier");
 }
 
 <CONDITION>"<="|">="|"<>"|"="|"<"|">" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "relational operator in while condition");
+    printf("\t%-20s\t\t%s\t\n", yytext, "relational operator");
+}
+
+<CONDITION>\([ \t]*[0-9]+[ \t]*,[ \t]*(2|8|10)[ \t]*\) {
+    printf("\t%-20s\t\t%s\t\n", yytext, "Integer constant");
 }
 
 <CONDITION>[0-9]+ {
-    printf("\t%-20s\t\t%s\t\n", yytext, "constant in while condition");
+    printf("\t%-20s\t\t%s\t\n", yytext, "constant");
 }
 
 <CONDITION>")" {
@@ -683,8 +687,12 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
         printf("\t%-20s\t\t%s\t\n", ")", "Error: missing matching parentheses");
         while_parantheses_count = 0;
     }
-    printf("\t%-20s\t\t%s\t\n", ")", "while closing brace");
+    printf("\t%-20s\t\t%s\t\n", ")", "separator");
     BEGIN(WHILE);
+}
+
+<WHILE>"do" {
+    printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
 }
 
 <WHILE>"begin" {

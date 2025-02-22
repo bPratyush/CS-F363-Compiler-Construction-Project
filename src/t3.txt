@@ -1,0 +1,15 @@
+begin program: 
+begin VarDecl: 
+(number, int); 
+(sum, int); 
+end VarDecl 
+number := (5, 10); 
+sum := (0,10); 
+scan("@, ",sum); 
+while (number> (0, 10)) do 
+begin 
+sum *= number; 
+number-=(12, 2); 
+end; 
+print("Final sum= @", sum); 
+end program
