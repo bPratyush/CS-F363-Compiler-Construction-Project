@@ -459,7 +459,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 [a-z][a-z0-9_]* {
     if (validate_identifier(yytext)) {
         if (isDeclared(yytext))
-            printf("\t%-20s\t\t%s\t\n", yytext, "identifier");
+            printf("\t%-20s\t\t%s\t\n", yytext, "Identifier");
         else 
             printf("\t%-20s\t\t%s\t\n", yytext, "Error: undefined identifier");
     }
