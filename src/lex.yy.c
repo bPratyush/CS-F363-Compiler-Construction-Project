@@ -3098,7 +3098,7 @@ void yyfree (void * ptr )
 
 
 int main(int argc, char **argv) {
-    printf("\t%-20s\t\t%s\t\n", "LEXEMME", "TOKEN");
+    printf("\t%-20s\t\t%s\t\n", "LEXEME", "TOKEN");
     yylex();
     return 0;
 }
