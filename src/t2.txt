@@ -1,12 +1,17 @@
 begin program:
 begin VarDecl:
-(a,int);
+(a, int)
+(b, int);
+(c, int);
+(b, char);
+// list ofvariables ended.
 end VarDecl
-scan("@, @, @", a, b, c); //Valid
-scan("@, @", a, b); //Valid
-scan("@, @", a, b) //Invalid since ; is missing at the end.
-scan("@, @", a); //Invalid since only one variable is given in the list, but there are 2 @ symbols in the formatted string.
-for a:=
-while(a)
-end;
+b := (20, 10);
+print("Welcome !!!");
+scan("@, @", a,b); 
+for a :=(10, 8) to b + (10, 2) inc (1, 10) do 
+begin 
+print("The value of a = @", a); 
+scan("@, @",b); 
+end; 
 end program

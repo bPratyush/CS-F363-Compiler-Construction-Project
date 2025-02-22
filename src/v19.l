@@ -350,28 +350,30 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
          }
     }
     [A-Za-z][A-Za-z0-9_]* {
-         if (varDeclPos == 0) { 
-             if (isKeyword(yytext)) {
-                 printf("\t%-20s\t\t%s\t\n", yytext, "Error: Keyword is used as an identifier");
-             } else if (validate_identifier(yytext)) {
-                 printf("\t%-20s\t\t%s\t\n", yytext, "identifier");
-                 if (!isDeclared(yytext)) {
-                     symbolTable[symbolCount++] = strdup(yytext);
-                 }
-             } else {
-                 printf("\t%-20s\t\t%s\t\n", yytext, "error: invalid identifier");
-             }
-         } else if (varDeclPos == 1) {  
-             if (strcmp(yytext, "int") == 0 || strcmp(yytext, "char") == 0) {
-                 printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
-             } else {
-                 printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid datatype");
-             }
-         } else {
-             printf("\t%-20s\t\t%s\t\n", yytext, "Error: unexpected token in VarDecl");
-         }
-         varDeclPos++;
+    if (varDeclPos == 0) { 
+        if (isKeyword(yytext)) {
+            printf("\t%-20s\t\t%s\t\n", yytext, "Error: Keyword is used as an identifier");
+        } else if (validate_identifier(yytext)) {
+            if (!isDeclared(yytext)) {
+                printf("\t%-20s\t\t%s\t\n", yytext, "identifier");
+                symbolTable[symbolCount++] = strdup(yytext);
+            } else {
+                printf("\t%-20s\t\t%s\t\n", yytext, "Error: identifier already declared");
+            }
+        } else {
+            printf("\t%-20s\t\t%s\t\n", yytext, "error: invalid identifier");
+        }
+    } else if (varDeclPos == 1) {  
+        if (strcmp(yytext, "int") == 0 || strcmp(yytext, "char") == 0) {
+            printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
+        } else {
+            printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid datatype");
+        }
+    } else {
+        printf("\t%-20s\t\t%s\t\n", yytext, "Error: unexpected token in VarDecl");
     }
+    varDeclPos++;
+}
     [^ \t\n()\,;]+ {
          printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid token in VarDecl");
     }
