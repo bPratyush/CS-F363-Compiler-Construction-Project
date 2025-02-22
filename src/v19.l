@@ -277,18 +277,18 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 %%
 
 "begin" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
 }
 
 [ \t]+  {}
 
 "VarDecl" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
     varDeclFlag = 1;
 }
 
 ":" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "separator");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Separator");
     if (varDeclFlag) {
          BEGIN(VARDECL);
          varDeclFlag = 0;
@@ -296,31 +296,31 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 }
 
 <VARDECL>"end" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
 }
 
 <VARDECL>"VarDecl" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
     BEGIN(INITIAL);
 }
 
 <VARDECL>{
     "(" { 
          varDeclPos = 0;
-         printf("\t%-20s\t\t%s\t\n", yytext, "separator");
+         printf("\t%-20s\t\t%s\t\n", yytext, "Separator");
     }
     ")" { 
-         printf("\t%-20s\t\t%s\t\n", yytext, "separator");
+         printf("\t%-20s\t\t%s\t\n", yytext, "Separator");
          varDeclPos = 0;
     }
     "," { 
-         printf("\t%-20s\t\t%s\t\n", yytext, "separator");
+         printf("\t%-20s\t\t%s\t\n", yytext, "Separator");
     }
     ";" { 
-         printf("\t%-20s\t\t%s\t\n", yytext, "separator");
+         printf("\t%-20s\t\t%s\t\n", yytext, "Separator");
     }
     "//".* { 
-         printf("\t%-20s\t\t%s\t\n", yytext, "comment");
+         printf("\t%-20s\t\t%s\t\n", yytext, "Comment");
     }
     [A-Za-z][A-Za-z0-9_]*\[[0-9]+\] {
          char arrName[256], sizeStr[64];
@@ -339,7 +339,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
                          printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid array size");
                      }
                  } else {
-                     printf("\t%-20s\t\t%s\t\n", yytext, "error: invalid identifier");
+                     printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid identifier");
                  }
              } else {  
                  printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
@@ -355,17 +355,17 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
             printf("\t%-20s\t\t%s\t\n", yytext, "Error: Keyword is used as an identifier");
         } else if (validate_identifier(yytext)) {
             if (!isDeclared(yytext)) {
-                printf("\t%-20s\t\t%s\t\n", yytext, "identifier");
+                printf("\t%-20s\t\t%s\t\n", yytext, "Identifier");
                 symbolTable[symbolCount++] = strdup(yytext);
             } else {
                 printf("\t%-20s\t\t%s\t\n", yytext, "Error: identifier already declared");
             }
         } else {
-            printf("\t%-20s\t\t%s\t\n", yytext, "error: invalid identifier");
+            printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid identifier");
         }
     } else if (varDeclPos == 1) {  
         if (strcmp(yytext, "int") == 0 || strcmp(yytext, "char") == 0) {
-            printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
+            printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
         } else {
             printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid datatype");
         }
@@ -380,7 +380,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 }
 
 "for"/[ \t]+[a-z][a-z0-9_]*[ \t]*":=" {
-    printf("\t%-20s\t\t%s\t\n", "for", "keyword");
+    printf("\t%-20s\t\t%s\t\n", "for", "Keyword");
     BEGIN(FOR);
 }
 
@@ -392,28 +392,28 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 <FOR>[ \t\n]+ {}
 
 <FOR>"to" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
 }
 
 <FOR>"inc" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
 }
 
 <FOR>"dec" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
 }
 
 <FOR>"do" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
     BEGIN(INITIAL); 
 }
 
 <FOR>[a-z][a-z0-9_]* {
-    printf("\t%-20s\t\t%s\t\n", yytext, "identifier");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Identifier");
 }
 
 <FOR>":=" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "assignment operator");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Assignment operator");
 }
 
 <FOR>\([ \t]*[0-9]+[ \t]*,[ \t]*(2|8|10)[ \t]*\) {
@@ -425,15 +425,15 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 }
 
 <FOR>"+"|"-"|"*"|"/"|"%" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "arithmetic operator");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Arithmetic operator");
 }
 
 <FOR>. {
-    printf("\t%-20s\t\t%s\t\n", yytext, "token");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Token");
 }
 
 "int"|"char"|"if"|"else"|"for"|"main"|"begin"|"end"|"program"|"VarDecl"|"inc"|"dec"|"then" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
 }
 
 "print" {
@@ -447,12 +447,12 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 }
 
 "while" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
     BEGIN(WHILE);
 }
 
 <WHILE>"while" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
 }
 
 [a-z][a-z0-9_]* {
@@ -465,7 +465,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 }
 
 "//".* {
-    printf("\t%-20s\t\t%s\t\n", yytext, "comment");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Comment");
 }
 
 "/*" {
@@ -475,7 +475,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 }
 
 <COMMENT>"*/" {
-    printf("\t%-20s\t\t%s\t\n", comment_buffer, "comment");
+    printf("\t%-20s\t\t%s\t\n", comment_buffer, "Comment");
     BEGIN(INITIAL);
 }
 
@@ -543,7 +543,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 
 '([^']|\\.)+' {
     if (validate_char_const(yytext))
-         printf("\t%-20s\t\t%s\t\n", yytext, "character constant");
+         printf("\t%-20s\t\t%s\t\n", yytext, "Character constant");
     else 
          printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid character constant");
 }
@@ -575,7 +575,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     BEGIN(INITIAL);
 }
 
-<PRINT>"," { /* ignore or mark as separator if required */ }
+<PRINT>"," {}
 
 <PRINT>\([ \t]*[0-9]+[ \t]*,[ \t]*(2|8|10)[ \t]*\) {
     arg_count++;
@@ -589,7 +589,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     if (!isDeclared(yytext))
         printf("\t%-20s\t\t%s\t\n", yytext, "Error: variable not declared");
     else
-        printf("\t%-20s\t\t%s\t\n", yytext, "identifier");
+        printf("\t%-20s\t\t%s\t\n", yytext, "Identifier");
     arg_count++;
 }
 
@@ -614,9 +614,9 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     char temp[1204];
     snprintf(temp, sizeof(temp), "print(\"%s\");", print_string);
     if (parentheses_count != 0)
-         printf("\t%-20s\t\t%s\t\n", temp, "missing closing parenthesis and semicolon");
+         printf("\t%-20s\t\t%s\t\n", temp, "Error: missing closing parenthesis and semicolon");
     else
-         printf("\t%-20s\t\t%s\t\n", temp, "missing semicolon");
+         printf("\t%-20s\t\t%s\t\n", temp, "Error: missing semicolon");
     reset_print_buffers();
     BEGIN(INITIAL);
 }
@@ -660,20 +660,20 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 
 <WHILE>"(" {
     reset_while_stats();
-    printf("\t%-20s\t\t%s\t\n", "(", "separator");
+    printf("\t%-20s\t\t%s\t\n", "(", "Separator");
     while_parantheses_count++;
     BEGIN(CONDITION);
 }
 
 <CONDITION>[a-z][a-z0-9_]* {
     if (isDeclared(yytext))
-        printf("\t%-20s\t\t%s\t\n", yytext, "identifier");
+        printf("\t%-20s\t\t%s\t\n", yytext, "Identifier");
     else
         printf("\t%-20s\t\t%s\t\n", yytext, "Error: undefined identifier");
 }
 
 <CONDITION>"<="|">="|"<>"|"="|"<"|">" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "relational operator");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Relational operator");
 }
 
 <CONDITION>\([ \t]*[0-9]+[ \t]*,[ \t]*(2|8|10)[ \t]*\) {
@@ -681,7 +681,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 }
 
 <CONDITION>[0-9]+ {
-    printf("\t%-20s\t\t%s\t\n", yytext, "constant");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Constant");
 }
 
 <CONDITION>")" {
@@ -690,16 +690,16 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
         printf("\t%-20s\t\t%s\t\n", ")", "Error: missing matching parentheses");
         while_parantheses_count = 0;
     }
-    printf("\t%-20s\t\t%s\t\n", ")", "separator");
+    printf("\t%-20s\t\t%s\t\n", ")", "Separator");
     BEGIN(WHILE);
 }
 
 <WHILE>"do" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
 }
 
 <WHILE>"begin" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
     while_parantheses_count++;
 }
 
@@ -708,32 +708,32 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     if(while_parantheses_count)
         printf("\t%-20s\t\t%s\t\n", yytext, "Error: unmatched begin");
     else
-        printf("\t%-20s\t\t%s\t\n", yytext, "keyword");
+        printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
 }
 
 <WHILE>";" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "separator");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Separator");
     BEGIN(INITIAL);
 }
 
 "@" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "separator");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Separator");
 }
 
 "+"|"-"|"*"|"/"|"%" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "arithmetic operator");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Arithmetic operator");
 }
 
 "="|">"|"<"|">="|"<="|"<>" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "relational operator");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Relational operator");
 }
 
 ":="|"+="|"-="|"*="|"/="|"%=" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "assignment operator");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Assignment operator");
 }
 
 "("|")"|","|";"|"{"|"}"|":" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "separator");
+    printf("\t%-20s\t\t%s\t\n", yytext, "Separator");
 }
 
 [ \t\n]+ {}
