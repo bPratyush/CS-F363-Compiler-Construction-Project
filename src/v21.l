@@ -6,7 +6,7 @@
 #define MAX_COMMENT_SIZE 2048
 static char comment_buffer[MAX_COMMENT_SIZE];
 static int comment_index = 0;
-
+static char scan_args[1024];
 static char print_string[1024];
 static char print_args[1024];
 static int print_state_string_captured = 0;
@@ -189,11 +189,12 @@ int scan_fl=0;
 char scan_string[1024];
 
 void reset_scan_buffers(){
-        scan_arg_count=0;
-        scan_paranthesis_count=0;
-        scan_symbol_count=0;
-        scan_fl=0;
-        scan_string[0]='\0';
+    scan_arg_count = 0;
+    scan_paranthesis_count = 0;
+    scan_symbol_count = 0;
+    scan_fl = 0;
+    scan_string[0] = '\0';
+    scan_args[0] = '\0';
 }
 
 void count_all_symbols(char*str)
@@ -587,13 +588,15 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 }
 
 <PRINT>[a-z][a-z0-9_]* {
-    if (!isDeclared(yytext))
-        printf("\t%-20s\t\t%s\t\n", yytext, "Error: variable not declared");
-    else
-        printf("\t%-20s\t\t%s\t\n", yytext, "Identifier");
-    if(print_args[0] != '\0')
-         strncat(print_args, ", ", sizeof(print_args)-strlen(print_args)-1);
-    strncat(print_args, yytext, sizeof(print_args)-strlen(print_args)-1);
+    if (!isDeclared(yytext)) {
+         if(print_args[0] != '\0')
+              strncat(print_args, ", ", sizeof(print_args)-strlen(print_args)-1);
+         strncat(print_args, yytext, sizeof(print_args)-strlen(print_args)-1);
+    } else {
+         if(print_args[0] != '\0')
+              strncat(print_args, ", ", sizeof(print_args)-strlen(print_args)-1);
+         strncat(print_args, yytext, sizeof(print_args)-strlen(print_args)-1);
+    }
     arg_count++;
 }
 
@@ -632,14 +635,20 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 <SCAN>\([ \t]*[0-9]+[ \t]*,[ \t]*(2|8|10)[ \t]*\) { scan_arg_count++;}
                                                                                                 
 <SCAN>\'([^']|\\.)+\' { scan_arg_count++; }
-<SCAN>[a-z][a-z0-9_]* { scan_arg_count++;
-                        if(!validate_identifier(yytext))scan_fl=1;
-                        else scan_fl=(check_for_no_declaration(yytext)==0)?1:scan_fl; 
-                        }
+<SCAN>[a-z][a-z0-9_]* { 
+    scan_arg_count++;
+    if(!validate_identifier(yytext))
+         scan_fl = 1;
+    else
+         scan_fl = (check_for_no_declaration(yytext)==0)?1:scan_fl; 
+    if(scan_args[0] != '\0')
+         strncat(scan_args, ", ", sizeof(scan_args)-strlen(scan_args)-1);
+    strncat(scan_args, yytext, sizeof(scan_args)-strlen(scan_args)-1);
+}
 <SCAN>")" {scan_paranthesis_count--;}
 <SCAN>[ \t]*";"[ \t]* {
     char temp[1204];
-    snprintf(temp, sizeof(temp), "scan(%s, num1, num2);", scan_string);
+    snprintf(temp, sizeof(temp), "scan(%s, %s);", scan_string, scan_args);
     if (!validate_scan_placeholders(scan_string))
          printf("\t%-20s\t\t%s\t\n", temp, "Error: invalid input statement");
     else if (scan_paranthesis_count != 0)
@@ -752,7 +761,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 %%
 
 int main(int argc, char **argv) {
-    printf("\t%-20s\t\t%s\t\n", "LEXEME", "TOKEN");
+    printf("\t%-20s\t\t%s\t\n", "LEXEME", "TOKEN TYPE");
     yylex();
     return 0;
 }
