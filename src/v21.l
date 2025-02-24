@@ -434,7 +434,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     printf("\t%-20s\t\t%s\t\n", yytext, "Token");
 }
 
-"int"|"char"|"if"|"else"|"for"|"main"|"begin"|"end"|"program"|"VarDecl"|"inc"|"dec"|"then" {
+"int"|"char"|"if"|"else"|"for"|"main"|"begin"|"end"|"program"|"VarDecl"|"inc"|"dec" {
     printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
 }
 
