@@ -761,8 +761,15 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 %%
 
 int main(int argc, char **argv) {
+    FILE *file = fopen("input.txt", "r");
+     if (!file) {
+        printf("File Not Found");
+        exit(1);
+    }
+    yyin = file;
     printf("\t%-20s\t\t%s\t\n", "LEXEME", "TOKEN TYPE");
     yylex();
+    fclose(file);
     return 0;
 }
 
