@@ -1,13 +1,15 @@
+
 begin program:
 begin VarDecl: 
 (num1,    int);
 (begin, int);
 (print, char);
-(num2, int);
-(sum_tem_123, int);
+(num2, int); (int,int);
+(sumtem_123[6], int);
 end VarDecl
 num1:= (10, 2);
-scan("@, @", num1, num2);
+(10,2) + (10,8):= (10,8);
+scan("@, @,", num1, num2);
 scan("b, t", num1, num2);
 scan("@ @", num1, num2);
 scan("@ @" num1, num2);
@@ -17,12 +19,12 @@ num1 = num1 + begin;
 if num1 > (20, 2)
 begin num1 :=(1, 10); 
 num2-= (99,8); 
-print("num1 = @, num2 = @", num1, num2); 
+print("num1 = @, num = @", num1, num2); 
 end 
 else begin 
 num  /=   (10,   2);
 num1 /= (10, 2); 
-print("num1 = @, num2 = @", num1); 
+print "num1 = @, num2 = @))", num1,num2[6];
 end; 
 num3 := num1 + num2; 
 end program

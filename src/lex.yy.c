@@ -774,8 +774,8 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "v21.l"
-#line 2 "v21.l"
+#line 1 "src.l"
+#line 2 "src.l"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -1267,7 +1267,7 @@ YY_DECL
 		}
 
 	{
-#line 279 "v21.l"
+#line 279 "src.l"
 
 
 #line 1273 "lex.yy.c"
@@ -1329,19 +1329,19 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 281 "v21.l"
+#line 281 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
 }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 285 "v21.l"
+#line 285 "src.l"
 {}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 287 "v21.l"
+#line 287 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
     varDeclFlag = 1;
@@ -1349,7 +1349,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 292 "v21.l"
+#line 292 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Separator");
     if (varDeclFlag) {
@@ -1360,14 +1360,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 300 "v21.l"
+#line 300 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
 }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 304 "v21.l"
+#line 304 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
     BEGIN(INITIAL);
@@ -1376,7 +1376,7 @@ YY_RULE_SETUP
 
 case 7:
 YY_RULE_SETUP
-#line 310 "v21.l"
+#line 310 "src.l"
 { 
          varDeclPos = 0;
          printf("\t%-20s\t\t%s\t\n", yytext, "Separator");
@@ -1384,7 +1384,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 314 "v21.l"
+#line 314 "src.l"
 { 
          printf("\t%-20s\t\t%s\t\n", yytext, "Separator");
          varDeclPos = 0;
@@ -1392,28 +1392,28 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 318 "v21.l"
+#line 318 "src.l"
 { 
          printf("\t%-20s\t\t%s\t\n", yytext, "Separator");
     }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 321 "v21.l"
+#line 321 "src.l"
 { 
          printf("\t%-20s\t\t%s\t\n", yytext, "Separator");
     }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 324 "v21.l"
+#line 324 "src.l"
 { 
          printf("\t%-20s\t\t%s\t\n", yytext, "Comment");
     }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 327 "v21.l"
+#line 327 "src.l"
 {
          char arrName[256], sizeStr[64];
          if (sscanf(yytext, "%[^[][%[0-9]]", arrName, sizeStr) == 2) {
@@ -1444,7 +1444,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 354 "v21.l"
+#line 354 "src.l"
 {
     if (varDeclPos == 0) { 
         if (isKeyword(yytext)) {
@@ -1473,7 +1473,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 379 "v21.l"
+#line 379 "src.l"
 {
          printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid token in VarDecl");
     }
@@ -1484,7 +1484,7 @@ case 15:
 (yy_c_buf_p) = yy_cp = yy_bp + 3;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 384 "v21.l"
+#line 384 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", "for", "Keyword");
     BEGIN(FOR);
@@ -1492,7 +1492,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 389 "v21.l"
+#line 389 "src.l"
 {
     yyless(0);
     BEGIN(WHILE);
@@ -1501,33 +1501,33 @@ YY_RULE_SETUP
 case 17:
 /* rule 17 can match eol */
 YY_RULE_SETUP
-#line 394 "v21.l"
+#line 394 "src.l"
 {}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 396 "v21.l"
+#line 396 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
 }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 400 "v21.l"
+#line 400 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
 }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 404 "v21.l"
+#line 404 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
 }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 408 "v21.l"
+#line 408 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
     BEGIN(INITIAL); 
@@ -1535,56 +1535,56 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 413 "v21.l"
+#line 413 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Identifier");
 }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 417 "v21.l"
+#line 417 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Assignment operator");
 }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 421 "v21.l"
+#line 421 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Integer constant");
 }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 425 "v21.l"
+#line 425 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Integer constant");
 }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 429 "v21.l"
+#line 429 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Arithmetic operator");
 }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 433 "v21.l"
+#line 433 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Token");
 }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 437 "v21.l"
+#line 437 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
 }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 441 "v21.l"
+#line 441 "src.l"
 {
     reset_print_buffers();
     BEGIN(PRINT);
@@ -1592,7 +1592,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 446 "v21.l"
+#line 446 "src.l"
 {
     reset_scan_buffers();
     BEGIN(SCAN);
@@ -1600,7 +1600,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 451 "v21.l"
+#line 451 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
     BEGIN(WHILE);
@@ -1608,14 +1608,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 456 "v21.l"
+#line 456 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
 }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 460 "v21.l"
+#line 460 "src.l"
 {
     if (validate_identifier(yytext)) {
         if (isDeclared(yytext))
@@ -1627,14 +1627,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 469 "v21.l"
+#line 469 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Comment");
 }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 473 "v21.l"
+#line 473 "src.l"
 {
     BEGIN(COMMENT);
     comment_index = 0;
@@ -1643,7 +1643,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 479 "v21.l"
+#line 479 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", comment_buffer, "Comment");
     BEGIN(INITIAL);
@@ -1652,7 +1652,7 @@ YY_RULE_SETUP
 case 37:
 /* rule 37 can match eol */
 YY_RULE_SETUP
-#line 484 "v21.l"
+#line 484 "src.l"
 {
     if (comment_index < MAX_COMMENT_SIZE - 1) {
         comment_buffer[comment_index++] = '\n';
@@ -1662,7 +1662,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 491 "v21.l"
+#line 491 "src.l"
 {
     if (comment_index < MAX_COMMENT_SIZE - 1) {
         comment_buffer[comment_index++] = yytext[0];
@@ -1672,7 +1672,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 499 "v21.l"
+#line 499 "src.l"
 {
     char tmp[128];
     char *start = yytext + 1;
@@ -1688,7 +1688,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 512 "v21.l"
+#line 512 "src.l"
 {
     char tmp[128];
     char *start = yytext + 1; 
@@ -1706,7 +1706,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 527 "v21.l"
+#line 527 "src.l"
 {
     char tmp[128];
     char *start = yytext + 1;
@@ -1724,7 +1724,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 542 "v21.l"
+#line 542 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Error: invalid integer constant");
 }
@@ -1732,7 +1732,7 @@ YY_RULE_SETUP
 case 43:
 /* rule 43 can match eol */
 YY_RULE_SETUP
-#line 546 "v21.l"
+#line 546 "src.l"
 {
     if (validate_char_const(yytext))
          printf("\t%-20s\t\t%s\t\n", yytext, "Character constant");
@@ -1742,7 +1742,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 553 "v21.l"
+#line 553 "src.l"
 { 
     if (parentheses_count > 1) {
          printf("\t%-20s\t\t%s\t\n", "(", "Error: parenthesis count exceeds 1");
@@ -1752,19 +1752,19 @@ YY_RULE_SETUP
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 560 "v21.l"
+#line 560 "src.l"
 { BEGIN(STRING); }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 562 "v21.l"
+#line 562 "src.l"
 { 
     strncat(print_string, yytext, sizeof(print_string)-strlen(print_string)-1);
 }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 566 "v21.l"
+#line 566 "src.l"
 {
      print_state_string_captured = 1;
      count_at_symbols(print_string);
@@ -1774,7 +1774,7 @@ YY_RULE_SETUP
 case 48:
 /* rule 48 can match eol */
 YY_RULE_SETUP
-#line 572 "v21.l"
+#line 572 "src.l"
 { 
     char temp[1204];
     snprintf(temp, sizeof(temp), "print(\"%s\");", print_string);
@@ -1785,12 +1785,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 580 "v21.l"
+#line 580 "src.l"
 {}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 582 "v21.l"
+#line 582 "src.l"
 {
     arg_count++;
 }
@@ -1798,14 +1798,14 @@ YY_RULE_SETUP
 case 51:
 /* rule 51 can match eol */
 YY_RULE_SETUP
-#line 586 "v21.l"
+#line 586 "src.l"
 {
     arg_count++;
 }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 590 "v21.l"
+#line 590 "src.l"
 {
     if (!isDeclared(yytext)) {
          if(print_args[0] != '\0')
@@ -1821,7 +1821,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 603 "v21.l"
+#line 603 "src.l"
 {
     if (parentheses_count > 1)
         printf("\t%-20s\t\t%s\t\n", ")", "Error: parenthesis count exceeds 1");
@@ -1833,7 +1833,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 612 "v21.l"
+#line 612 "src.l"
 {
     if (parentheses_count != 0)
         printf("\t%-20s\t\t%s\t\n", ";", "Error: parentheses not closed");
@@ -1845,7 +1845,7 @@ YY_RULE_SETUP
 case 55:
 /* rule 55 can match eol */
 YY_RULE_SETUP
-#line 620 "v21.l"
+#line 620 "src.l"
 { 
     char temp[1204];
     snprintf(temp, sizeof(temp), "print(\"%s\");", print_string);
@@ -1859,31 +1859,31 @@ YY_RULE_SETUP
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 631 "v21.l"
+#line 631 "src.l"
 {scan_paranthesis_count++;}
 	YY_BREAK
 case 57:
 /* rule 57 can match eol */
 YY_RULE_SETUP
-#line 632 "v21.l"
+#line 632 "src.l"
 { strncpy(scan_string,yytext,yyleng);
                     count_all_symbols(scan_string);
                      }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 635 "v21.l"
+#line 635 "src.l"
 { scan_arg_count++;}
 	YY_BREAK
 case 59:
 /* rule 59 can match eol */
 YY_RULE_SETUP
-#line 637 "v21.l"
+#line 637 "src.l"
 { scan_arg_count++; }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 638 "v21.l"
+#line 638 "src.l"
 { 
     scan_arg_count++;
     if(!validate_identifier(yytext))
@@ -1897,12 +1897,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 648 "v21.l"
+#line 648 "src.l"
 {scan_paranthesis_count--;}
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 649 "v21.l"
+#line 649 "src.l"
 {
     char temp[1204];
     snprintf(temp, sizeof(temp), "scan(%s, %s);", scan_string, scan_args);
@@ -1919,13 +1919,13 @@ YY_RULE_SETUP
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 662 "v21.l"
+#line 662 "src.l"
 {}
 	YY_BREAK
 case 64:
 /* rule 64 can match eol */
 YY_RULE_SETUP
-#line 663 "v21.l"
+#line 663 "src.l"
 {
             printf("Error: invalid input statement\n"); 
             BEGIN(INITIAL); 
@@ -1934,7 +1934,7 @@ YY_RULE_SETUP
 case 65:
 /* rule 65 can match eol */
 YY_RULE_SETUP
-#line 668 "v21.l"
+#line 668 "src.l"
 {
     BEGIN(INITIAL);
 }
@@ -1942,12 +1942,12 @@ YY_RULE_SETUP
 case 66:
 /* rule 66 can match eol */
 YY_RULE_SETUP
-#line 672 "v21.l"
+#line 672 "src.l"
 { }
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 674 "v21.l"
+#line 674 "src.l"
 {
     reset_while_stats();
     printf("\t%-20s\t\t%s\t\n", "(", "Separator");
@@ -1957,7 +1957,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 681 "v21.l"
+#line 681 "src.l"
 {
     if (isDeclared(yytext))
         printf("\t%-20s\t\t%s\t\n", yytext, "Identifier");
@@ -1967,28 +1967,28 @@ YY_RULE_SETUP
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 688 "v21.l"
+#line 688 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Relational operator");
 }
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 692 "v21.l"
+#line 692 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Integer constant");
 }
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 696 "v21.l"
+#line 696 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Constant");
 }
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 700 "v21.l"
+#line 700 "src.l"
 {
     while_parantheses_count--;
     if(while_parantheses_count != 0) {
@@ -2001,14 +2001,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 710 "v21.l"
+#line 710 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
 }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 714 "v21.l"
+#line 714 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
     while_parantheses_count++;
@@ -2016,7 +2016,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 719 "v21.l"
+#line 719 "src.l"
 {
     while_parantheses_count--;
     if(while_parantheses_count)
@@ -2027,7 +2027,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 727 "v21.l"
+#line 727 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Separator");
     BEGIN(INITIAL);
@@ -2035,35 +2035,35 @@ YY_RULE_SETUP
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 732 "v21.l"
+#line 732 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Separator");
 }
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 736 "v21.l"
+#line 736 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Arithmetic operator");
 }
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 740 "v21.l"
+#line 740 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Relational operator");
 }
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 744 "v21.l"
+#line 744 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Assignment operator");
 }
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 748 "v21.l"
+#line 748 "src.l"
 {
     printf("\t%-20s\t\t%s\t\n", yytext, "Separator");
 }
@@ -2071,12 +2071,12 @@ YY_RULE_SETUP
 case 82:
 /* rule 82 can match eol */
 YY_RULE_SETUP
-#line 752 "v21.l"
+#line 752 "src.l"
 {}
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 754 "v21.l"
+#line 754 "src.l"
 {
     if(YYSTATE == PRINT)
         printf("\t%-20s\t\t%s\t\n", yytext, "Error: unexpected token");
@@ -2086,7 +2086,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 761 "v21.l"
+#line 761 "src.l"
 ECHO;
 	YY_BREAK
 #line 2092 "lex.yy.c"
@@ -3103,7 +3103,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 761 "v21.l"
+#line 761 "src.l"
 
 
 int main(int argc, char **argv) {
