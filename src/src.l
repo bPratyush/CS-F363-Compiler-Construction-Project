@@ -322,7 +322,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
          printf("\t%-20s\t\t%s\t\n", yytext, "Separator");
     }
     "//".* { 
-         printf("\t%-20s\t\t%s\t\n", yytext, "Comment");
+         //printf("\t%-20s\t\t%s\t\n", yytext, "Comment");
     }
     [A-Za-z][A-Za-z0-9_]*\[[0-9]+\] {
          char arrName[256], sizeStr[64];
@@ -467,7 +467,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 }
 
 "//".* {
-    printf("\t%-20s\t\t%s\t\n", yytext, "Comment");
+    //printf("\t%-20s\t\t%s\t\n", yytext, "Comment");
 }
 
 "/*" {
@@ -477,7 +477,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 }
 
 <COMMENT>"*/" {
-    printf("\t%-20s\t\t%s\t\n", comment_buffer, "Comment");
+    //printf("\t%-20s\t\t%s\t\n", comment_buffer, "Comment");
     BEGIN(INITIAL);
 }
 

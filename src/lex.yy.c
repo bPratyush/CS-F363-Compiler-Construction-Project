@@ -1408,7 +1408,7 @@ case 11:
 YY_RULE_SETUP
 #line 324 "src.l"
 { 
-         printf("\t%-20s\t\t%s\t\n", yytext, "Comment");
+         //printf("\t%-20s\t\t%s\t\n", yytext, "Comment");
     }
 	YY_BREAK
 case 12:
@@ -1629,7 +1629,7 @@ case 34:
 YY_RULE_SETUP
 #line 469 "src.l"
 {
-    printf("\t%-20s\t\t%s\t\n", yytext, "Comment");
+    //printf("\t%-20s\t\t%s\t\n", yytext, "Comment");
 }
 	YY_BREAK
 case 35:
@@ -1645,7 +1645,7 @@ case 36:
 YY_RULE_SETUP
 #line 479 "src.l"
 {
-    printf("\t%-20s\t\t%s\t\n", comment_buffer, "Comment");
+    //printf("\t%-20s\t\t%s\t\n", comment_buffer, "Comment");
     BEGIN(INITIAL);
 }
 	YY_BREAK
