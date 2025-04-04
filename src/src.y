@@ -1,4 +1,4 @@
-//TRIAL BISON PARSER
+//TRIAL BISON PARSER: DEBUG
 %{
 #include <stdio.h>
 #include <stdlib.h>
