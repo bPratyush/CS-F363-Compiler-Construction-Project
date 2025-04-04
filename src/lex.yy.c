@@ -779,7 +779,7 @@ char *yytext;
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
+#include "src.tab.h"
 #define MAX_COMMENT_SIZE 2048
 static char comment_buffer[MAX_COMMENT_SIZE];
 static int comment_index = 0;
@@ -791,8 +791,8 @@ static int at_count = 0;
 static int arg_count = 0;
 static int parentheses_count = 0;
 static int varDeclPos = 0;
-static char* symbolTable[256];
-static int symbolCount = 0;
+char* symbolTable[256];
+int symbolCount = 0;
 static int varDeclFlag = 0;
 int while_parantheses_count = 0;
     char while_condition_buffer[1024];
@@ -3105,19 +3105,6 @@ void yyfree (void * ptr )
 
 #line 761 "src.l"
 
-
-int main(int argc, char **argv) {
-    FILE *file = fopen("input.txt", "r");
-     if (!file) {
-        printf("File Not Found");
-        exit(1);
-    }
-    yyin = file;
-    printf("\t%-20s\t\t%s\t\n", "LEXEME", "TOKEN TYPE");
-    yylex();
-    fclose(file);
-    return 0;
-}
 
 int yywrap(){
     return 1;
