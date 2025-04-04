@@ -17,9 +17,6 @@ static int varDeclPos = 0;
 static char* symbolTable[256];
 static int symbolCount = 0;
 static int varDeclFlag = 0;
-int while_parantheses_count = 0;
-    char while_condition_buffer[1024];
-    int while_condition_index = 0;
 
 int isDeclared(const char* id) {
     int i;
@@ -36,11 +33,6 @@ void reset_print_buffers() {
     at_count = 0;
     arg_count = 0;
     parentheses_count = 0;
-}
-
-void reset_while_stats(){
-        memset(while_condition_buffer, 0, sizeof(while_condition_buffer));
-        while_parantheses_count = 0;
 }
 
 void count_at_symbols(const char* s) {
@@ -130,58 +122,6 @@ int validate_binary(const char *text) {
     return 1;
 }
 
-int validate_array_identifier(const char *text) {
-    const char *keywords[] = {
-        "int","char","if","else","while","for","main","begin","end",
-        "print","scan","program","VarDecl","inc","dec", NULL
-    };
-    int i;
-    for (i = 0; keywords[i] != NULL; i++) {
-        if (strcmp(text, keywords[i]) == 0) return 0;
-    }
-    if (!((text[0] >= 'a' && text[0] <= 'z') || (text[0] >= 'A' && text[0] <= 'Z'))) return 0;
-    {
-        int underscore = 0;
-        int j;
-        for (j = 0; text[j] != '\0'; j++) {
-            char c = text[j];
-            if (c == '_') {
-                underscore++;
-                if (underscore > 1) return 0;
-            } else if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))) {
-                return 0;
-            }
-        }
-    }
-    return 1;
-}
-
-int validate_relational_expression(char * condition){
-        char id1[256],op[3],id2[256];
-        if(sscanf(condition,"%s %s %s",id1,op,id2)==3){
-            if(!validate_identifier(id1) || !validate_identifier(id2)){
-                return 0;
-            }
-            if(!(strcmp(op,"=")||strcmp(op,"<>")||strcmp(op,">")||strcmp(op,"<")||strcmp(op,">=")||strcmp(op,"<="))){
-                return 0;
-            }
-            return 1;
-        }
-        else if(sscanf(condition,"%s",id1)==1){
-            return validate_identifier(id1);
-        }
-        return 0;
-}
-
-void check_while_condition(){
-    while_condition_buffer[while_condition_index] = '\0';
-    if (validate_relational_expression(while_condition_buffer))
-         printf("\t%-20s\t\t%s\t\n", while_condition_buffer, "valid condition in while loop");
-    else
-         printf("\t%-20s\t\t%s\t\n", while_condition_buffer, "Error: invalid condition in while loop");
-}
-
-
 int scan_arg_count=0;
 int scan_paranthesis_count=0;
 int scan_symbol_count=0;
@@ -231,28 +171,11 @@ int validate_scan_placeholders(const char *s) {
          return 0;
     return 1;
 }
-
 int statement_fl=0;
-void reset_statement(){
-    statement_fl=0;
-}
-
-int check_for_no_declaration(char*str){
-    for(int i=0;i<symbolCount;i++)
-    {
-        if(strcmp(str,symbolTable[i])==0)
-        {
-            return 1;
-        }
-    
-    }
-    return 0;
-}
-
 int isKeyword(const char *word) {
     const char *keywords[] = {
         "begin", "end", "VarDecl", "int", "char", "if", "else", "while",
-        "for", "print", "scan", "program", "inc", "dec", NULL
+        "for", "print", "scan", "program", "inc", "dec", "do", "to", "main", NULL
     };
     int i;
     for (i = 0; keywords[i] != NULL; i++) {
@@ -268,9 +191,7 @@ int isKeyword(const char *word) {
 %x NUMRELATIONS
 %x COMMENT
 %x PRINT
-%x WHILE
 %x CONDITION
-%x FOR
 %x SCAN
 %x STRING
 
@@ -381,60 +302,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     }
 }
 
-"for"/[ \t]+[a-z][a-z0-9_]*[ \t]*":=" {
-    printf("\t%-20s\t\t%s\t\n", "for", "Keyword");
-    BEGIN(FOR);
-}
-
-<FOR>"while" {
-    yyless(0);
-    BEGIN(WHILE);
-}
-
-<FOR>[ \t\n]+ {}
-
-<FOR>"to" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
-}
-
-<FOR>"inc" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
-}
-
-<FOR>"dec" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
-}
-
-<FOR>"do" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
-    BEGIN(INITIAL); 
-}
-
-<FOR>[a-z][a-z0-9_]* {
-    printf("\t%-20s\t\t%s\t\n", yytext, "Identifier");
-}
-
-<FOR>":=" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "Assignment operator");
-}
-
-<FOR>\([ \t]*[0-9]+[ \t]*,[ \t]*(2|8|10)[ \t]*\) {
-    printf("\t%-20s\t\t%s\t\n", yytext, "Integer constant");
-}
-
-<FOR>[0-9]+ {
-    printf("\t%-20s\t\t%s\t\n", yytext, "Integer constant");
-}
-
-<FOR>"+"|"-"|"*"|"/"|"%" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "Arithmetic operator");
-}
-
-<FOR>. {
-    printf("\t%-20s\t\t%s\t\n", yytext, "Token");
-}
-
-"int"|"char"|"if"|"else"|"for"|"main"|"begin"|"end"|"program"|"VarDecl"|"inc"|"dec" {
+"int"|"char"|"if"|"else"|"for"|"main"|"begin"|"end"|"program"|"VarDecl"|"inc"|"dec"|"while"|"do"|"to" {
     printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
 }
 
@@ -446,15 +314,6 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 "scan" {
     reset_scan_buffers();
     BEGIN(SCAN);
-}
-
-"while" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
-    BEGIN(WHILE);
-}
-
-<WHILE>"while" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
 }
 
 [a-z][a-z0-9_]* {
@@ -640,7 +499,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
     if(!validate_identifier(yytext))
          scan_fl = 1;
     else
-         scan_fl = (check_for_no_declaration(yytext)==0)?1:scan_fl; 
+         scan_fl = (!isDeclared(yytext))?1:scan_fl; 
     if(scan_args[0] != '\0')
          strncat(scan_args, ", ", sizeof(scan_args)-strlen(scan_args)-1);
     strncat(scan_args, yytext, sizeof(scan_args)-strlen(scan_args)-1);
@@ -664,70 +523,6 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
             printf("Error: invalid input statement\n"); 
             BEGIN(INITIAL); 
         }
-
-<WHILE>"\n" {
-    BEGIN(INITIAL);
-}
-
-<WHILE>[\t\n]* { }
-
-<WHILE>"(" {
-    reset_while_stats();
-    printf("\t%-20s\t\t%s\t\n", "(", "Separator");
-    while_parantheses_count++;
-    BEGIN(CONDITION);
-}
-
-<CONDITION>[a-z][a-z0-9_]* {
-    if (isDeclared(yytext))
-        printf("\t%-20s\t\t%s\t\n", yytext, "Identifier");
-    else
-        printf("\t%-20s\t\t%s\t\n", yytext, "Error: undefined identifier");
-}
-
-<CONDITION>"<="|">="|"<>"|"="|"<"|">" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "Relational operator");
-}
-
-<CONDITION>\([ \t]*[0-9]+[ \t]*,[ \t]*(2|8|10)[ \t]*\) {
-    printf("\t%-20s\t\t%s\t\n", yytext, "Integer constant");
-}
-
-<CONDITION>[0-9]+ {
-    printf("\t%-20s\t\t%s\t\n", yytext, "Constant");
-}
-
-<CONDITION>")" {
-    while_parantheses_count--;
-    if(while_parantheses_count != 0) {
-        printf("\t%-20s\t\t%s\t\n", ")", "Error: missing matching parentheses");
-        while_parantheses_count = 0;
-    }
-    printf("\t%-20s\t\t%s\t\n", ")", "Separator");
-    BEGIN(WHILE);
-}
-
-<WHILE>"do" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
-}
-
-<WHILE>"begin" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
-    while_parantheses_count++;
-}
-
-<WHILE>"end" {
-    while_parantheses_count--;
-    if(while_parantheses_count)
-        printf("\t%-20s\t\t%s\t\n", yytext, "Error: unmatched begin");
-    else
-        printf("\t%-20s\t\t%s\t\n", yytext, "Keyword");
-}
-
-<WHILE>";" {
-    printf("\t%-20s\t\t%s\t\n", yytext, "Separator");
-    BEGIN(INITIAL);
-}
 
 "@" {
     printf("\t%-20s\t\t%s\t\n", yytext, "Separator");
