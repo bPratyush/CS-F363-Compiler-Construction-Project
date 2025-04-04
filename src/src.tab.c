@@ -126,7 +126,7 @@
 
 
 /* Copy the first part of user declarations.  */
-#line 1 "src.y"
+#line 2 "src.y"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -159,7 +159,7 @@ extern int isDeclared(const char *id);
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 13 "src.y"
+#line 14 "src.y"
 {
     char* str;
 }
@@ -484,12 +484,12 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    33,    33,    35,    42,    43,    47,    49,    53,    55,
-      60,    62,    67,    68,    69,    74,    83,    88,    89,    90,
-      95,    96,   101,   102,   103,   104,   105,   106,   107,   112,
-     122,   132,   145,   147,   155,   160,   161,   162,   167,   168,
-     176,   181,   183,   185,   190,   198,   209,   218,   219,   220,
-     227,   228,   229,   230,   231,   232,   233
+       0,    34,    34,    36,    43,    44,    48,    50,    54,    56,
+      61,    63,    68,    69,    70,    75,    84,    89,    90,    91,
+      96,    97,   102,   103,   104,   105,   106,   107,   108,   113,
+     123,   133,   146,   148,   156,   161,   162,   163,   168,   169,
+     177,   182,   184,   186,   191,   199,   210,   219,   220,   221,
+     228,   229,   230,   231,   232,   233,   234
 };
 #endif
 
@@ -1468,37 +1468,37 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 34 "src.y"
+#line 35 "src.y"
     { printf("Program parsed successfully.\n"); ;}
     break;
 
   case 3:
-#line 35 "src.y"
+#line 36 "src.y"
     { yyerror("Syntax error in program definition"); yyerrok; ;}
     break;
 
   case 10:
-#line 61 "src.y"
+#line 62 "src.y"
     { /* Successful declaration block */ ;}
     break;
 
   case 11:
-#line 62 "src.y"
+#line 63 "src.y"
     { yyerror("Syntax error in variable declaration block"); yyerrok; ;}
     break;
 
   case 12:
-#line 67 "src.y"
+#line 68 "src.y"
     { /* Nothing extra */ ;}
     break;
 
   case 14:
-#line 69 "src.y"
+#line 70 "src.y"
     { yyerror("Syntax error in declaration list"); yyerrok; ;}
     break;
 
   case 15:
-#line 75 "src.y"
+#line 76 "src.y"
     {
            printf("Declaration: %s of type %s\n", (yyvsp[(2) - (6)].str), (yyvsp[(4) - (6)].str));
            /* Register the identifier if not already declared */
@@ -1510,37 +1510,37 @@ yyreduce:
     break;
 
   case 16:
-#line 83 "src.y"
+#line 84 "src.y"
     { yyerror("Invalid variable declaration"); yyerrok; ;}
     break;
 
   case 17:
-#line 88 "src.y"
+#line 89 "src.y"
     { (yyval.str) = strdup("int"); ;}
     break;
 
   case 18:
-#line 89 "src.y"
+#line 90 "src.y"
     { (yyval.str) = strdup("char"); ;}
     break;
 
   case 19:
-#line 90 "src.y"
+#line 91 "src.y"
     { yyerror("Invalid type specification"); yyerrok; (yyval.str) = NULL; ;}
     break;
 
   case 21:
-#line 96 "src.y"
+#line 97 "src.y"
     { (yyval.str) = NULL; ;}
     break;
 
   case 28:
-#line 107 "src.y"
+#line 108 "src.y"
     { yyerror("Invalid statement syntax"); yyerrok; ;}
     break;
 
   case 29:
-#line 113 "src.y"
+#line 114 "src.y"
     { 
            printf("Assignment: %s := %s\n", (yyvsp[(1) - (4)].str), (yyvsp[(3) - (4)].str));
            free((yyvsp[(1) - (4)].str));
@@ -1549,7 +1549,7 @@ yyreduce:
     break;
 
   case 30:
-#line 123 "src.y"
+#line 124 "src.y"
     {
            printf("Scan statement with format %s and identifiers %s\n", (yyvsp[(3) - (7)].str), (yyvsp[(5) - (7)].str));
            free((yyvsp[(3) - (7)].str));
@@ -1558,7 +1558,7 @@ yyreduce:
     break;
 
   case 31:
-#line 133 "src.y"
+#line 134 "src.y"
     {
            if ((yyvsp[(4) - (6)].str))
               printf("Print statement: %s with args %s\n", (yyvsp[(3) - (6)].str), (yyvsp[(4) - (6)].str));
@@ -1570,12 +1570,12 @@ yyreduce:
     break;
 
   case 32:
-#line 146 "src.y"
+#line 147 "src.y"
     { (yyval.str) = strdup((yyvsp[(1) - (1)].str)); free((yyvsp[(1) - (1)].str)); ;}
     break;
 
   case 33:
-#line 148 "src.y"
+#line 149 "src.y"
     {
            char *temp = malloc(strlen((yyvsp[(1) - (3)].str)) + strlen((yyvsp[(3) - (3)].str)) + 3);
            sprintf(temp, "%s, %s", (yyvsp[(1) - (3)].str), (yyvsp[(3) - (3)].str));
@@ -1586,32 +1586,32 @@ yyreduce:
     break;
 
   case 34:
-#line 155 "src.y"
+#line 156 "src.y"
     { yyerror("Error in identifier list"); yyerrok; (yyval.str) = NULL; ;}
     break;
 
   case 35:
-#line 160 "src.y"
+#line 161 "src.y"
     { (yyval.str) = NULL; ;}
     break;
 
   case 36:
-#line 161 "src.y"
+#line 162 "src.y"
     { (yyval.str) = (yyvsp[(2) - (2)].str); ;}
     break;
 
   case 37:
-#line 162 "src.y"
+#line 163 "src.y"
     { yyerror("Error in print argument list"); yyerrok; (yyval.str) = NULL; ;}
     break;
 
   case 38:
-#line 167 "src.y"
+#line 168 "src.y"
     { (yyval.str) = strdup((yyvsp[(1) - (1)].str)); free((yyvsp[(1) - (1)].str)); ;}
     break;
 
   case 39:
-#line 169 "src.y"
+#line 170 "src.y"
     {
            char *temp = malloc(strlen((yyvsp[(1) - (3)].str)) + strlen((yyvsp[(3) - (3)].str)) + 3);
            sprintf(temp, "%s, %s", (yyvsp[(1) - (3)].str), (yyvsp[(3) - (3)].str));
@@ -1622,32 +1622,32 @@ yyreduce:
     break;
 
   case 40:
-#line 176 "src.y"
+#line 177 "src.y"
     { yyerror("Error in expression list"); yyerrok; (yyval.str) = NULL; ;}
     break;
 
   case 41:
-#line 182 "src.y"
+#line 183 "src.y"
     { printf("If statement without else.\n"); free((yyvsp[(2) - (3)].str)); ;}
     break;
 
   case 42:
-#line 184 "src.y"
+#line 185 "src.y"
     { printf("If statement with else.\n"); free((yyvsp[(2) - (5)].str)); ;}
     break;
 
   case 43:
-#line 185 "src.y"
+#line 186 "src.y"
     { yyerror("Invalid if statement syntax"); yyerrok; ;}
     break;
 
   case 44:
-#line 191 "src.y"
+#line 192 "src.y"
     { printf("While statement.\n"); free((yyvsp[(3) - (5)].str)); ;}
     break;
 
   case 45:
-#line 199 "src.y"
+#line 200 "src.y"
     {
            printf("For statement with control variable %s.\n", (yyvsp[(3) - (12)].str));
            /* Free declared values: IDENTIFIER = $3, remaining as needed */
@@ -1661,7 +1661,7 @@ yyreduce:
     break;
 
   case 46:
-#line 210 "src.y"
+#line 211 "src.y"
     {
            yyerror("Invalid for statement syntax");
            yyerrok;
@@ -1669,52 +1669,52 @@ yyreduce:
     break;
 
   case 47:
-#line 218 "src.y"
+#line 219 "src.y"
     { (yyval.str) = strdup("inc"); ;}
     break;
 
   case 48:
-#line 219 "src.y"
+#line 220 "src.y"
     { (yyval.str) = strdup("dec"); ;}
     break;
 
   case 49:
-#line 220 "src.y"
+#line 221 "src.y"
     { yyerror("Invalid increment/decrement operator"); yyerrok; (yyval.str) = NULL; ;}
     break;
 
   case 50:
-#line 227 "src.y"
-    { (yyval.str) = strdup((yyvsp[(1) - (1)].str)); free((yyvsp[(1) - (1)].str)); ;}
-    break;
-
-  case 51:
 #line 228 "src.y"
     { (yyval.str) = strdup((yyvsp[(1) - (1)].str)); free((yyvsp[(1) - (1)].str)); ;}
     break;
 
-  case 52:
+  case 51:
 #line 229 "src.y"
     { (yyval.str) = strdup((yyvsp[(1) - (1)].str)); free((yyvsp[(1) - (1)].str)); ;}
     break;
 
-  case 53:
+  case 52:
 #line 230 "src.y"
     { (yyval.str) = strdup((yyvsp[(1) - (1)].str)); free((yyvsp[(1) - (1)].str)); ;}
     break;
 
-  case 54:
+  case 53:
 #line 231 "src.y"
+    { (yyval.str) = strdup((yyvsp[(1) - (1)].str)); free((yyvsp[(1) - (1)].str)); ;}
+    break;
+
+  case 54:
+#line 232 "src.y"
     { (yyval.str) = NULL; /* Build AST as needed */ ;}
     break;
 
   case 55:
-#line 232 "src.y"
+#line 233 "src.y"
     { (yyval.str) = (yyvsp[(2) - (3)].str); ;}
     break;
 
   case 56:
-#line 233 "src.y"
+#line 234 "src.y"
     { yyerror("Invalid expression syntax"); yyerrok; (yyval.str) = NULL; ;}
     break;
 
@@ -1934,7 +1934,7 @@ yyreturn:
 }
 
 
-#line 235 "src.y"
+#line 236 "src.y"
 
  
 void yyerror(const char *s) {
