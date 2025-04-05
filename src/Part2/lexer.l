@@ -217,7 +217,7 @@ int isKeyword(const char *word) {
     return IDENTIFIER;
 }
 
-[ \t\n]+    { /* skip whitespace */ }
+[ \t\n]+    { }
 
 . {
     record_token(yytext, "Error: unexpected token");
