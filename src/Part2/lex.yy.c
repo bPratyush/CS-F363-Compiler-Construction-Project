@@ -519,6 +519,33 @@ void record_token(const char* lexeme, const char* token) {
     token_output[token_output_count++] = strdup(line);
 }
 
+/* New function to print the token output */
+void print_token_output() {
+    printf("%-20s  %s\n", "LEXEME", "TOKEN TYPE");
+    
+    /* Filter out error messages */
+    int j = 0;
+    for (int i = 0; i < token_output_count; i++) {
+        if (strcmp(token_output[i], "syntax error") == 0 || 
+            strstr(token_output[i], "Syntax error in declaration") != NULL) {
+            free(token_output[i]);
+        } 
+        else {
+            if (j != i) {
+                token_output[j] = token_output[i];
+            }
+            j++;
+        }
+    }
+    token_output_count = j;
+    
+    /* Print the tokens */
+    for (int i = 0; i < token_output_count; i++) {
+        printf("%s\n", token_output[i]);
+        free(token_output[i]);
+    }
+}
+
 int isDeclared(const char* id) {
     int i;
     for(i = 0; i < symbolCount; i++){
@@ -685,8 +712,8 @@ int isKeyword(const char *word) {
     }
     return 0;
 }
-#line 688 "lex.yy.c"
-#line 689 "lex.yy.c"
+#line 715 "lex.yy.c"
+#line 716 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -903,9 +930,9 @@ YY_DECL
 		}
 
 	{
-#line 198 "lexer.l"
+#line 225 "lexer.l"
 
-#line 908 "lex.yy.c"
+#line 935 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -964,73 +991,73 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 199 "lexer.l"
+#line 226 "lexer.l"
 { }
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 200 "lexer.l"
+#line 227 "lexer.l"
 { }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 201 "lexer.l"
+#line 228 "lexer.l"
 { record_token(yytext, "Keyword"); return TK_BEGIN; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 202 "lexer.l"
+#line 229 "lexer.l"
 { record_token(yytext, "Keyword"); return TK_PROGRAM; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 203 "lexer.l"
+#line 230 "lexer.l"
 { record_token(yytext, "Keyword"); return TK_VARDECL; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 204 "lexer.l"
+#line 231 "lexer.l"
 { record_token(yytext, "Keyword"); return TK_END; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 205 "lexer.l"
+#line 232 "lexer.l"
 { record_token(yytext, "Keyword"); return TK_INT; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 206 "lexer.l"
+#line 233 "lexer.l"
 { record_token(yytext, "Keyword"); return TK_CHAR; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 207 "lexer.l"
+#line 234 "lexer.l"
 { record_token(yytext, "Separator"); return TK_COLON; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 208 "lexer.l"
+#line 235 "lexer.l"
 { record_token(yytext, "Separator"); return TK_SEP; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 209 "lexer.l"
+#line 236 "lexer.l"
 { record_token(yytext, "Separator"); return LPAREN; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 210 "lexer.l"
+#line 237 "lexer.l"
 { record_token(yytext, "Separator"); return RPAREN; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 211 "lexer.l"
+#line 238 "lexer.l"
 { record_token(yytext, "Separator"); return COMMA; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 213 "lexer.l"
+#line 240 "lexer.l"
 {
     record_token(yytext, "Identifier");
     yylval.str = strdup(yytext);
@@ -1040,12 +1067,12 @@ YY_RULE_SETUP
 case 15:
 /* rule 15 can match eol */
 YY_RULE_SETUP
-#line 219 "lexer.l"
+#line 246 "lexer.l"
 { }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 221 "lexer.l"
+#line 248 "lexer.l"
 {
     record_token(yytext, "Error: unexpected token");
     return yytext[0];
@@ -1053,10 +1080,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 226 "lexer.l"
+#line 253 "lexer.l"
 ECHO;
 	YY_BREAK
-#line 1059 "lex.yy.c"
+#line 1086 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2061,7 +2088,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 226 "lexer.l"
+#line 253 "lexer.l"
 
 
 int yywrap(void) {

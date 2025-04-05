@@ -15,8 +15,8 @@ extern char* symbolTable[256];
 extern int symbolCount;
 extern int varDeclPos;
 extern int varDeclFlag;
+extern void print_token_output(void);
 
-int discard_error_messages = 1;
 %}
 %union {
     char* str;
@@ -105,36 +105,18 @@ type:
   
 %%
 
-int main(int argc, char **argv) {
+int main(int argc, char *argv[]) {
     if (argc != 2) {
-       fprintf(stderr, "Usage: %s <input file>\n", argv[0]);
-       exit(1);
+        fprintf(stderr, "Usage: %s <input file>\n", argv[0]);
+        return 1;
     }
     yyin = fopen(argv[1], "r");
     if (!yyin) {
-       perror("Error opening file");
-       exit(1);
+        perror("Error opening file");
+        return 1;
     }
-    printf("%-20s  %s\n", "LEXEME", "TOKEN TYPE");
     yyparse();
     fclose(yyin);
-    int j = 0;
-    for (int i = 0; i < token_output_count; i++) {
-        if (strcmp(token_output[i], "syntax error") == 0 || 
-            strstr(token_output[i], "Syntax error in declaration") != NULL) {
-            free(token_output[i]);
-        } 
-        else {
-            if (j != i) {
-                token_output[j] = token_output[i];
-            }
-            j++;
-        }
-    }
-    token_output_count = j;
-    for (int i = 0; i < token_output_count; i++) {
-        printf("%s\n", token_output[i]);
-        free(token_output[i]);
-    }
+    print_token_output();
     return 0;
 }

@@ -27,6 +27,33 @@ void record_token(const char* lexeme, const char* token) {
     token_output[token_output_count++] = strdup(line);
 }
 
+/* New function to print the token output */
+void print_token_output() {
+    printf("%-20s  %s\n", "LEXEME", "TOKEN TYPE");
+    
+    /* Filter out error messages */
+    int j = 0;
+    for (int i = 0; i < token_output_count; i++) {
+        if (strcmp(token_output[i], "syntax error") == 0 || 
+            strstr(token_output[i], "Syntax error in declaration") != NULL) {
+            free(token_output[i]);
+        } 
+        else {
+            if (j != i) {
+                token_output[j] = token_output[i];
+            }
+            j++;
+        }
+    }
+    token_output_count = j;
+    
+    /* Print the tokens */
+    for (int i = 0; i < token_output_count; i++) {
+        printf("%s\n", token_output[i]);
+        free(token_output[i]);
+    }
+}
+
 int isDeclared(const char* id) {
     int i;
     for(i = 0; i < symbolCount; i++){
