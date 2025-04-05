@@ -11,7 +11,6 @@ void yyerror(const char *s) {
 }
 int yylex(void);
 FILE *yyin;
-/* Use extern declarations from parser.l */
 extern char* token_output[];
 extern int token_output_count;
 extern char* symbolTable[256];
@@ -22,8 +21,6 @@ extern int varDeclFlag;
 %union {
     char* str;
 }
-
-/* Token declarations */
 %token TK_BEGIN TK_PROGRAM TK_VARDECL TK_END TK_INT TK_CHAR TK_COLON TK_SEP
 %token <str> IDENTIFIER
 %token LPAREN RPAREN COMMA
@@ -43,7 +40,6 @@ var_decl_block:
 decl_list:
       decl_list decl
     | decl
-    /* error recovery: skip bad declaration till semicolon */
     | decl_list error TK_SEP { yyerror("Syntax error in declaration"); yyerrok; }
     ;
 
@@ -97,7 +93,7 @@ type:
           }
       }
       char err_token[256];
-      snprintf(err_token, sizeof(err_token), "%-20s  %s", invalid_type, "Error: invalid data type");
+      snprintf(err_token, sizeof(err_token), "%-20s  %s", invalid_type, "Syntax Error: invalid data type");
       token_output[token_output_count++] = strdup(err_token);
       char err_msg[256];
       snprintf(err_msg, sizeof(err_msg), "Error: %s is not a valid data type (only int and char allowed)", invalid_type);
