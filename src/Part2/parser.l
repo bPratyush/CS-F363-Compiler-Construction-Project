@@ -193,31 +193,18 @@ int isKeyword(const char *word) {
     }
     return 0;
 }
-
 %}
 
 %option noyywrap yylineno
-%x COMMENT
 %x VARDECL
 %x STRING
 %x PRINT
 %x SCAN
 
 %%
-"//".*                  { /* skip single line comments */ }
-"/*"                    { BEGIN(COMMENT); comment_index = 0; comment_buffer[0] = '\0'; }
-<COMMENT>"*/"           { BEGIN(INITIAL); }
-<COMMENT>\n             { 
-                          if (comment_index < MAX_COMMENT_SIZE - 1) {
-                              comment_buffer[comment_index++] = '\n';
-                              comment_buffer[comment_index] = '\0';
-                          }
-                        }
-<COMMENT>.              { if (comment_index < MAX_COMMENT_SIZE - 1) {
-                              comment_buffer[comment_index++] = yytext[0];
-                              comment_buffer[comment_index] = '\0';
-                          }
-                        }
+"/*"([^*]|"*"+[^*/])*"*"+"/"  { }
+"//".*                       { }
+"/*"                    { }
 
 "begin"                 { print_token(yytext, "KEYWORD"); return TK_BEGIN; }
 "end"                   { print_token(yytext, "KEYWORD"); return TK_END; }
@@ -244,7 +231,8 @@ int isKeyword(const char *word) {
                           return TK_END; 
                         }
 
-<VARDECL>"//".* { }
+<VARDECL>"/*"([^*]|"*"+[^*/])*"*"+"/"  {}
+<VARDECL>"//".*                       { }
 
 <VARDECL>"VarDecl"      { 
                           print_token(yytext, "KEYWORD");
