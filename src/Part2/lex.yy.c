@@ -489,8 +489,8 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "parser.l"
-#line 2 "parser.l"
+#line 1 "lexer.l"
+#line 2 "lexer.l"
 #include "parser.tab.h"
 #include <stdio.h>
 #include <string.h>
@@ -903,7 +903,7 @@ YY_DECL
 		}
 
 	{
-#line 198 "parser.l"
+#line 198 "lexer.l"
 
 #line 908 "lex.yy.c"
 
@@ -964,74 +964,75 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 199 "parser.l"
+#line 199 "lexer.l"
 { }
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 200 "parser.l"
+#line 200 "lexer.l"
 { }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 201 "parser.l"
+#line 201 "lexer.l"
 { record_token(yytext, "Keyword"); return TK_BEGIN; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 202 "parser.l"
+#line 202 "lexer.l"
 { record_token(yytext, "Keyword"); return TK_PROGRAM; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 203 "parser.l"
+#line 203 "lexer.l"
 { record_token(yytext, "Keyword"); return TK_VARDECL; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 204 "parser.l"
+#line 204 "lexer.l"
 { record_token(yytext, "Keyword"); return TK_END; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 205 "parser.l"
+#line 205 "lexer.l"
 { record_token(yytext, "Keyword"); return TK_INT; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 206 "parser.l"
+#line 206 "lexer.l"
 { record_token(yytext, "Keyword"); return TK_CHAR; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 207 "parser.l"
+#line 207 "lexer.l"
 { record_token(yytext, "Separator"); return TK_COLON; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 208 "parser.l"
+#line 208 "lexer.l"
 { record_token(yytext, "Separator"); return TK_SEP; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 209 "parser.l"
+#line 209 "lexer.l"
 { record_token(yytext, "Separator"); return LPAREN; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 210 "parser.l"
+#line 210 "lexer.l"
 { record_token(yytext, "Separator"); return RPAREN; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 211 "parser.l"
+#line 211 "lexer.l"
 { record_token(yytext, "Separator"); return COMMA; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 213 "parser.l"
+#line 213 "lexer.l"
 {
+    /* For identifiers like "float" we need to classify them as identifiers but let the grammar handle the validation */
     record_token(yytext, "Identifier");
     yylval.str = strdup(yytext);
     return IDENTIFIER;
@@ -1040,12 +1041,12 @@ YY_RULE_SETUP
 case 15:
 /* rule 15 can match eol */
 YY_RULE_SETUP
-#line 219 "parser.l"
+#line 220 "lexer.l"
 { /* skip whitespace */ }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 221 "parser.l"
+#line 222 "lexer.l"
 {
     record_token(yytext, "ERROR (unexpected token)");
     return yytext[0];
@@ -1053,10 +1054,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 226 "parser.l"
+#line 227 "lexer.l"
 ECHO;
 	YY_BREAK
-#line 1059 "lex.yy.c"
+#line 1060 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2061,7 +2062,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 226 "parser.l"
+#line 227 "lexer.l"
 
 
 int yywrap(void) {

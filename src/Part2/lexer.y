@@ -5,7 +5,7 @@
 int validate_identifier(const char *text);
 int isKeyword(const char *text);
 int isDeclared(const char *id);
-
+extern void record_token(const char* lexeme, const char* token);
 void yyerror(const char *s) {
     fprintf(stderr, "%s\n", s);
 }
@@ -81,6 +81,30 @@ decl:
 type:
     TK_INT { $$ = strdup("int"); }
   | TK_CHAR { $$ = strdup("char"); }
+  | IDENTIFIER {
+      char* invalid_type = strdup($1);
+      int i;
+      for (i = token_output_count - 1; i >= 0; i--) {
+          if (strstr(token_output[i], invalid_type) != NULL && 
+              strstr(token_output[i], "Identifier") != NULL) {
+              free(token_output[i]);
+              int j;
+              for (j = i; j < token_output_count - 1; j++) {
+                  token_output[j] = token_output[j + 1];
+              }
+              token_output_count--;
+              break;
+          }
+      }
+      char err_token[256];
+      snprintf(err_token, sizeof(err_token), "%-20s  %s", invalid_type, "Error: invalid data type");
+      token_output[token_output_count++] = strdup(err_token);
+      char err_msg[256];
+      snprintf(err_msg, sizeof(err_msg), "Error: %s is not a valid data type (only int and char allowed)", invalid_type);
+      $$ = strdup(err_msg);
+      free(invalid_type);
+      free($1);
+    }
   ;
   
 %%

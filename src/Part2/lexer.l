@@ -211,6 +211,7 @@ int isKeyword(const char *word) {
 ","          { record_token(yytext, "Separator"); return COMMA; }
 
 ([a-z][a-z0-9]*(_[a-z0-9]+)?) {
+    /* For identifiers like "float" we need to classify them as identifiers but let the grammar handle the validation */
     record_token(yytext, "Identifier");
     yylval.str = strdup(yytext);
     return IDENTIFIER;
