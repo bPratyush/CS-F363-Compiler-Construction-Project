@@ -1048,7 +1048,7 @@ case 16:
 YY_RULE_SETUP
 #line 222 "lexer.l"
 {
-    record_token(yytext, "ERROR (unexpected token)");
+    record_token(yytext, "Error: unexpected token");
     return yytext[0];
 }
 	YY_BREAK

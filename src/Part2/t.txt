@@ -2,7 +2,7 @@ begin program:
 // single line comment
 begin VarDecl:
 (a, int); (b, float); (sum, int); (count, int);
-(a, char);
+(a, char); (20,10;
 (scan, int);
 end VarDecl
 end program
