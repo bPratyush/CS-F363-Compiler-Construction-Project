@@ -244,6 +244,8 @@ int isKeyword(const char *word) {
                           return TK_END; 
                         }
 
+<VARDECL>"//".* { }
+
 <VARDECL>"VarDecl"      { 
                           print_token(yytext, "KEYWORD");
                           BEGIN(INITIAL);
