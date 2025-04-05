@@ -489,6 +489,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 
 <SCAN>"(" {scan_paranthesis_count++;}
 <SCAN>\"[^\"]*\"  { strncpy(scan_string,yytext,yyleng);
+                    scan_string[yyleng] = '\0';
                     count_all_symbols(scan_string);
                      }
 <SCAN>\([ \t]*[0-9]+[ \t]*,[ \t]*(2|8|10)[ \t]*\) { scan_arg_count++;}
