@@ -6,12 +6,7 @@ int validate_identifier(const char *text);
 int isKeyword(const char *text);
 int isDeclared(const char *id);
 extern void record_token(const char* lexeme, const char* token);
-
-/* Modify yyerror to not print to stderr */
-void yyerror(const char *s) {
-    /* Do nothing - we'll handle errors in our own way */
-}
-
+void yyerror(const char *s) {}
 int yylex(void);
 FILE *yyin;
 extern char* token_output[];
@@ -21,7 +16,6 @@ extern int symbolCount;
 extern int varDeclPos;
 extern int varDeclFlag;
 
-/* Flag to track if we should discard syntax error messages */
 int discard_error_messages = 1;
 %}
 %union {
@@ -121,26 +115,16 @@ int main(int argc, char **argv) {
        perror("Error opening file");
        exit(1);
     }
-    
-    /* Print header before parsing */
     printf("%-20s  %s\n", "LEXEME", "TOKEN TYPE");
-    
-    /* Parse input */
     yyparse();
-    
-    /* Close input file */
     fclose(yyin);
-    
-    /* Filter out any standalone error messages */
     int j = 0;
     for (int i = 0; i < token_output_count; i++) {
-        /* Skip any token that contains just the standalone error messages */
         if (strcmp(token_output[i], "syntax error") == 0 || 
             strstr(token_output[i], "Syntax error in declaration") != NULL) {
             free(token_output[i]);
         } 
         else {
-            /* Move valid tokens to the beginning of the array */
             if (j != i) {
                 token_output[j] = token_output[i];
             }
@@ -148,12 +132,9 @@ int main(int argc, char **argv) {
         }
     }
     token_output_count = j;
-    
-    /* Print filtered token output */
     for (int i = 0; i < token_output_count; i++) {
         printf("%s\n", token_output[i]);
         free(token_output[i]);
     }
-    
     return 0;
 }
