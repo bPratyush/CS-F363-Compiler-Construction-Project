@@ -1,0 +1,7 @@
+begin program: 
+begin VarDecl: 
+(a, int); (b, int);
+(c, int); 
+(b, char); 
+// list ofvariables ended. 
+end VarDecl

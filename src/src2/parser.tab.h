@@ -39,73 +39,45 @@
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     IDENTIFIER = 258,
-     INTEGER_CONSTANT = 259,
-     CHARACTER_CONSTANT = 260,
-     STRING_CONSTANT = 261,
-     TK_BEGIN = 262,
-     TK_END = 263,
-     TK_VARDECL = 264,
-     TK_PROGRAM = 265,
-     TK_INT = 266,
-     TK_CHAR = 267,
-     TK_IF = 268,
-     TK_ELSE = 269,
-     TK_WHILE = 270,
-     TK_FOR = 271,
-     TK_PRINT = 272,
-     TK_SCAN = 273,
-     TK_ASSIGN = 274,
-     TK_RELOP = 275,
-     TK_ARITHOP = 276,
-     TK_SEP = 277,
-     TK_COLON = 278,
-     TK_TO = 279,
-     TK_INC = 280,
-     TK_DEC = 281,
-     TK_DO = 282,
-     IFX = 283
+     TK_BEGIN = 258,
+     TK_PROGRAM = 259,
+     TK_VARDECL = 260,
+     TK_END = 261,
+     TK_INT = 262,
+     TK_CHAR = 263,
+     TK_COLON = 264,
+     TK_SEP = 265,
+     IDENTIFIER = 266,
+     LPAREN = 267,
+     RPAREN = 268,
+     COMMA = 269
    };
 #endif
 /* Tokens.  */
-#define IDENTIFIER 258
-#define INTEGER_CONSTANT 259
-#define CHARACTER_CONSTANT 260
-#define STRING_CONSTANT 261
-#define TK_BEGIN 262
-#define TK_END 263
-#define TK_VARDECL 264
-#define TK_PROGRAM 265
-#define TK_INT 266
-#define TK_CHAR 267
-#define TK_IF 268
-#define TK_ELSE 269
-#define TK_WHILE 270
-#define TK_FOR 271
-#define TK_PRINT 272
-#define TK_SCAN 273
-#define TK_ASSIGN 274
-#define TK_RELOP 275
-#define TK_ARITHOP 276
-#define TK_SEP 277
-#define TK_COLON 278
-#define TK_TO 279
-#define TK_INC 280
-#define TK_DEC 281
-#define TK_DO 282
-#define IFX 283
+#define TK_BEGIN 258
+#define TK_PROGRAM 259
+#define TK_VARDECL 260
+#define TK_END 261
+#define TK_INT 262
+#define TK_CHAR 263
+#define TK_COLON 264
+#define TK_SEP 265
+#define IDENTIFIER 266
+#define LPAREN 267
+#define RPAREN 268
+#define COMMA 269
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 14 "src.y"
+#line 22 "parser.y"
 {
     char* str;
 }
 /* Line 1529 of yacc.c.  */
-#line 109 "src.tab.h"
+#line 81 "parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

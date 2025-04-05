@@ -557,7 +557,7 @@ assign_op (":="|"+="|"-="|"*="|"/="|"%=")
 %%
 
 int main(int argc, char **argv) {
-    FILE *file = fopen("input.txt", "r");
+    FILE *file = fopen("t1.txt", "r");
      if (!file) {
         printf("File Not Found");
         exit(1);
