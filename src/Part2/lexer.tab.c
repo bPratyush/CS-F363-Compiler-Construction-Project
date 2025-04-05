@@ -112,7 +112,6 @@ void yyerror(const char *s) {
 }
 int yylex(void);
 FILE *yyin;
-/* Use extern declarations from parser.l */
 extern char* token_output[];
 extern int token_output_count;
 extern char* symbolTable[256];
@@ -141,12 +140,12 @@ extern int varDeclFlag;
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 22 "lexer.y"
+#line 21 "lexer.y"
 {
     char* str;
 }
 /* Line 193 of yacc.c.  */
-#line 150 "lexer.tab.c"
+#line 149 "lexer.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -159,7 +158,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 163 "lexer.tab.c"
+#line 162 "lexer.tab.c"
 
 #ifdef short
 # undef short
@@ -445,8 +444,8 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    35,    35,    40,    44,    45,    47,    51,    82,    83,
-      84
+       0,    32,    32,    37,    41,    42,    43,    47,    78,    79,
+      80
 };
 #endif
 
@@ -1358,17 +1357,17 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 36 "lexer.y"
+#line 33 "lexer.y"
     { ;}
     break;
 
   case 6:
-#line 47 "lexer.y"
+#line 43 "lexer.y"
     { yyerror("Syntax error in declaration"); yyerrok; ;}
     break;
 
   case 7:
-#line 52 "lexer.y"
+#line 48 "lexer.y"
     {
          /* Save current token_output count before processing declaration tokens */
          int tokens_start = token_output_count;
@@ -1399,17 +1398,17 @@ yyreduce:
     break;
 
   case 8:
-#line 82 "lexer.y"
+#line 78 "lexer.y"
     { (yyval.str) = strdup("int"); ;}
     break;
 
   case 9:
-#line 83 "lexer.y"
+#line 79 "lexer.y"
     { (yyval.str) = strdup("char"); ;}
     break;
 
   case 10:
-#line 84 "lexer.y"
+#line 80 "lexer.y"
     {
       char* invalid_type = strdup((yyvsp[(1) - (1)].str));
       int i;
@@ -1438,7 +1437,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 1442 "lexer.tab.c"
+#line 1441 "lexer.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1652,7 +1651,7 @@ yyreturn:
 }
 
 
-#line 110 "lexer.y"
+#line 106 "lexer.y"
 
 
 int main(int argc, char **argv) {
