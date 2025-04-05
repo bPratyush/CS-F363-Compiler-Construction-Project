@@ -163,8 +163,27 @@ extern FILE *yyin, *yyout;
 #define EOB_ACT_END_OF_FILE 1
 #define EOB_ACT_LAST_MATCH 2
     
-    #define YY_LESS_LINENO(n)
-    #define YY_LINENO_REWIND_TO(ptr)
+    /* Note: We specifically omit the test for yy_rule_can_match_eol because it requires
+     *       access to the local variable yy_act. Since yyless() is a macro, it would break
+     *       existing scanners that call yyless() from OUTSIDE yylex.
+     *       One obvious solution it to make yy_act a global. I tried that, and saw
+     *       a 5% performance hit in a non-yylineno scanner, because yy_act is
+     *       normally declared as a register variable-- so it is not worth it.
+     */
+    #define  YY_LESS_LINENO(n) \
+            do { \
+                yy_size_t yyl;\
+                for ( yyl = n; yyl < yyleng; ++yyl )\
+                    if ( yytext[yyl] == '\n' )\
+                        --yylineno;\
+            }while(0)
+    #define YY_LINENO_REWIND_TO(dst) \
+            do {\
+                const char *p;\
+                for ( p = yy_cp-1; p >= (dst); --p)\
+                    if ( *p == '\n' )\
+                        --yylineno;\
+            }while(0)
     
 /* Return all but the first "n" matched characters back to the input stream. */
 #define yyless(n) \
@@ -323,6 +342,9 @@ void yyfree ( void *  );
 #define YY_AT_BOL() (YY_CURRENT_BUFFER_LVALUE->yy_at_bol)
 
 /* Begin user sect3 */
+
+#define yywrap() (/*CONSTCOND*/1)
+#define YY_SKIP_YYWRAP
 typedef flex_uint8_t YY_CHAR;
 
 FILE *yyin = NULL, *yyout = NULL;
@@ -352,8 +374,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 17
-#define YY_END_OF_BUFFER 18
+#define YY_NUM_RULES 82
+#define YY_END_OF_BUFFER 83
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -361,32 +383,48 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static const flex_int16_t yy_accept[57] =
+static const flex_int16_t yy_accept[201] =
     {   0,
-        0,    0,   18,   16,   15,   15,   11,   12,   13,   16,
-        9,   10,   16,   14,   14,   14,   14,   14,   14,   15,
-        0,    1,    0,   14,    0,   14,   14,   14,   14,   14,
-        0,    0,    0,    1,    0,   14,   14,   14,    6,    7,
-       14,    0,    0,    2,    0,   14,    8,   14,    0,    3,
-       14,    0,   14,    5,    4,    0
+        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+        0,    0,   83,   81,   79,   80,   81,   41,   81,   34,
+       35,   39,   37,   36,   38,   40,   10,   33,   44,   42,
+       43,   81,   72,   72,   72,   72,   72,   72,   72,   72,
+       72,   72,   72,   72,    5,    4,    5,   20,   21,   13,
+       14,   15,   82,   16,   20,   19,   19,   19,   19,   57,
+       58,   56,   82,   55,   63,   59,   64,   60,   82,   66,
+       70,   68,   71,   69,   79,    0,   78,    0,   53,    0,
+        0,    0,    0,   51,   49,   50,    2,    1,   52,   48,
+       46,   47,   45,    0,   72,   72,   72,   72,   26,   72,
+
+       72,   72,   22,   72,   72,   72,   72,   27,   72,    3,
+       20,   21,    0,   19,   19,   19,   19,   57,    0,    0,
+        0,    0,   60,    0,   67,   69,   77,    0,   77,    0,
+        0,    0,    1,    0,   72,   72,   29,   72,    7,   25,
+       28,   31,   72,   72,   72,   72,   72,    0,   19,   11,
+       17,   62,    0,   62,    0,    0,    0,    0,    0,    0,
+        0,    0,    0,   72,   32,   23,   30,   72,   72,   65,
+       72,    0,   18,    0,    0,    0,    0,   76,    0,    0,
+       73,    0,   74,    0,    6,   54,   72,   24,    0,    0,
+       61,    0,   75,    0,   72,    0,    9,    8,   12,    0
+
     } ;
 
 static const YY_CHAR yy_ec[256] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
-        1,    1,    4,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    2,    1,    1,    1,    1,    1,    1,    1,    5,
-        6,    7,    1,    8,    1,    1,    9,   10,   10,   10,
-       10,   10,   10,   10,   10,   10,   10,   11,   12,    1,
-        1,    1,    1,    1,    1,    1,    1,   13,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,   14,    1,    1,    1,    1,
-        1,    1,    1,    1,   15,    1,   16,   17,   18,   19,
+        1,    2,    1,    4,    1,    1,    5,    1,    6,    7,
+        8,    9,   10,   11,   12,    1,   13,   14,   15,   16,
+       17,   17,   17,   17,   17,   18,   17,   19,   20,   21,
+       22,   23,    1,    1,    1,    1,    1,   24,    1,    1,
+        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,    1,    1,    1,    1,   25,    1,    1,    1,    1,
+        1,   26,    1,    1,   27,    1,   28,   29,   30,   31,
 
-       20,   21,   22,   23,   24,   21,   21,   25,   26,   27,
-       28,   29,   21,   30,   21,   31,   21,   21,   21,   21,
-       21,   21,    1,    1,    1,    1,    1,    1,    1,    1,
+       32,   33,   34,   35,   36,   37,   37,   38,   39,   40,
+       41,   42,   37,   43,   44,   45,   37,   37,   46,   37,
+       37,   37,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -403,77 +441,205 @@ static const YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static const YY_CHAR yy_meta[32] =
+static const YY_CHAR yy_meta[47] =
     {   0,
-        1,    1,    2,    1,    1,    1,    1,    1,    1,    3,
-        1,    1,    1,    1,    4,    3,    3,    3,    3,    3,
-        3,    3,    3,    3,    3,    3,    3,    3,    3,    3,
-        3
+        1,    2,    3,    4,    1,    5,    6,    7,    1,    1,
+        8,    1,    1,    9,    9,    9,    9,    9,    1,    6,
+        1,    1,    1,    1,    1,    1,   10,   10,   10,   10,
+       10,   10,   10,   10,   10,   10,   10,   10,   10,   10,
+       10,   10,   10,   10,   10,   10
     } ;
 
-static const flex_int16_t yy_base[62] =
+static const flex_int16_t yy_base[219] =
     {   0,
-        0,    0,  120,  121,   30,   32,  121,  121,  121,   29,
-      121,  121,  103,  103,   22,   24,   25,   26,   28,   42,
-       47,    0,   87,  101,    0,   33,   41,   44,   31,   45,
-       61,   63,   68,    0,   96,    0,   54,   46,   85,   84,
-       59,   76,   81,  121,   77,   67,   81,   71,   77,   78,
-       74,   67,   72,  121,   76,  121,   99,  103,  107,   46,
-      111
+        0,    0,   44,   45,   54,    0,  488,  487,  100,    0,
+      146,    0,  490,  493,  487,  493,  189,  466,  461,  192,
+      493,  464,  463,  493,  462,  189,  461,  493,   27,  493,
+      460,  453,    0,  448,  444,  163,  159,  437,  163,  449,
+      433,  445,  433,  438,  493,  493,  459,    0,   49,  493,
+      493,  493,  493,  493,  443,    0,  435,  429,  428,    0,
+      493,  493,  441,  203,  493,  493,  493,    0,  462,  493,
+      493,  493,  493,    0,  463,  196,  493,    0,  493,  206,
+      210,  212,  222,  493,  493,  493,  493,    0,  493,  493,
+      493,  493,  493,  421,    0,  429,  434,  431,    0,  416,
+
+      428,  415,    0,  193,  421,  198,  428,    0,  418,  493,
+        0,  238,  409,    0,  423,  419,  404,    0,  219,  240,
+      233,  242,    0,  441,  493,    0,  493,  231,  236,  249,
+      252,  254,    0,  420,  407,  399,    0,  409,    0,    0,
+        0,    0,  382,  377,  382,  375,  376,  389,  339,    0,
+        0,  493,  252,  253,  258,  263,  265,  271,  274,  288,
+      289,  290,  339,  323,    0,    0,    0,  317,  310,    0,
+      309,  284,    0,  291,  301,  292,  293,  493,  297,  302,
+      493,  306,  493,  283,    0,    0,  275,    0,  247,  309,
+      493,  310,  493,  222,  192,  163,  493,    0,  493,  493,
+
+      318,  328,  338,  348,  350,  360,  357,  367,  377,  379,
+      389,  391,  401,  410,  419,  429,  438,  446
     } ;
 
-static const flex_int16_t yy_def[62] =
+static const flex_int16_t yy_def[219] =
     {   0,
-       56,    1,   56,   56,   56,   56,   56,   56,   56,   56,
-       56,   56,   56,   57,   57,   57,   57,   57,   57,   56,
-       58,   59,   56,   57,   60,   57,   57,   57,   57,   57,
-       58,   58,   61,   59,   56,   60,   57,   57,   57,   57,
-       57,   58,   58,   56,   56,   57,   57,   57,   56,   57,
-       57,   56,   57,   56,   57,    0,   56,   56,   56,   56,
-       56
+      200,    1,  201,  201,  200,    5,  202,  202,  200,    9,
+      200,   11,  200,  200,  200,  200,  203,  200,  204,  200,
+      200,  200,  200,  200,  200,  200,  200,  200,  200,  200,
+      200,  200,  205,  205,  205,  205,  205,  205,  205,  205,
+      205,  205,  205,  205,  200,  200,  200,  206,  200,  200,
+      200,  200,  200,  200,  206,  207,  207,  207,  207,  208,
+      200,  200,  209,  200,  200,  200,  200,  210,  211,  200,
+      200,  200,  200,  212,  200,  203,  200,  203,  200,  204,
+      213,  200,  214,  200,  200,  200,  200,  215,  200,  200,
+      200,  200,  200,  200,  205,  205,  205,  205,  205,  205,
+
+      205,  205,  205,  205,  205,  205,  205,  205,  205,  200,
+      206,  200,  200,  207,  207,  207,  207,  208,  209,  216,
+      200,  217,  210,  211,  200,  212,  200,  204,  204,  213,
+      200,  200,  215,  200,  205,  205,  205,  205,  205,  205,
+      205,  205,  205,  205,  205,  205,  205,  200,  207,  207,
+      207,  200,  209,  209,  216,  200,  200,  200,  218,  218,
+      218,  218,  200,  205,  205,  205,  205,  205,  205,  205,
+      205,  200,  207,  200,  200,  200,  200,  200,  218,  200,
+      200,  200,  200,  200,  205,  205,  205,  205,  200,  200,
+      200,  200,  200,  200,  205,  200,  200,  205,  200,    0,
+
+      200,  200,  200,  200,  200,  200,  200,  200,  200,  200,
+      200,  200,  200,  200,  200,  200,  200,  200
     } ;
 
-static const flex_int16_t yy_nxt[153] =
+static const flex_int16_t yy_nxt[540] =
     {   0,
-        4,    5,    6,    4,    7,    8,    4,    9,   10,    4,
-       11,   12,    4,   13,    4,   14,   15,   16,   14,   17,
-       14,   14,   14,   18,   14,   14,   14,   14,   19,   14,
-       14,   20,   20,   20,   20,   21,   25,   22,   25,   25,
-       25,   26,   25,   20,   20,   25,   27,   25,   36,   32,
-       32,   28,   29,   33,   37,   25,   38,   30,   25,   25,
-       25,   40,   39,   32,   32,   32,   32,   33,   25,   33,
-       43,   43,   41,   25,   33,   47,   44,   46,   32,   32,
-       48,   25,   33,   32,   32,   25,   25,   33,   25,   53,
-       25,   54,   25,   50,   52,   25,   49,   55,   25,   25,
-
-       51,   24,   24,   31,   31,   31,   31,   34,   45,   34,
-       34,   42,   42,   42,   42,   25,   35,   25,   23,   56,
-        3,   56,   56,   56,   56,   56,   56,   56,   56,   56,
+       14,   15,   16,   17,   18,   19,   20,   21,   22,   23,
+       24,   25,   26,   14,   14,   14,   14,   14,   27,   28,
+       29,   30,   31,   14,   32,   14,   14,   33,   34,   35,
+       36,   37,   38,   33,   33,   39,   33,   33,   40,   33,
+       33,   41,   33,   42,   43,   44,   46,   46,   91,   92,
+      112,  112,   47,   47,   48,   49,   49,   48,   48,   48,
+       50,   51,   48,   48,   52,   48,   48,   53,   53,   53,
+       53,   53,   48,   54,   48,   48,   48,   48,   55,   48,
+       53,   56,   56,   57,   56,   58,   56,   56,   56,   59,
        56,   56,   56,   56,   56,   56,   56,   56,   56,   56,
-       56,   56,   56,   56,   56,   56,   56,   56,   56,   56,
-       56,   56
+
+       53,   53,   53,   62,   53,   63,   64,   65,   53,   53,
+       66,   53,   53,   53,   53,   53,   53,   53,   53,   67,
+       53,   53,   53,   53,   53,   53,   53,   68,   68,   68,
+       68,   68,   68,   68,   68,   68,   68,   68,   68,   68,
+       68,   68,   68,   68,   68,   68,   53,   53,   53,   69,
+       53,   53,   70,   71,   53,   53,   72,   53,   53,   53,
+       53,   53,   53,   53,   53,   73,   53,   53,   53,   53,
+       53,   53,   53,   74,   74,   74,   74,   74,   74,   74,
+       74,   74,   74,   74,   74,   74,   74,   74,   74,   74,
+       74,   74,   77,   82,   98,  103,  100,   87,  101,   77,
+
+      199,   88,  104,   99,  121,   83,   83,   83,   83,   83,
+       89,  127,   80,   82,   78,  129,  122,  122,  122,  122,
+      122,   78,  141,  131,  152,   83,   83,   83,   83,   83,
+      198,   81,  132,  144,  121,  130,  127,  142,  145,  112,
+      112,  127,  119,  156,  120,  154,  122,  122,  122,  122,
+      122,   80,  157,  131,  129,  158,   81,  152,  152,  197,
+      119,   81,  132,  154,  156,  155,  174,  159,  160,  161,
+      159,  162,  158,  157,  130,  177,  196,  120,  120,  175,
+      176,  178,  176,  155,  159,  160,  161,  159,  162,  177,
+      180,  182,  174,  190,  177,  178,  181,  183,  192,  191,
+
+      178,  179,  195,  180,  193,  175,  176,  182,  176,  181,
+      190,  192,  194,  183,  176,  189,  191,  193,   45,   45,
+       45,   45,   45,   45,   45,   45,   45,   45,   60,   60,
+       60,   60,   60,   60,   60,   60,   60,   60,   76,   76,
+      188,   76,   76,   76,   76,   76,   76,   76,   80,   80,
+       80,   80,  187,   80,   80,   80,   80,   80,   95,   95,
+      111,  186,  185,  111,  111,  114,  114,  118,  118,  118,
+      184,  118,  118,  118,  118,  118,  118,  119,  119,  119,
+      119,  173,  119,  119,  119,  119,  119,  123,  123,  124,
+      124,  124,  124,  124,  124,  124,  124,  124,  124,  126,
+
+      126,  128,  128,  128,  128,  128,  128,  128,  128,  128,
+      128,   83,  172,  171,  170,  169,  168,   83,   83,  133,
+      133,  167,  133,  133,  133,  133,  133,  133,  133,  153,
+      153,  153,  153,  153,  153,  153,  153,  153,  153,  122,
+      166,  165,  164,  163,  125,  122,  122,  159,  151,  150,
+      149,  148,  159,  147,  159,  146,  143,  140,  139,  138,
+      137,  136,  135,  134,   75,  125,  120,  117,  116,  115,
+      113,  110,  109,  108,  107,  106,  105,  102,   97,   96,
+       94,   93,   90,   86,   85,   84,   81,   79,   75,  200,
+       61,   61,   13,  200,  200,  200,  200,  200,  200,  200,
+
+      200,  200,  200,  200,  200,  200,  200,  200,  200,  200,
+      200,  200,  200,  200,  200,  200,  200,  200,  200,  200,
+      200,  200,  200,  200,  200,  200,  200,  200,  200,  200,
+      200,  200,  200,  200,  200,  200,  200,  200,  200
     } ;
 
-static const flex_int16_t yy_chk[153] =
+static const flex_int16_t yy_chk[540] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    5,    5,    6,    6,   10,   15,   10,   16,   17,
-       18,   15,   19,   20,   20,   29,   16,   26,   60,   21,
-       21,   17,   18,   21,   26,   27,   27,   19,   28,   30,
-       38,   29,   28,   31,   31,   32,   32,   31,   37,   32,
-       33,   33,   30,   41,   33,   38,   33,   37,   42,   42,
-       41,   46,   42,   43,   43,   48,   53,   43,   51,   51,
-       55,   52,   50,   46,   49,   47,   45,   53,   40,   39,
+        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,    1,    1,    1,    1,    1,    3,    4,   29,   29,
+       49,   49,    3,    4,    5,    5,    5,    5,    5,    5,
+        5,    5,    5,    5,    5,    5,    5,    5,    5,    5,
+        5,    5,    5,    5,    5,    5,    5,    5,    5,    5,
+        5,    5,    5,    5,    5,    5,    5,    5,    5,    5,
+        5,    5,    5,    5,    5,    5,    5,    5,    5,    5,
 
-       48,   57,   57,   58,   58,   58,   58,   59,   35,   59,
-       59,   61,   61,   61,   61,   24,   23,   14,   13,    3,
-       56,   56,   56,   56,   56,   56,   56,   56,   56,   56,
-       56,   56,   56,   56,   56,   56,   56,   56,   56,   56,
-       56,   56,   56,   56,   56,   56,   56,   56,   56,   56,
-       56,   56
+        9,    9,    9,    9,    9,    9,    9,    9,    9,    9,
+        9,    9,    9,    9,    9,    9,    9,    9,    9,    9,
+        9,    9,    9,    9,    9,    9,    9,    9,    9,    9,
+        9,    9,    9,    9,    9,    9,    9,    9,    9,    9,
+        9,    9,    9,    9,    9,    9,   11,   11,   11,   11,
+       11,   11,   11,   11,   11,   11,   11,   11,   11,   11,
+       11,   11,   11,   11,   11,   11,   11,   11,   11,   11,
+       11,   11,   11,   11,   11,   11,   11,   11,   11,   11,
+       11,   11,   11,   11,   11,   11,   11,   11,   11,   11,
+       11,   11,   17,   20,   36,   39,   37,   26,   37,   76,
+
+      196,   26,   39,   36,   64,   20,   20,   20,   20,   20,
+       26,   80,   81,   82,   17,   81,   64,   64,   64,   64,
+       64,   76,  104,   83,  119,   82,   82,   82,   82,   82,
+      195,   80,   83,  106,  121,   81,  128,  104,  106,  112,
+      112,  129,  120,  122,  119,  120,  121,  121,  121,  121,
+      121,  130,  122,  131,  130,  132,  128,  153,  154,  194,
+      155,  129,  131,  155,  156,  120,  157,  132,  132,  132,
+      132,  132,  158,  156,  130,  159,  189,  153,  154,  157,
+      157,  159,  157,  155,  158,  158,  158,  158,  158,  160,
+      161,  162,  174,  176,  177,  160,  161,  162,  179,  176,
+
+      177,  160,  187,  180,  179,  174,  174,  182,  174,  180,
+      190,  192,  184,  182,  175,  172,  190,  192,  201,  201,
+      201,  201,  201,  201,  201,  201,  201,  201,  202,  202,
+      202,  202,  202,  202,  202,  202,  202,  202,  203,  203,
+      171,  203,  203,  203,  203,  203,  203,  203,  204,  204,
+      204,  204,  169,  204,  204,  204,  204,  204,  205,  205,
+      206,  168,  164,  206,  206,  207,  207,  208,  208,  208,
+      163,  208,  208,  208,  208,  208,  208,  209,  209,  209,
+      209,  149,  209,  209,  209,  209,  209,  210,  210,  211,
+      211,  211,  211,  211,  211,  211,  211,  211,  211,  212,
+
+      212,  213,  213,  213,  213,  213,  213,  213,  213,  213,
+      213,  214,  148,  147,  146,  145,  144,  214,  214,  215,
+      215,  143,  215,  215,  215,  215,  215,  215,  215,  216,
+      216,  216,  216,  216,  216,  216,  216,  216,  216,  217,
+      138,  136,  135,  134,  124,  217,  217,  218,  117,  116,
+      115,  113,  218,  109,  218,  107,  105,  102,  101,  100,
+       98,   97,   96,   94,   75,   69,   63,   59,   58,   57,
+       55,   47,   44,   43,   42,   41,   40,   38,   35,   34,
+       32,   31,   27,   25,   23,   22,   19,   18,   15,   13,
+        8,    7,  200,  200,  200,  200,  200,  200,  200,  200,
+
+      200,  200,  200,  200,  200,  200,  200,  200,  200,  200,
+      200,  200,  200,  200,  200,  200,  200,  200,  200,  200,
+      200,  200,  200,  200,  200,  200,  200,  200,  200,  200,
+      200,  200,  200,  200,  200,  200,  200,  200,  200
     } ;
+
+/* Table of booleans, true if rule could match eol. */
+static const flex_int32_t yy_rule_can_match_eol[83] =
+    {   0,
+0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 
+    0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 
+    1, 0, 0,     };
 
 static yy_state_type yy_last_accepting_state;
 static char *yy_last_accepting_cpos;
@@ -489,60 +655,35 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "lexer.l"
-#line 2 "lexer.l"
-#include "lexer.tab.h"
+#line 1 "parser.l"
+#line 2 "parser.l"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#define MAX_TOKENS 1024
+#include "parser.tab.h"  // Include Bison-generated header
+
 #define MAX_COMMENT_SIZE 2048
-char comment_buffer[MAX_COMMENT_SIZE];
-int comment_index = 0;
-char scan_args[1024];
-char print_string[1024];
-char print_args[1024];
-int print_state_string_captured = 0;
-int at_count = 0;
-int arg_count = 0;
-int parentheses_count = 0;
-int varDeclPos = 0;
+static char comment_buffer[MAX_COMMENT_SIZE];
+static int comment_index = 0;
+static char scan_args[1024];
+static char print_string[1024];
+static char print_args[1024];
+static int print_state_string_captured = 0;
+static int at_count = 0;
+static int arg_count = 0;
+static int parentheses_count = 0;
+static int varDeclPos = 0;
 char* symbolTable[256];
 int symbolCount = 0;
-int varDeclFlag = 0;
-char* token_output[MAX_TOKENS];
-int token_output_count = 0;
+static int varDeclFlag = 0;
 
-void record_token(const char* lexeme, const char* token) {
-    char line[256];
-    snprintf(line, sizeof(line), "%-20s  %s", lexeme, token);
-    token_output[token_output_count++] = strdup(line);
-}
+// External variable from parser to check if we should print tokens
+extern int print_lexeme_token_pairs;
 
-/* New function to print the token output */
-void print_token_output() {
-    printf("%-20s  %s\n", "LEXEME", "TOKEN TYPE");
-    
-    /* Filter out error messages */
-    int j = 0;
-    for (int i = 0; i < token_output_count; i++) {
-        if (strcmp(token_output[i], "syntax error") == 0 || 
-            strstr(token_output[i], "Syntax error in declaration") != NULL) {
-            free(token_output[i]);
-        } 
-        else {
-            if (j != i) {
-                token_output[j] = token_output[i];
-            }
-            j++;
-        }
-    }
-    token_output_count = j;
-    
-    /* Print the tokens */
-    for (int i = 0; i < token_output_count; i++) {
-        printf("%s\n", token_output[i]);
-        free(token_output[i]);
+// Function to print lexeme-token pairs
+void print_token(const char* lexeme, const char* token_type) {
+    if (print_lexeme_token_pairs) {
+        printf("%-20s  %-20s\n", lexeme, token_type);
     }
 }
 
@@ -578,23 +719,21 @@ void finalize_print_statement() {
          snprintf(temp, sizeof(temp), "print(\"%s\");", print_string);
     
     if (!print_state_string_captured) {
-         printf("\t%-20s\t\t%s\t\n", temp, "Error: Invalid output statement");
+         print_token(temp, "Error: Invalid output statement");
          return;
     }
     if (at_count != arg_count) {
-         char err_msg[256];
-         snprintf(err_msg, sizeof(err_msg), "Error: Invalid output statement");
-         printf("\t%-20s\t\t%s\t\n", temp, err_msg);
+         print_token(temp, "Error: Invalid output statement");
          return;
     }
     
-    printf("\t%-20s\t\t%s\t\n", temp, "Valid output statement");
+    print_token(temp, "Valid output statement");
 }
 
 int validate_identifier(const char *text) {
     const char *keywords[] = {
         "int","char","if","else","while","for","main","begin","end",
-        "print","scan","program","VarDecl","inc","dec", NULL
+        "print","scan","program","VarDecl","inc","dec","to","do", NULL
     };
     int i;
     for (i = 0; keywords[i] != NULL; i++) {
@@ -665,7 +804,7 @@ void reset_scan_buffers(){
     scan_args[0] = '\0';
 }
 
-void count_all_symbols(char* str)
+void count_all_symbols(char*str)
 {
     int idx=0;
     while(str[idx]!='\0')
@@ -702,7 +841,7 @@ int validate_scan_placeholders(const char *s) {
 int statement_fl=0;
 int isKeyword(const char *word) {
     const char *keywords[] = {
-        "begin", "end", "VarDecl", "int", "char", "if", "else","while",
+        "begin", "end", "VarDecl", "int", "char", "if", "else", "while",
         "for", "print", "scan", "program", "inc", "dec", "do", "to", "main", NULL
     };
     int i;
@@ -712,10 +851,17 @@ int isKeyword(const char *word) {
     }
     return 0;
 }
-#line 715 "lex.yy.c"
-#line 716 "lex.yy.c"
+
+#line 855 "lex.yy.c"
+
+#line 857 "lex.yy.c"
 
 #define INITIAL 0
+#define COMMENT 1
+#define VARDECL 2
+#define STRING 3
+#define PRINT 4
+#define SCAN 5
 
 #ifndef YY_NO_UNISTD_H
 /* Special case for "unistd.h", since it is non-ANSI. We include it way
@@ -930,9 +1076,9 @@ YY_DECL
 		}
 
 	{
-#line 225 "lexer.l"
+#line 206 "parser.l"
 
-#line 935 "lex.yy.c"
+#line 1081 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -959,13 +1105,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 57 )
+				if ( yy_current_state >= 201 )
 					yy_c = yy_meta[yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 121 );
+		while ( yy_base[yy_current_state] != 493 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -977,6 +1123,16 @@ yy_find_action:
 			}
 
 		YY_DO_BEFORE_ACTION;
+
+		if ( yy_act != YY_END_OF_BUFFER && yy_rule_can_match_eol[yy_act] )
+			{
+			yy_size_t yyl;
+			for ( yyl = 0; yyl < yyleng; ++yyl )
+				if ( yytext[yyl] == '\n' )
+					
+    yylineno++;
+;
+			}
 
 do_action:	/* This label is used only to access EOF actions. */
 
@@ -991,100 +1147,661 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 226 "lexer.l"
-{ }
+#line 207 "parser.l"
+{ /* skip single line comments */ }
 	YY_BREAK
 case 2:
-/* rule 2 can match eol */
 YY_RULE_SETUP
-#line 227 "lexer.l"
-{ }
+#line 208 "parser.l"
+{ BEGIN(COMMENT); comment_index = 0; comment_buffer[0] = '\0'; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 228 "lexer.l"
-{ record_token(yytext, "Keyword"); return TK_BEGIN; }
+#line 209 "parser.l"
+{ BEGIN(INITIAL); }
 	YY_BREAK
 case 4:
+/* rule 4 can match eol */
 YY_RULE_SETUP
-#line 229 "lexer.l"
-{ record_token(yytext, "Keyword"); return TK_PROGRAM; }
+#line 210 "parser.l"
+{ 
+                          if (comment_index < MAX_COMMENT_SIZE - 1) {
+                              comment_buffer[comment_index++] = '\n';
+                              comment_buffer[comment_index] = '\0';
+                          }
+                        }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 230 "lexer.l"
-{ record_token(yytext, "Keyword"); return TK_VARDECL; }
+#line 216 "parser.l"
+{ if (comment_index < MAX_COMMENT_SIZE - 1) {
+                              comment_buffer[comment_index++] = yytext[0];
+                              comment_buffer[comment_index] = '\0';
+                          }
+                        }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 231 "lexer.l"
-{ record_token(yytext, "Keyword"); return TK_END; }
+#line 222 "parser.l"
+{ print_token(yytext, "KEYWORD"); return TK_BEGIN; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 232 "lexer.l"
-{ record_token(yytext, "Keyword"); return TK_INT; }
+#line 223 "parser.l"
+{ print_token(yytext, "KEYWORD"); return TK_END; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 233 "lexer.l"
-{ record_token(yytext, "Keyword"); return TK_CHAR; }
+#line 224 "parser.l"
+{ print_token(yytext, "KEYWORD"); return TK_PROGRAM; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 234 "lexer.l"
-{ record_token(yytext, "Separator"); return TK_COLON; }
+#line 226 "parser.l"
+{ 
+                          print_token(yytext, "KEYWORD"); 
+                          varDeclFlag = 1;
+                          return TK_VARDECL; 
+                        }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 235 "lexer.l"
-{ record_token(yytext, "Separator"); return TK_SEP; }
+#line 232 "parser.l"
+{ 
+                          print_token(yytext, "SEPARATOR"); 
+                          if (varDeclFlag) {
+                              varDeclFlag = 0;
+                              BEGIN(VARDECL);
+                          }
+                          return TK_COLON; 
+                        }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 236 "lexer.l"
-{ record_token(yytext, "Separator"); return LPAREN; }
+#line 241 "parser.l"
+{ 
+                          print_token(yytext, "KEYWORD"); 
+                          BEGIN(INITIAL);
+                          return TK_END; 
+                        }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 237 "lexer.l"
-{ record_token(yytext, "Separator"); return RPAREN; }
+#line 247 "parser.l"
+{ 
+                          print_token(yytext, "KEYWORD");
+                          BEGIN(INITIAL);
+                          return TK_VARDECL; 
+                        }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 238 "lexer.l"
-{ record_token(yytext, "Separator"); return COMMA; }
+#line 253 "parser.l"
+{ 
+                          print_token(yytext, "SEPARATOR"); 
+                          varDeclPos = 0;
+                          return LPAREN; 
+                        }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 240 "lexer.l"
-{
-    record_token(yytext, "Identifier");
-    yylval.str = strdup(yytext);
-    return IDENTIFIER;
-}
+#line 259 "parser.l"
+{ 
+                          print_token(yytext, "SEPARATOR"); 
+                          return RPAREN; 
+                        }
 	YY_BREAK
 case 15:
-/* rule 15 can match eol */
 YY_RULE_SETUP
-#line 246 "lexer.l"
-{ }
+#line 264 "parser.l"
+{ 
+                          print_token(yytext, "SEPARATOR"); 
+                          varDeclPos++;
+                          return COMMA; 
+                        }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 248 "lexer.l"
-{
-    record_token(yytext, "Error: unexpected token");
-    return yytext[0];
-}
+#line 270 "parser.l"
+{ 
+                          print_token(yytext, "SEPARATOR"); 
+                          varDeclPos = 0;
+                          return TK_SEP; 
+                        }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 253 "lexer.l"
+#line 276 "parser.l"
+{ 
+                          print_token(yytext, "KEYWORD"); 
+                          return TK_INT; 
+                        }
+	YY_BREAK
+case 18:
+YY_RULE_SETUP
+#line 281 "parser.l"
+{ 
+                          print_token(yytext, "KEYWORD"); 
+                          return TK_CHAR; 
+                        }
+	YY_BREAK
+case 19:
+YY_RULE_SETUP
+#line 286 "parser.l"
+{ 
+                          if (varDeclPos == 0) { 
+                              if (!validate_identifier(yytext)) {
+                                  print_token(yytext, "ERROR: Invalid identifier");
+                              } else if (isDeclared(yytext)) {
+                                  print_token(yytext, "ERROR: Identifier already declared");
+                              } else {
+                                  print_token(yytext, "IDENTIFIER");
+                                  symbolTable[symbolCount++] = strdup(yytext);
+                              }
+                          } else if (varDeclPos == 1) {
+                              print_token(yytext, "ERROR: Invalid data type");
+                          }
+                          yylval.str = strdup(yytext);
+                          return IDENTIFIER;
+                        }
+	YY_BREAK
+case 20:
+YY_RULE_SETUP
+#line 303 "parser.l"
+{
+                          print_token(yytext, "ERROR: Invalid token in VarDecl");
+                          return yytext[0]; /* Return first char to allow parser to recover */
+                        }
+	YY_BREAK
+case 21:
+/* rule 21 can match eol */
+YY_RULE_SETUP
+#line 308 "parser.l"
+{ }
+	YY_BREAK
+case 22:
+YY_RULE_SETUP
+#line 310 "parser.l"
+{ print_token(yytext, "KEYWORD"); return TK_IF; }
+	YY_BREAK
+case 23:
+YY_RULE_SETUP
+#line 311 "parser.l"
+{ print_token(yytext, "KEYWORD"); return TK_ELSE; }
+	YY_BREAK
+case 24:
+YY_RULE_SETUP
+#line 312 "parser.l"
+{ print_token(yytext, "KEYWORD"); return TK_WHILE; }
+	YY_BREAK
+case 25:
+YY_RULE_SETUP
+#line 313 "parser.l"
+{ print_token(yytext, "KEYWORD"); return TK_FOR; }
+	YY_BREAK
+case 26:
+YY_RULE_SETUP
+#line 314 "parser.l"
+{ print_token(yytext, "KEYWORD"); return TK_DO; }
+	YY_BREAK
+case 27:
+YY_RULE_SETUP
+#line 315 "parser.l"
+{ print_token(yytext, "KEYWORD"); return TK_TO; }
+	YY_BREAK
+case 28:
+YY_RULE_SETUP
+#line 316 "parser.l"
+{ print_token(yytext, "KEYWORD"); return TK_INC; }
+	YY_BREAK
+case 29:
+YY_RULE_SETUP
+#line 317 "parser.l"
+{ print_token(yytext, "KEYWORD"); return TK_DEC; }
+	YY_BREAK
+case 30:
+YY_RULE_SETUP
+#line 318 "parser.l"
+{ print_token(yytext, "KEYWORD"); return TK_MAIN; }
+	YY_BREAK
+case 31:
+YY_RULE_SETUP
+#line 319 "parser.l"
+{ print_token(yytext, "KEYWORD"); return TK_INT; }
+	YY_BREAK
+case 32:
+YY_RULE_SETUP
+#line 320 "parser.l"
+{ print_token(yytext, "KEYWORD"); return TK_CHAR; }
+	YY_BREAK
+case 33:
+YY_RULE_SETUP
+#line 322 "parser.l"
+{ print_token(yytext, "SEPARATOR"); return TK_SEP; }
+	YY_BREAK
+case 34:
+YY_RULE_SETUP
+#line 323 "parser.l"
+{ print_token(yytext, "SEPARATOR"); return LPAREN; }
+	YY_BREAK
+case 35:
+YY_RULE_SETUP
+#line 324 "parser.l"
+{ print_token(yytext, "SEPARATOR"); return RPAREN; }
+	YY_BREAK
+case 36:
+YY_RULE_SETUP
+#line 325 "parser.l"
+{ print_token(yytext, "SEPARATOR"); return COMMA; }
+	YY_BREAK
+case 37:
+YY_RULE_SETUP
+#line 327 "parser.l"
+{ print_token(yytext, "OPERATOR"); return PLUS; }
+	YY_BREAK
+case 38:
+YY_RULE_SETUP
+#line 328 "parser.l"
+{ print_token(yytext, "OPERATOR"); return MINUS; }
+	YY_BREAK
+case 39:
+YY_RULE_SETUP
+#line 329 "parser.l"
+{ print_token(yytext, "OPERATOR"); return MULT; }
+	YY_BREAK
+case 40:
+YY_RULE_SETUP
+#line 330 "parser.l"
+{ print_token(yytext, "OPERATOR"); return DIV; }
+	YY_BREAK
+case 41:
+YY_RULE_SETUP
+#line 331 "parser.l"
+{ print_token(yytext, "OPERATOR"); return MOD; }
+	YY_BREAK
+case 42:
+YY_RULE_SETUP
+#line 333 "parser.l"
+{ print_token(yytext, "OPERATOR"); return EQ; }
+	YY_BREAK
+case 43:
+YY_RULE_SETUP
+#line 334 "parser.l"
+{ print_token(yytext, "OPERATOR"); return GT; }
+	YY_BREAK
+case 44:
+YY_RULE_SETUP
+#line 335 "parser.l"
+{ print_token(yytext, "OPERATOR"); return LT; }
+	YY_BREAK
+case 45:
+YY_RULE_SETUP
+#line 336 "parser.l"
+{ print_token(yytext, "OPERATOR"); return GE; }
+	YY_BREAK
+case 46:
+YY_RULE_SETUP
+#line 337 "parser.l"
+{ print_token(yytext, "OPERATOR"); return LE; }
+	YY_BREAK
+case 47:
+YY_RULE_SETUP
+#line 338 "parser.l"
+{ print_token(yytext, "OPERATOR"); return NE; }
+	YY_BREAK
+case 48:
+YY_RULE_SETUP
+#line 340 "parser.l"
+{ print_token(yytext, "Assignment operator"); return ASSIGN; }
+	YY_BREAK
+case 49:
+YY_RULE_SETUP
+#line 341 "parser.l"
+{ print_token(yytext, "OPERATOR"); return PLUS_ASSIGN; }
+	YY_BREAK
+case 50:
+YY_RULE_SETUP
+#line 342 "parser.l"
+{ print_token(yytext, "OPERATOR"); return MINUS_ASSIGN; }
+	YY_BREAK
+case 51:
+YY_RULE_SETUP
+#line 343 "parser.l"
+{ print_token(yytext, "OPERATOR"); return MULT_ASSIGN; }
+	YY_BREAK
+case 52:
+YY_RULE_SETUP
+#line 344 "parser.l"
+{ print_token(yytext, "OPERATOR"); return DIV_ASSIGN; }
+	YY_BREAK
+case 53:
+YY_RULE_SETUP
+#line 345 "parser.l"
+{ print_token(yytext, "OPERATOR"); return MOD_ASSIGN; }
+	YY_BREAK
+case 54:
+YY_RULE_SETUP
+#line 347 "parser.l"
+{ 
+                          print_token(yytext, "KEYWORD"); 
+                          reset_print_buffers();
+                          BEGIN(PRINT);
+                          return TK_PRINT;
+                        }
+	YY_BREAK
+case 55:
+YY_RULE_SETUP
+#line 354 "parser.l"
+{ 
+                          print_token(yytext, "SEPARATOR"); 
+                          parentheses_count++;
+                          return LPAREN;
+                        }
+	YY_BREAK
+case 56:
+YY_RULE_SETUP
+#line 360 "parser.l"
+{ BEGIN(STRING); }
+	YY_BREAK
+case 57:
+/* rule 57 can match eol */
+YY_RULE_SETUP
+#line 362 "parser.l"
+{ 
+                          strncat(print_string, yytext, sizeof(print_string)-strlen(print_string)-1);
+                        }
+	YY_BREAK
+case 58:
+YY_RULE_SETUP
+#line 366 "parser.l"
+{ 
+                          print_state_string_captured = 1;
+                          count_at_symbols(print_string);
+                          BEGIN(PRINT);
+                          yylval.str = strdup(print_string);
+                          return STRING_LITERAL;
+                        }
+	YY_BREAK
+case 59:
+YY_RULE_SETUP
+#line 374 "parser.l"
+{ 
+                          print_token(yytext, "SEPARATOR"); 
+                          return COMMA; 
+                        }
+	YY_BREAK
+case 60:
+YY_RULE_SETUP
+#line 379 "parser.l"
+{ 
+                          print_token(yytext, "IDENTIFIER");
+                          arg_count++;
+                          if(print_args[0] != '\0')
+                              strncat(print_args, ", ", sizeof(print_args)-strlen(print_args)-1);
+                          strncat(print_args, yytext, sizeof(print_args)-strlen(print_args)-1);
+                          yylval.str = strdup(yytext);
+                          return IDENTIFIER;
+                        }
+	YY_BREAK
+case 61:
+YY_RULE_SETUP
+#line 389 "parser.l"
+{
+                          print_token(yytext, "INTEGER_CONST");
+                          arg_count++;
+                          yylval.str = strdup(yytext);
+                          return INTEGER_CONST;
+                        }
+	YY_BREAK
+case 62:
+/* rule 62 can match eol */
+YY_RULE_SETUP
+#line 396 "parser.l"
+{
+                          print_token(yytext, "CHARACTER_CONST");
+                          arg_count++;
+                          yylval.str = strdup(yytext);
+                          return CHAR_CONST;
+                        }
+	YY_BREAK
+case 63:
+YY_RULE_SETUP
+#line 403 "parser.l"
+{ 
+                          print_token(yytext, "SEPARATOR");
+                          parentheses_count--;
+                          return RPAREN; 
+                        }
+	YY_BREAK
+case 64:
+YY_RULE_SETUP
+#line 409 "parser.l"
+{ 
+                          print_token(yytext, "SEPARATOR");
+                          finalize_print_statement();
+                          BEGIN(INITIAL);
+                          return TK_SEP; 
+                        }
+	YY_BREAK
+case 65:
+YY_RULE_SETUP
+#line 416 "parser.l"
+{ 
+                          print_token(yytext, "KEYWORD");
+                          reset_scan_buffers();
+                          BEGIN(SCAN);
+                          return TK_SCAN;
+                        }
+	YY_BREAK
+case 66:
+YY_RULE_SETUP
+#line 423 "parser.l"
+{ 
+                          print_token(yytext, "SEPARATOR");
+                          scan_paranthesis_count++;
+                          return LPAREN; 
+                        }
+	YY_BREAK
+case 67:
+/* rule 67 can match eol */
+YY_RULE_SETUP
+#line 429 "parser.l"
+{ 
+                          print_token(yytext, "STRING_LITERAL");
+                          strncpy(scan_string, yytext, yyleng);
+                          scan_string[yyleng] = '\0';
+                          count_all_symbols(scan_string);
+                          yylval.str = strdup(yytext);
+                          return STRING_LITERAL;
+                        }
+	YY_BREAK
+case 68:
+YY_RULE_SETUP
+#line 438 "parser.l"
+{ 
+                          print_token(yytext, "SEPARATOR"); 
+                          return COMMA; 
+                        }
+	YY_BREAK
+case 69:
+YY_RULE_SETUP
+#line 443 "parser.l"
+{ 
+                          print_token(yytext, "IDENTIFIER");
+                          scan_arg_count++;
+                          if(!validate_identifier(yytext))
+                              scan_fl = 1;
+                          else
+                              scan_fl = (!isDeclared(yytext))?1:scan_fl; 
+                          if(scan_args[0] != '\0')
+                              strncat(scan_args, ", ", sizeof(scan_args)-strlen(scan_args)-1);
+                          strncat(scan_args, yytext, sizeof(scan_args)-strlen(scan_args)-1);
+                          yylval.str = strdup(yytext);
+                          return IDENTIFIER;
+                        }
+	YY_BREAK
+case 70:
+YY_RULE_SETUP
+#line 457 "parser.l"
+{ 
+                          print_token(yytext, "SEPARATOR");
+                          scan_paranthesis_count--;
+                          return RPAREN; 
+                        }
+	YY_BREAK
+case 71:
+YY_RULE_SETUP
+#line 463 "parser.l"
+{ 
+                          print_token(yytext, "SEPARATOR");
+                          char temp[1204];
+                          snprintf(temp, sizeof(temp), "scan(%s, %s);", scan_string, scan_args);
+                          if (!validate_scan_placeholders(scan_string))
+                               print_token(temp, "Error: invalid input statement");
+                          else if (scan_paranthesis_count != 0)
+                               print_token(temp, "Error: invalid input statement");
+                          else if (scan_arg_count != scan_symbol_count)
+                               print_token(temp, "Error: invalid input statement");
+                          else
+                               print_token(temp, "Valid input statement");
+                          BEGIN(INITIAL);
+                          return TK_SEP; 
+                        }
+	YY_BREAK
+case 72:
+YY_RULE_SETUP
+#line 479 "parser.l"
+{ 
+                          if (validate_identifier(yytext)) {
+                              print_token(yytext, "IDENTIFIER");
+                          } else {
+                              print_token(yytext, "ERROR: Invalid identifier");
+                          }
+                          yylval.str = strdup(yytext);
+                          return IDENTIFIER; 
+                        }
+	YY_BREAK
+case 73:
+YY_RULE_SETUP
+#line 489 "parser.l"
+{
+                          char tmp[128];
+                          char *start = yytext + 1;
+                          while (*start == ' ' || *start == '\t') start++;
+                          int value_len = (int)(strchr(yytext, ',') - start);
+                          strncpy(tmp, start, value_len);
+                          tmp[value_len] = '\0';
+                          if (validate_binary(tmp)) {
+                              print_token(yytext, "BINARY_INTEGER");
+                          } else {
+                              print_token(yytext, "ERROR: Invalid binary integer");
+                          }
+                          yylval.str = strdup(yytext);
+                          return INTEGER_CONST;
+                        }
+	YY_BREAK
+case 74:
+YY_RULE_SETUP
+#line 505 "parser.l"
+{
+                          char tmp[128];
+                          char *start = yytext + 1;
+                          while (*start == ' ' || *start == '\t') start++;
+                          char *comma_ptr = strchr(start, ',');
+                          int value_len = (int)(comma_ptr - start);
+                          strncpy(tmp, start, value_len);
+                          tmp[value_len] = '\0';
+                          
+                          if (validate_octal(tmp)) {
+                              print_token(yytext, "OCTAL_INTEGER");
+                          } else {
+                              print_token(yytext, "ERROR: Invalid octal integer");
+                          }
+                          yylval.str = strdup(yytext);
+                          return INTEGER_CONST;
+                        }
+	YY_BREAK
+case 75:
+YY_RULE_SETUP
+#line 523 "parser.l"
+{
+                          char tmp[128];
+                          char *start = yytext + 1;
+                          while (*start == ' ' || *start == '\t') start++;
+                          char *comma_ptr = strchr(start, ',');
+                          int value_len = (int)(comma_ptr - start);
+                          strncpy(tmp, start, value_len);
+                          tmp[value_len] = '\0';
+                          
+                          if (validate_decimal(tmp)) {
+                              print_token(yytext, "DECIMAL_INTEGER");
+                          } else {
+                              print_token(yytext, "ERROR: Invalid decimal integer");
+                          }
+                          yylval.str = strdup(yytext);
+                          return INTEGER_CONST;
+                        }
+	YY_BREAK
+case 76:
+YY_RULE_SETUP
+#line 541 "parser.l"
+{
+                          print_token(yytext, "ERROR: Invalid integer format");
+                          yylval.str = strdup(yytext);
+                          return INTEGER_CONST;  
+                        }
+	YY_BREAK
+case 77:
+/* rule 77 can match eol */
+YY_RULE_SETUP
+#line 547 "parser.l"
+{
+                          if (validate_char_const(yytext)) {
+                              print_token(yytext, "CHARACTER_CONST");
+                          } else {
+                              print_token(yytext, "ERROR: Invalid character constant");
+                          }
+                          yylval.str = strdup(yytext);
+                          return CHAR_CONST;
+                        }
+	YY_BREAK
+case 78:
+YY_RULE_SETUP
+#line 557 "parser.l"
+{ 
+                          print_token(yytext, "STRING_LITERAL"); 
+                          yylval.str = strdup(yytext); 
+                          return STRING_LITERAL; 
+                        }
+	YY_BREAK
+case 79:
+YY_RULE_SETUP
+#line 563 "parser.l"
+{ /* skip whitespace */ }
+	YY_BREAK
+case 80:
+/* rule 80 can match eol */
+YY_RULE_SETUP
+#line 564 "parser.l"
+{ /* skip newlines */ }
+	YY_BREAK
+case 81:
+YY_RULE_SETUP
+#line 565 "parser.l"
+{ print_token(yytext, "ERROR: unexpected character"); return yytext[0]; }
+	YY_BREAK
+case 82:
+YY_RULE_SETUP
+#line 567 "parser.l"
 ECHO;
 	YY_BREAK
-#line 1086 "lex.yy.c"
+#line 1798 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
+case YY_STATE_EOF(COMMENT):
+case YY_STATE_EOF(VARDECL):
+case YY_STATE_EOF(STRING):
+case YY_STATE_EOF(PRINT):
+case YY_STATE_EOF(SCAN):
 	yyterminate();
 
 	case YY_END_OF_BUFFER:
@@ -1380,7 +2097,7 @@ static int yy_get_next_buffer (void)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 57 )
+			if ( yy_current_state >= 201 )
 				yy_c = yy_meta[yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
@@ -1408,11 +2125,11 @@ static int yy_get_next_buffer (void)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 57 )
+		if ( yy_current_state >= 201 )
 			yy_c = yy_meta[yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
-	yy_is_jam = (yy_current_state == 56);
+	yy_is_jam = (yy_current_state == 200);
 
 		return yy_is_jam ? 0 : yy_current_state;
 }
@@ -1450,6 +2167,10 @@ static int yy_get_next_buffer (void)
 		}
 
 	*--yy_cp = (char) c;
+
+    if ( c == '\n' ){
+        --yylineno;
+    }
 
 	(yytext_ptr) = yy_bp;
 	(yy_hold_char) = *yy_cp;
@@ -1527,6 +2248,11 @@ static int yy_get_next_buffer (void)
 	c = *(unsigned char *) (yy_c_buf_p);	/* cast for 8-bit char's */
 	*(yy_c_buf_p) = '\0';	/* preserve yytext */
 	(yy_hold_char) = *++(yy_c_buf_p);
+
+	if ( c == '\n' )
+		
+    yylineno++;
+;
 
 	return c;
 }
@@ -1994,6 +2720,9 @@ static int yy_init_globals (void)
      * This function is called from yylex_destroy(), so don't allocate here.
      */
 
+    /* We do not touch yylineno unless the option is enabled. */
+    yylineno =  1;
+    
     (yy_buffer_stack) = NULL;
     (yy_buffer_stack_top) = 0;
     (yy_buffer_stack_max) = 0;
@@ -2088,9 +2817,5 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 253 "lexer.l"
+#line 567 "parser.l"
 
-
-int yywrap(void) {
-    return 1;
-}
