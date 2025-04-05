@@ -107,9 +107,12 @@ int validate_identifier(const char *text);
 int isKeyword(const char *text);
 int isDeclared(const char *id);
 extern void record_token(const char* lexeme, const char* token);
+
+/* Modify yyerror to not print to stderr */
 void yyerror(const char *s) {
-    fprintf(stderr, "%s\n", s);
+    /* Do nothing - we'll handle errors in our own way */
 }
+
 int yylex(void);
 FILE *yyin;
 extern char* token_output[];
@@ -118,6 +121,9 @@ extern char* symbolTable[256];
 extern int symbolCount;
 extern int varDeclPos;
 extern int varDeclFlag;
+
+/* Flag to track if we should discard syntax error messages */
+int discard_error_messages = 1;
 
 
 /* Enabling traces.  */
@@ -140,12 +146,12 @@ extern int varDeclFlag;
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 21 "lexer.y"
+#line 27 "lexer.y"
 {
     char* str;
 }
 /* Line 193 of yacc.c.  */
-#line 149 "lexer.tab.c"
+#line 155 "lexer.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -158,7 +164,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 162 "lexer.tab.c"
+#line 168 "lexer.tab.c"
 
 #ifdef short
 # undef short
@@ -444,8 +450,8 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    32,    32,    37,    41,    42,    43,    47,    78,    79,
-      80
+       0,    38,    38,    43,    47,    48,    49,    53,    84,    85,
+      86
 };
 #endif
 
@@ -1357,17 +1363,17 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 33 "lexer.y"
+#line 39 "lexer.y"
     { ;}
     break;
 
   case 6:
-#line 43 "lexer.y"
-    { yyerror("Syntax error in declaration"); yyerrok; ;}
+#line 49 "lexer.y"
+    { yyerrok; ;}
     break;
 
   case 7:
-#line 48 "lexer.y"
+#line 54 "lexer.y"
     {
          /* Save current token_output count before processing declaration tokens */
          int tokens_start = token_output_count;
@@ -1398,17 +1404,17 @@ yyreduce:
     break;
 
   case 8:
-#line 78 "lexer.y"
+#line 84 "lexer.y"
     { (yyval.str) = strdup("int"); ;}
     break;
 
   case 9:
-#line 79 "lexer.y"
+#line 85 "lexer.y"
     { (yyval.str) = strdup("char"); ;}
     break;
 
   case 10:
-#line 80 "lexer.y"
+#line 86 "lexer.y"
     {
       char* invalid_type = strdup((yyvsp[(1) - (1)].str));
       int i;
@@ -1425,7 +1431,7 @@ yyreduce:
           }
       }
       char err_token[256];
-      snprintf(err_token, sizeof(err_token), "%-20s  %s", invalid_type, "Error: invalid data type)");
+      snprintf(err_token, sizeof(err_token), "%-20s  %s", invalid_type, "Error: invalid data type");
       token_output[token_output_count++] = strdup(err_token);
       char err_msg[256];
       snprintf(err_msg, sizeof(err_msg), "%s (invalid data type)", invalid_type);
@@ -1437,7 +1443,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 1441 "lexer.tab.c"
+#line 1447 "lexer.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1651,7 +1657,7 @@ yyreturn:
 }
 
 
-#line 106 "lexer.y"
+#line 112 "lexer.y"
 
 
 int main(int argc, char **argv) {
@@ -1664,13 +1670,39 @@ int main(int argc, char **argv) {
        perror("Error opening file");
        exit(1);
     }
+    
     /* Print header before parsing */
     printf("%-20s  %s\n", "LEXEME", "TOKEN TYPE");
+    
+    /* Parse input */
     yyparse();
+    
+    /* Close input file */
     fclose(yyin);
+    
+    /* Filter out any standalone error messages */
+    int j = 0;
+    for (int i = 0; i < token_output_count; i++) {
+        /* Skip any token that contains just the standalone error messages */
+        if (strcmp(token_output[i], "syntax error") == 0 || 
+            strstr(token_output[i], "Syntax error in declaration") != NULL) {
+            free(token_output[i]);
+        } 
+        else {
+            /* Move valid tokens to the beginning of the array */
+            if (j != i) {
+                token_output[j] = token_output[i];
+            }
+            j++;
+        }
+    }
+    token_output_count = j;
+    
+    /* Print filtered token output */
     for (int i = 0; i < token_output_count; i++) {
         printf("%s\n", token_output[i]);
         free(token_output[i]);
     }
+    
     return 0;
 }
