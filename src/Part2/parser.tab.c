@@ -444,7 +444,7 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    35,    35,    43,    47,    48,    50,    54,    85,    86
+       0,    35,    35,    40,    44,    45,    47,    51,    82,    83
 };
 #endif
 
@@ -1355,19 +1355,16 @@ yyreduce:
     {
         case 2:
 #line 36 "parser.y"
-    { 
-         /* Instead of an immediate printf, record the success message */
-         token_output[token_output_count++] = strdup("Program parsed successfully.");
-       ;}
+    { ;}
     break;
 
   case 6:
-#line 50 "parser.y"
+#line 47 "parser.y"
     { yyerror("Syntax error in declaration"); yyerrok; ;}
     break;
 
   case 7:
-#line 55 "parser.y"
+#line 52 "parser.y"
     {
          /* Save current token_output count before processing declaration tokens */
          int tokens_start = token_output_count;
@@ -1398,18 +1395,18 @@ yyreduce:
     break;
 
   case 8:
-#line 85 "parser.y"
+#line 82 "parser.y"
     { (yyval.str) = strdup("int"); ;}
     break;
 
   case 9:
-#line 86 "parser.y"
+#line 83 "parser.y"
     { (yyval.str) = strdup("char"); ;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1413 "parser.tab.c"
+#line 1410 "parser.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1623,7 +1620,7 @@ yyreturn:
 }
 
 
-#line 89 "parser.y"
+#line 86 "parser.y"
 
 
 int main(int argc, char **argv) {

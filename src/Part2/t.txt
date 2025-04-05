@@ -1,0 +1,8 @@
+begin program:
+// single line comment
+begin VarDecl:
+(a, int); (b, int); (sum, int); (count, int);
+(a, char);
+(scan, int);
+end VarDecl
+end program

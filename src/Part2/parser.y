@@ -33,10 +33,7 @@ extern int varDeclFlag;
 %%
 program:
     TK_BEGIN TK_PROGRAM TK_COLON var_decl_block TK_END TK_PROGRAM
-       { 
-         /* Instead of an immediate printf, record the success message */
-         token_output[token_output_count++] = strdup("Program parsed successfully.");
-       }
+       { }
     ;
 
 var_decl_block:
