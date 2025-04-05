@@ -1425,7 +1425,7 @@ yyreduce:
           }
       }
       char err_token[256];
-      snprintf(err_token, sizeof(err_token), "%-20s  %s", invalid_type, "ERROR (invalid data type)");
+      snprintf(err_token, sizeof(err_token), "%-20s  %s", invalid_type, "Error: invalid data type)");
       token_output[token_output_count++] = strdup(err_token);
       char err_msg[256];
       snprintf(err_msg, sizeof(err_msg), "%s (invalid data type)", invalid_type);
