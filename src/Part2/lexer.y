@@ -96,7 +96,7 @@ type:
       snprintf(err_token, sizeof(err_token), "%-20s  %s", invalid_type, "Syntax Error: invalid data type");
       token_output[token_output_count++] = strdup(err_token);
       char err_msg[256];
-      snprintf(err_msg, sizeof(err_msg), "Error: %s is not a valid data type (only int and char allowed)", invalid_type);
+      snprintf(err_msg, sizeof(err_msg), "Syntax Error: invalid data type", invalid_type);
       $$ = strdup(err_msg);
       free(invalid_type);
       free($1);
