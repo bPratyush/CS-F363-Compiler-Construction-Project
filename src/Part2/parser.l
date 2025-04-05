@@ -345,14 +345,14 @@ int isKeyword(const char *word) {
 "%="                    { print_token(yytext, "OPERATOR"); return MOD_ASSIGN; }
 
 "print"                 { 
-                          print_token(yytext, "KEYWORD"); 
+                        //  print_token(yytext, "KEYWORD"); 
                           reset_print_buffers();
                           BEGIN(PRINT);
                           return TK_PRINT;
                         }
 
 <PRINT>"("              { 
-                          print_token(yytext, "SEPARATOR"); 
+                    //      print_token(yytext, "SEPARATOR"); 
                           parentheses_count++;
                           return LPAREN;
                         }
@@ -372,12 +372,12 @@ int isKeyword(const char *word) {
                         }
 
 <PRINT>","              { 
-                          print_token(yytext, "SEPARATOR"); 
+                     //     print_token(yytext, "SEPARATOR"); 
                           return COMMA; 
                         }
 
 <PRINT>[a-z][a-z0-9_]*  { 
-                          print_token(yytext, "IDENTIFIER");
+                    //      print_token(yytext, "IDENTIFIER");
                           arg_count++;
                           if(print_args[0] != '\0')
                               strncat(print_args, ", ", sizeof(print_args)-strlen(print_args)-1);
@@ -387,31 +387,41 @@ int isKeyword(const char *word) {
                         }
 
 <PRINT>\([ \t]*[0-9]+[ \t]*,[ \t]*(2|8|10)[ \t]*\) {
-                          print_token(yytext, "INTEGER_CONST");
+                    //      print_token(yytext, "INTEGER_CONST");
                           arg_count++;
                           yylval.str = strdup(yytext);
                           return INTEGER_CONST;
                         }
 
 <PRINT>\'([^']|\\.)+\'  {
-                          print_token(yytext, "CHARACTER_CONST");
+                     //     print_token(yytext, "CHARACTER_CONST");
                           arg_count++;
                           yylval.str = strdup(yytext);
                           return CHAR_CONST;
                         }
 
 <PRINT>")"              { 
-                          print_token(yytext, "SEPARATOR");
+                       //   print_token(yytext, "SEPARATOR");
                           parentheses_count--;
                           return RPAREN; 
                         }
 
 <PRINT>";"              { 
-                          print_token(yytext, "SEPARATOR");
+                       //   print_token(yytext, "SEPARATOR");
                           finalize_print_statement();
                           BEGIN(INITIAL);
                           return TK_SEP; 
                         }
+
+<PRINT>[ \t]+           { /* Skip whitespace in print statements */ }
+
+<PRINT>\n               { /* Skip newlines in print statements */ }
+
+<PRINT>.                {
+                          print_token(yytext, "ERROR: unexpected character in print statement");
+                          return yytext[0];
+                        }
+
 
 "scan"                  { 
                           print_token(yytext, "KEYWORD");
