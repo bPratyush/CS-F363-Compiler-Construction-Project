@@ -1032,7 +1032,6 @@ case 14:
 YY_RULE_SETUP
 #line 213 "lexer.l"
 {
-    /* For identifiers like "float" we need to classify them as identifiers but let the grammar handle the validation */
     record_token(yytext, "Identifier");
     yylval.str = strdup(yytext);
     return IDENTIFIER;
@@ -1041,12 +1040,12 @@ YY_RULE_SETUP
 case 15:
 /* rule 15 can match eol */
 YY_RULE_SETUP
-#line 220 "lexer.l"
-{ /* skip whitespace */ }
+#line 219 "lexer.l"
+{ }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 222 "lexer.l"
+#line 221 "lexer.l"
 {
     record_token(yytext, "Error: unexpected token");
     return yytext[0];
@@ -1054,10 +1053,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 227 "lexer.l"
+#line 226 "lexer.l"
 ECHO;
 	YY_BREAK
-#line 1060 "lex.yy.c"
+#line 1059 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2062,7 +2061,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 227 "lexer.l"
+#line 226 "lexer.l"
 
 
 int yywrap(void) {
