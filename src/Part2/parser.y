@@ -28,7 +28,7 @@ int print_lexeme_token_pairs = 1; // Default to printing lexeme-token pairs
 %token PLUS MINUS MULT DIV MOD
 %token EQ GT LT GE LE NE
 %token ASSIGN PLUS_ASSIGN MINUS_ASSIGN MULT_ASSIGN DIV_ASSIGN MOD_ASSIGN
-%token SCAN_STRING
+
 /* Handle the dangling else problem with proper precedence */
 %nonassoc NO_ELSE
 %nonassoc TK_ELSE
@@ -136,13 +136,6 @@ expression_statement:
 print_statement:
     TK_PRINT LPAREN STRING_LITERAL optional_print_args RPAREN TK_SEP
     ;
-scan_statement:
-    TK_SCAN  LPAREN  SCAN_STRING scan_arg_list RPAREN TK_SEP
-    ;
-
-scan_arg_list: COMMA IDENTIFIER 
-| COMMA IDENTIFIER scan_arg_list
-;
 
 optional_print_args:
     /* empty */
@@ -154,7 +147,9 @@ print_arg_list:
     | print_arg_list COMMA expression
     ;
 
-
+scan_statement:
+    TK_SCAN LPAREN STRING_LITERAL COMMA id_list RPAREN TK_SEP
+    ;
 
 id_list:
     IDENTIFIER
@@ -168,6 +163,12 @@ compound_statement:
 selection_statement:
     TK_IF LPAREN expression RPAREN statement %prec NO_ELSE
     | TK_IF LPAREN expression RPAREN statement TK_ELSE statement
+    | error TK_ELSE statement { 
+        if (!print_lexeme_token_pairs) { 
+            yyerror("Syntax error: 'else' without matching 'if'"); 
+        }
+        yyerrok; 
+    }
     | TK_IF error statement %prec NO_ELSE { 
         if (!print_lexeme_token_pairs) { 
             yyerror("Syntax error in if condition"); 
@@ -282,8 +283,11 @@ void yyerror(const char *s) {
 }
 
 int main(int argc, char *argv[]) {
-
-yyin = fopen("input.txt", "r");
+if (argc != 2) {
+fprintf(stderr, "Usage: %s <input file>\n", argv[0]);
+return 1;
+}
+yyin = fopen(argv[1], "r");
 if (!yyin) {
 perror("Error opening file");
 return 1;
