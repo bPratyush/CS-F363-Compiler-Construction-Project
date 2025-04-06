@@ -414,20 +414,20 @@ int isKeyword(const char *word) {
 
 
 "scan"                  { 
-                          print_token(yytext, "KEYWORD");
+                         // print_token(yytext, "KEYWORD");
                           reset_scan_buffers();
                           BEGIN(SCAN);
                           return TK_SCAN;
                         }
 
 <SCAN>"("               { 
-                          print_token(yytext, "SEPARATOR");
+                         // print_token(yytext, "SEPARATOR");
                           scan_paranthesis_count++;
                           return LPAREN; 
                         }
 
 <SCAN>\"[^\"]*\"        { 
-                          print_token(yytext, "STRING_LITERAL");
+                       //   print_token(yytext, "STRING_LITERAL");
                           strncpy(scan_string, yytext, yyleng);
                           scan_string[yyleng] = '\0';
                           count_all_symbols(scan_string);
@@ -436,12 +436,12 @@ int isKeyword(const char *word) {
                         }
 
 <SCAN>","               { 
-                          print_token(yytext, "SEPARATOR"); 
+                        //  print_token(yytext, "SEPARATOR"); 
                           return COMMA; 
                         }
 
 <SCAN>[a-z][a-z0-9_]*   { 
-                          print_token(yytext, "IDENTIFIER");
+                         // print_token(yytext, "IDENTIFIER");
                           scan_arg_count++;
                           if(!validate_identifier(yytext))
                               scan_fl = 1;
@@ -455,13 +455,13 @@ int isKeyword(const char *word) {
                         }
 
 <SCAN>")"               { 
-                          print_token(yytext, "SEPARATOR");
+                        //  print_token(yytext, "SEPARATOR");
                           scan_paranthesis_count--;
                           return RPAREN; 
                         }
 
 <SCAN>";"               { 
-                          print_token(yytext, "SEPARATOR");
+                        //  print_token(yytext, "SEPARATOR");
                           char temp[1204];
                           snprintf(temp, sizeof(temp), "scan(%s, %s);", scan_string, scan_args);
                           if (!validate_scan_placeholders(scan_string))
