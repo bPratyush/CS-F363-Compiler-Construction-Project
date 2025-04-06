@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "parser.tab.h"  // Include Bison-generated header
+#include "parser.tab.h"  
 
 #define MAX_COMMENT_SIZE 2048
 static char comment_buffer[MAX_COMMENT_SIZE];
@@ -36,42 +36,17 @@ int isDeclared(const char* id) {
     }
     return 0;
 }
-
-void reset_print_buffers() {
-    memset(print_string, 0, sizeof(print_string));
-    memset(print_args, 0, sizeof(print_args));
-    print_state_string_captured = 0;
-    at_count = 0;
-    arg_count = 0;
-    parentheses_count = 0;
-}
-
-void count_at_symbols(const char* s) {
-    int i;
-    for (i = 0; s[i]; i++) {
-        if (s[i] == '@') at_count++;
-    }
-}
-
-void finalize_print_statement() {
-    char temp[1204];
-    if(strlen(print_args) > 0)
-         snprintf(temp, sizeof(temp), "print(\"%s\", %s);", print_string, print_args);
-    else
-         snprintf(temp, sizeof(temp), "print(\"%s\");", print_string);
+int check_for_no_declaration(char*str){
+    for(int i=0;i<symbolCount;i++)
+    {
+        if(strcmp(str,symbolTable[i])==0)
+        {
+            return 1;
+        }
     
-    if (!print_state_string_captured) {
-         print_token(temp, "Error: Invalid output statement");
-         return;
     }
-    if (at_count != arg_count) {
-         print_token(temp, "Error: Invalid output statement");
-         return;
-    }
-    
-    print_token(temp, "Valid output statement");
+    return 0;
 }
-
 int validate_identifier(const char *text) {
     const char *keywords[] = {
         "int","char","if","else","while","for","main","begin","end",
@@ -131,11 +106,16 @@ int validate_binary(const char *text) {
     return 1;
 }
 
+
+
+
 int scan_arg_count=0;
 int scan_paranthesis_count=0;
 int scan_symbol_count=0;
 int scan_fl=0;
 char scan_string[1024];
+static char scan_args[1024];
+
 
 void reset_scan_buffers(){
     scan_arg_count = 0;
@@ -180,31 +160,27 @@ int validate_scan_placeholders(const char *s) {
          return 0;
     return 1;
 }
-int statement_fl=0;
-int isKeyword(const char *word) {
-    const char *keywords[] = {
-        "begin", "end", "VarDecl", "int", "char", "if", "else", "while",
-        "for", "print", "scan", "program", "inc", "dec", "do", "to", "main", NULL
-    };
-    int i;
-    for (i = 0; keywords[i] != NULL; i++) {
-        if (strcmp(word, keywords[i]) == 0)
-            return 1;
-    }
-    return 0;
-}
 %}
 
 %option noyywrap yylineno
+%x COMMENT
 %x VARDECL
-%x STRING
-%x PRINT
-%x SCAN
-
+%x  SCAN
 %%
-"/*"([^*]|"*"+[^*/])*"*"+"/"  { }
-"//".*                       { }
-"/*"                    { }
+"//".*                  { /* skip single line comments */ }
+"/*"                    { BEGIN(COMMENT); comment_index = 0; comment_buffer[0] = '\0'; }
+<COMMENT>"*/"           { BEGIN(INITIAL); }
+<COMMENT>\n             { 
+                          if (comment_index < MAX_COMMENT_SIZE - 1) {
+                              comment_buffer[comment_index++] = '\n';
+                              comment_buffer[comment_index] = '\0';
+                          }
+                        }
+<COMMENT>.              { if (comment_index < MAX_COMMENT_SIZE - 1) {
+                              comment_buffer[comment_index++] = yytext[0];
+                              comment_buffer[comment_index] = '\0';
+                          }
+                        }
 
 "begin"                 { print_token(yytext, "KEYWORD"); return TK_BEGIN; }
 "end"                   { print_token(yytext, "KEYWORD"); return TK_END; }
@@ -230,9 +206,6 @@ int isKeyword(const char *word) {
                           BEGIN(INITIAL);
                           return TK_END; 
                         }
-
-<VARDECL>"/*"([^*]|"*"+[^*/])*"*"+"/"  {}
-<VARDECL>"//".*                       { }
 
 <VARDECL>"VarDecl"      { 
                           print_token(yytext, "KEYWORD");
@@ -295,7 +268,7 @@ int isKeyword(const char *word) {
                           return yytext[0]; /* Return first char to allow parser to recover */
                         }
 
-<VARDECL>[ \t\n]+       { }
+<VARDECL>[ \t\n]+       { /* Skip whitespace in VARDECL mode */ }
 
 "if"                    { print_token(yytext, "KEYWORD"); return TK_IF; }
 "else"                  { print_token(yytext, "KEYWORD"); return TK_ELSE; }
@@ -305,6 +278,9 @@ int isKeyword(const char *word) {
 "to"                    { print_token(yytext, "KEYWORD"); return TK_TO; }
 "inc"                   { print_token(yytext, "KEYWORD"); return TK_INC; }
 "dec"                   { print_token(yytext, "KEYWORD"); return TK_DEC; }
+"print"                 { print_token(yytext, "KEYWORD"); return TK_PRINT; }
+"scan"                  { reset_scan_buffers();
+                                BEGIN(SCAN);     return TK_SCAN; }
 "main"                  { print_token(yytext, "KEYWORD"); return TK_MAIN; }
 "int"                   { print_token(yytext, "KEYWORD"); return TK_INT; }
 "char"                  { print_token(yytext, "KEYWORD"); return TK_CHAR; }
@@ -334,147 +310,51 @@ int isKeyword(const char *word) {
 "/="                    { print_token(yytext, "OPERATOR"); return DIV_ASSIGN; }
 "%="                    { print_token(yytext, "OPERATOR"); return MOD_ASSIGN; }
 
-"print"                 { 
-                        //  print_token(yytext, "KEYWORD"); 
-                          reset_print_buffers();
-                          BEGIN(PRINT);
-                          return TK_PRINT;
-                        }
 
-<PRINT>"("              { 
-                    //      print_token(yytext, "SEPARATOR"); 
-                          parentheses_count++;
-                          return LPAREN;
-                        }
-
-<PRINT>\"               { BEGIN(STRING); }
-
-<STRING>[^\"]+          { 
-                          strncat(print_string, yytext, sizeof(print_string)-strlen(print_string)-1);
-                        }
-
-<STRING>\"              { 
-                          print_state_string_captured = 1;
-                          count_at_symbols(print_string);
-                          BEGIN(PRINT);
-                          yylval.str = strdup(print_string);
-                          return STRING_LITERAL;
-                        }
-
-<PRINT>","              { 
-                     //     print_token(yytext, "SEPARATOR"); 
-                          return COMMA; 
-                        }
-
-<PRINT>[a-z][a-z0-9_]*  { 
-                    //      print_token(yytext, "IDENTIFIER");
-                          arg_count++;
-                          if(print_args[0] != '\0')
-                              strncat(print_args, ", ", sizeof(print_args)-strlen(print_args)-1);
-                          strncat(print_args, yytext, sizeof(print_args)-strlen(print_args)-1);
-                          yylval.str = strdup(yytext);
-                          return IDENTIFIER;
-                        }
-
-<PRINT>\([ \t]*[0-9]+[ \t]*,[ \t]*(2|8|10)[ \t]*\) {
-                    //      print_token(yytext, "INTEGER_CONST");
-                          arg_count++;
-                          yylval.str = strdup(yytext);
-                          return INTEGER_CONST;
-                        }
-
-<PRINT>\'([^']|\\.)+\'  {
-                     //     print_token(yytext, "CHARACTER_CONST");
-                          arg_count++;
-                          yylval.str = strdup(yytext);
-                          return CHAR_CONST;
-                        }
-
-<PRINT>")"              { 
-                       //   print_token(yytext, "SEPARATOR");
-                          parentheses_count--;
-                          return RPAREN; 
-                        }
-
-<PRINT>";"              { 
-                       //   print_token(yytext, "SEPARATOR");
-                          finalize_print_statement();
-                          BEGIN(INITIAL);
-                          return TK_SEP; 
-                        }
-
-<PRINT>[ \t]+           { /* Skip whitespace in print statements */ }
-
-<PRINT>\n               { /* Skip newlines in print statements */ }
-
-<PRINT>.                {
-                          print_token(yytext, "ERROR: unexpected character in print statement");
-                          return yytext[0];
-                        }
+<SCAN>"(" {scan_paranthesis_count++; return LPAREN;}
+<SCAN>\"[^\"]*\"  { 
+                    strncpy(scan_string,yytext,yyleng);
+                    scan_string[yyleng]='\0';
+                    count_all_symbols(scan_string);
+                    return SCAN_STRING;
+                     }
+                                                                     
+<SCAN>[a-z][a-z0-9_]* { 
+    scan_arg_count++;
+    if(!validate_identifier(yytext))
+         scan_fl = 1;
+    else
+         scan_fl = (check_for_no_declaration(yytext)==0)?1:scan_fl; 
+    if(scan_args[0] != '\0')
+         strncat(scan_args, ", ", sizeof(scan_args)-strlen(scan_args)-1);
+    strncat(scan_args, yytext, sizeof(scan_args)-strlen(scan_args)-1);
+    
+    return IDENTIFIER;
+}
+<SCAN>")" {scan_paranthesis_count--; return RPAREN;}
+<SCAN>[ \t]*";"[ \t]* {
+    char temp[1204];
+   
+    snprintf(temp, sizeof(temp), "scan(%s, %s);", scan_string, scan_args);
+    if (!validate_scan_placeholders(scan_string))
+         printf("\t%-20s\t\t%s\t\n", temp, "Error:invalid input statement");
+    else if (scan_paranthesis_count != 0)
+         printf("\t%-20s\t\t%s\t\n", temp, "Error: invalid input statement");
+    else if (scan_arg_count != scan_symbol_count)
+         printf("\t%-20s\t\t%s\t\n", temp, "Error:invalid input statement");
+    else
+         printf("\t%-20s\t\t%s\t\n", temp, "Valid input statement");
+    BEGIN(INITIAL);
+    return TK_SEP;
+}
+<SCAN>"," {}
+<SCAN>\n {
+            printf("Error: invalid input statement\n"); 
+            BEGIN(INITIAL); 
+        }
 
 
-"scan"                  { 
-                          print_token(yytext, "KEYWORD");
-                          reset_scan_buffers();
-                          BEGIN(SCAN);
-                          return TK_SCAN;
-                        }
 
-<SCAN>"("               { 
-                          print_token(yytext, "SEPARATOR");
-                          scan_paranthesis_count++;
-                          return LPAREN; 
-                        }
-
-<SCAN>\"[^\"]*\"        { 
-                          print_token(yytext, "STRING_LITERAL");
-                          strncpy(scan_string, yytext, yyleng);
-                          scan_string[yyleng] = '\0';
-                          count_all_symbols(scan_string);
-                          yylval.str = strdup(yytext);
-                          return STRING_LITERAL;
-                        }
-
-<SCAN>","               { 
-                          print_token(yytext, "SEPARATOR"); 
-                          return COMMA; 
-                        }
-
-<SCAN>[a-z][a-z0-9_]*   { 
-                          print_token(yytext, "IDENTIFIER");
-                          scan_arg_count++;
-                          if(!validate_identifier(yytext))
-                              scan_fl = 1;
-                          else
-                              scan_fl = (!isDeclared(yytext))?1:scan_fl; 
-                          if(scan_args[0] != '\0')
-                              strncat(scan_args, ", ", sizeof(scan_args)-strlen(scan_args)-1);
-                          strncat(scan_args, yytext, sizeof(scan_args)-strlen(scan_args)-1);
-                          yylval.str = strdup(yytext);
-                          return IDENTIFIER;
-                        }
-
-<SCAN>")"               { 
-                          print_token(yytext, "SEPARATOR");
-                          scan_paranthesis_count--;
-                          return RPAREN; 
-                        }
-
-<SCAN>";"               { 
-                          print_token(yytext, "SEPARATOR");
-                          char temp[1204];
-                          snprintf(temp, sizeof(temp), "scan(%s, %s);", scan_string, scan_args);
-                          if (!validate_scan_placeholders(scan_string))
-                               print_token(temp, "Error: invalid input statement");
-                          else if (scan_paranthesis_count != 0)
-                               print_token(temp, "Error: invalid input statement");
-                          else if (scan_arg_count != scan_symbol_count)
-                               print_token(temp, "Error: invalid input statement");
-                          else
-                               print_token(temp, "Valid input statement");
-                          BEGIN(INITIAL);
-                          return TK_SEP; 
-                        }
 
 [a-z][a-z0-9_]*         { 
                           if (validate_identifier(yytext)) {
