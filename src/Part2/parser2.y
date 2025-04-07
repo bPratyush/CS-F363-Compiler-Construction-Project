@@ -119,7 +119,6 @@ statement:
     | compound_statement
     | selection_statement
     | iteration_statement
-    | conditional_statement
     ;
 
 expression_statement:
@@ -146,19 +145,6 @@ print_arg_list:
     expression
     | print_arg_list COMMA expression
     ;
-conditional_statement:
-    IDENTIFIER GE INTEGER_CONST
-    | IDENTIFIER EQ INTEGER_CONST
-    | IDENTIFIER GT INTEGER_CONST
-    | IDENTIFIER LE INTEGER_CONST
-    | IDENTIFIER LT INTEGER_CONST
-    | IDENTIFIER NE INTEGER_CONST
-    | error {
-        if (!print_lexeme_token_pairs) {
-            yyerror("Syntax error in conditional statement");
-        }
-        yyerrok;
-    }
 scan_statement:
     TK_SCAN LPAREN STRING_LITERAL COMMA id_list RPAREN TK_SEP
     ;
@@ -177,9 +163,7 @@ selection_statement:
     TK_IF ifexpr  statement %prec IFX
     | TK_IF  ifexpr statement TK_ELSE statement
     ;
-ifexpr:INTEGER_CONST
-| IDENTIFIER
-| conditional_statement
+ifexpr:expression
 
 
 iteration_statement:
