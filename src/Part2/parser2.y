@@ -173,7 +173,6 @@ expression:
     ;
 
 
-   Only an IDENTIFIER can appear on the left. */
 assignment_expression:
       equality_expression
     | IDENTIFIER assignment_operator assignment_expression
