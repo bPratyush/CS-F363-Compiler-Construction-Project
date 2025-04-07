@@ -104,12 +104,6 @@ type:
 statement_list:
     statement
     |  statement statement_list
-    | statement_list error { 
-        if (!print_lexeme_token_pairs) {
-            yyerror("Syntax error in statement");
-        }
-        yyerrok; 
-    }
     ;
 
 statement:
