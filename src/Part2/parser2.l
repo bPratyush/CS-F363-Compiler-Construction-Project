@@ -208,7 +208,7 @@ int isKeyword(const char *word) {
 "begin"/[ \t]*("program"|"VarDecl")[ \t]*               { print_token(yytext, "KEYWORD"); return TK_BEGIN; }
 
 "begin"      {
-     print_token(yytext, "KEYWORD2"); return   TK_BLOCKBEGIN; }
+     print_token(yytext, "KEYWORD"); return   TK_BLOCKBEGIN; }
 "end"                   { print_token(yytext, "KEYWORD"); return TK_END; }
 "program"               { print_token(yytext, "KEYWORD"); return TK_PROGRAM; }
 

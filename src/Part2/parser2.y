@@ -184,7 +184,9 @@ ifexpr:INTEGER_CONST
 
 iteration_statement:
     TK_WHILE LPAREN expression RPAREN TK_DO statement
-    | TK_FOR LPAREN IDENTIFIER ASSIGN expression TK_TO expression optional_inc RPAREN TK_DO statement
+    | TK_WHILE expression TK_DO statement
+    | TK_FOR LPAREN IDENTIFIER ASSIGN expression TK_TO expression optional_inc expression RPAREN TK_DO statement
+    | TK_FOR IDENTIFIER ASSIGN expression TK_TO expression optional_inc expression TK_DO statement
     | TK_DO statement TK_WHILE LPAREN expression RPAREN TK_SEP
     ;
 
