@@ -165,6 +165,7 @@ iteration_statement:
 optional_inc:
     /* empty */
     | TK_INC expression
+    | TK_DEC expression
     ;
 
 
