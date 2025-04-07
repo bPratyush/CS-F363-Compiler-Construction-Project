@@ -124,12 +124,6 @@ statement:
 expression_statement:
     expression TK_SEP
     | TK_SEP  /* Empty statement */
-    | error TK_SEP { 
-        if (!print_lexeme_token_pairs) {
-            yyerror("Syntax error in expression"); 
-        }
-        yyerrok; 
-    }
     ;
 
 print_statement:
