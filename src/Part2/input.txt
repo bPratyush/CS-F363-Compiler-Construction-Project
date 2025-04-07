@@ -1,9 +1,9 @@
 begin program:
 begin VarDecl:
-(num1, int);
-(print, char);
-(num2, int);
-(sum_tem_123, int);
+(num1,int);
+(print,char);
+(num2,int);
+(sum_tem_123,int);
 end VarDecl
 num1:= (10, 2);
 if num1 > (20, 2)
