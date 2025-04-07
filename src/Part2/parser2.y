@@ -167,23 +167,20 @@ optional_inc:
     | TK_INC expression
     ;
 
+
 expression:
     assignment_expression
-    | error { 
-        if (!print_lexeme_token_pairs) {
-            yyerror("Invalid expression"); 
-        }
-        yyerrok; 
-    }
     ;
 
+
+   Only an IDENTIFIER can appear on the left. */
 assignment_expression:
-    logical_or_expression
+      equality_expression
     | IDENTIFIER assignment_operator assignment_expression
     ;
 
 assignment_operator:
-    ASSIGN
+      ASSIGN
     | PLUS_ASSIGN
     | MINUS_ASSIGN
     | MULT_ASSIGN
@@ -191,61 +188,85 @@ assignment_operator:
     | MOD_ASSIGN
     ;
 
-logical_or_expression:
-    logical_and_expression
-    ;
-
-logical_and_expression:
-    equality_expression
-    ;
 
 equality_expression:
-    relational_expression
-    | equality_expression EQ relational_expression
-    | equality_expression NE relational_expression
+      relational_expression equality_expression_tail
     ;
+
+equality_expression_tail:
+      /* empty */
+    | EQ relational_expression
+      { /* then continue tail recursively */ }
+      equality_expression_tail
+    | NE relational_expression
+      { /* then continue tail recursively */ }
+      equality_expression_tail
+    ;
+
 
 relational_expression:
-    additive_expression
-    | relational_expression LT additive_expression
-    | relational_expression GT additive_expression
-    | relational_expression LE additive_expression
-    | relational_expression GE additive_expression
+      additive_expression relational_expression_tail
     ;
+
+relational_expression_tail:
+      /* empty */
+    | LT additive_expression
+    | GT additive_expression
+    | LE additive_expression
+    | GE additive_expression
+    ;
+
 
 additive_expression:
-    multiplicative_expression
-    | additive_expression PLUS multiplicative_expression
-    | additive_expression MINUS multiplicative_expression
+      multiplicative_expression additive_expression_tail
     ;
+
+additive_expression_tail:
+      /* empty */
+    | PLUS multiplicative_expression additive_expression_tail
+    | MINUS multiplicative_expression additive_expression_tail
+    ;
+
 
 multiplicative_expression:
-    unary_expression
-    | multiplicative_expression MULT unary_expression
-    | multiplicative_expression DIV unary_expression
-    | multiplicative_expression MOD unary_expression
+      unary_expression multiplicative_expression_tail
     ;
 
+multiplicative_expression_tail:
+      /* empty */
+    | MULT unary_expression multiplicative_expression_tail
+    | DIV unary_expression multiplicative_expression_tail
+    | MOD unary_expression multiplicative_expression_tail
+    ;
+
+
 unary_expression:
-    postfix_expression
+      postfix_expression
     | PLUS unary_expression
     | MINUS unary_expression
     | TK_INC unary_expression
     | TK_DEC unary_expression
     ;
 
+
 postfix_expression:
-    primary_expression
-    | postfix_expression TK_INC
-    | postfix_expression TK_DEC
+      primary_expression postfix_expression_tail
     ;
 
+postfix_expression_tail:
+      /* empty */
+    | TK_INC
+    | TK_DEC
+    ;
+
+
 primary_expression:
-    IDENTIFIER
+      IDENTIFIER
     | INTEGER_CONST
     | CHAR_CONST
     | LPAREN expression RPAREN
     ;
+
 %%
 
 void yyerror(const char *s) {
