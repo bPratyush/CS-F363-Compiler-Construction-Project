@@ -304,17 +304,11 @@ compound_statement:
 
 selection_statement:
      TK_IF ifexpr compound_statement TK_SEP %prec IFX
-    | TK_IF ifexpr compound_statement TK_ELSE statement
-
-    /* if with single statement (requires semicolon if no else) */
-    | TK_IF ifexpr statement TK_SEP %prec IFX
-    | TK_IF ifexpr statement TK_ELSE statement
+    | TK_IF ifexpr compound_statement TK_ELSE compound_statement TK_SEP
 
     /* if with parentheses */
     | TK_IF LPAREN ifexpr RPAREN compound_statement TK_SEP %prec IFX
-    | TK_IF LPAREN ifexpr RPAREN compound_statement TK_ELSE statement
-    | TK_IF LPAREN ifexpr RPAREN statement TK_SEP %prec IFX
-    | TK_IF LPAREN ifexpr RPAREN statement TK_ELSE statement
+    | TK_IF LPAREN ifexpr RPAREN compound_statement TK_ELSE compound_statement TK_SEP
     ;
 
 ifexpr:
@@ -335,20 +329,20 @@ ifexpr:
     ;
 
 iteration_statement:
-    TK_WHILE LPAREN expression RPAREN TK_DO statement 
+    TK_WHILE LPAREN expression RPAREN TK_DO compound_statement TK_SEP
     {
     }
-    | TK_WHILE expression TK_DO statement
+    | TK_WHILE expression TK_DO compound_statement TK_SEP
     {
     }
     |
-    TK_WHILE LPAREN expression RPAREN statement 
+    TK_WHILE LPAREN expression RPAREN compound_statement TK_SEP
     {
     }
-    | TK_WHILE expression statement
+    | TK_WHILE expression compound_statement TK_SEP
     {
     }
-    | TK_FOR LPAREN IDENTIFIER ASSIGN expression TK_TO expression optional_inc expression RPAREN TK_DO statement
+    | TK_FOR LPAREN IDENTIFIER ASSIGN expression TK_TO expression optional_inc expression RPAREN TK_DO compound_statement TK_SEP
     {
         if (!is_declared($3)) {
             char error_msg[100];
@@ -356,16 +350,13 @@ iteration_statement:
             semantic_error(error_msg);
         }
     }
-    | TK_FOR IDENTIFIER ASSIGN expression TK_TO expression optional_inc expression TK_DO statement
+    | TK_FOR IDENTIFIER ASSIGN expression TK_TO expression optional_inc expression TK_DO compound_statement TK_SEP
     {
         if (!is_declared($2)) {
             char error_msg[100];
             snprintf(error_msg, sizeof(error_msg), "Variable '%s' not declared", $2);
             semantic_error(error_msg);
         }
-    }
-    | TK_DO statement TK_WHILE LPAREN expression RPAREN TK_SEP
-    {
     }
     ;
 
