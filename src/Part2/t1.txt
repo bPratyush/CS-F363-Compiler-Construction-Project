@@ -1,9 +1,0 @@
-begin program: 
-begin VarDecl: 
-/* list ofvariables ended. */
-(a, int); (b, int);
-(c, int); 
-// List of Variables
-/* list ofvariables ended. */
-end VarDecl
-end program
