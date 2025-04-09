@@ -380,6 +380,14 @@ selection_statement:
     {
         $$ = createTernaryNode(NODE_IF_ELSE_STMT, $2, $3, $5);
     }
+    | TK_IF LPAREN ifexpr RPAREN statement %prec IFX
+    {
+        $$ = createBinaryNode(NODE_IF_STMT, $3, $5);
+    }
+    | TK_IF LPAREN ifexpr RPAREN statement TK_ELSE statement
+    {
+        $$ = createTernaryNode(NODE_IF_ELSE_STMT, $3, $5, $7);
+    }
     ;
 
 ifexpr:
