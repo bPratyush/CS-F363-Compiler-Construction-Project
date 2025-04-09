@@ -88,44 +88,44 @@ const char* getNodeTypeName(NodeType type) {
         case NODE_MAIN_SECTION: return "MAIN_SECTION";
         case NODE_STATEMENT_LIST: return "STATEMENT_LIST";
         case NODE_VARDECL: return "VARDECL";
-        case NODE_TYPE_INT: return "TYPE_INT";
-        case NODE_TYPE_CHAR: return "TYPE_CHAR";
-        case NODE_COMPOUND_STMT: return "COMPOUND_STMT";
+        case NODE_TYPE_INT: return "int";
+        case NODE_TYPE_CHAR: return "char";
+        case NODE_COMPOUND_STMT: return "BLOCK_STMT";
         case NODE_IF_STMT: return "IF_STMT";
         case NODE_IF_ELSE_STMT: return "IF_ELSE_STMT";
-        case NODE_WHILE_STMT: return "WHILE_STMT";
-        case NODE_FOR_STMT: return "FOR_STMT";
+        case NODE_WHILE_STMT: return "while";
+        case NODE_FOR_STMT: return "for";
         case NODE_DO_WHILE_STMT: return "DO_WHILE_STMT";
-        case NODE_PRINT_STMT: return "PRINT_STMT";
-        case NODE_SCAN_STMT: return "SCAN_STMT";
+        case NODE_PRINT_STMT: return "print";
+        case NODE_SCAN_STMT: return "scan";
         case NODE_EXPR_STMT: return "EXPR_STMT";
-        case NODE_ASSIGN: return "ASSIGN";
-        case NODE_PLUS_ASSIGN: return "PLUS_ASSIGN";
-        case NODE_MINUS_ASSIGN: return "MINUS_ASSIGN";
-        case NODE_MULT_ASSIGN: return "MULT_ASSIGN";
-        case NODE_DIV_ASSIGN: return "DIV_ASSIGN";
-        case NODE_MOD_ASSIGN: return "MOD_ASSIGN";
-        case NODE_EQ: return "EQ";
-        case NODE_NE: return "NE";
-        case NODE_LT: return "LT";
-        case NODE_GT: return "GT";
-        case NODE_LE: return "LE";
-        case NODE_GE: return "GE";
-        case NODE_ADD: return "ADD";
-        case NODE_SUB: return "SUB";
-        case NODE_MUL: return "MUL";
-        case NODE_DIV: return "DIV";
-        case NODE_MOD: return "MOD";
+        case NODE_ASSIGN: return ":=";
+        case NODE_PLUS_ASSIGN: return "+=";
+        case NODE_MINUS_ASSIGN: return "-=";
+        case NODE_MULT_ASSIGN: return "*=";
+        case NODE_DIV_ASSIGN: return "/=";
+        case NODE_MOD_ASSIGN: return "%=";
+        case NODE_EQ: return "=";
+        case NODE_NE: return "<>";
+        case NODE_LT: return "<";
+        case NODE_GT: return ">";
+        case NODE_LE: return "<=";
+        case NODE_GE: return ">=";
+        case NODE_ADD: return "+";
+        case NODE_SUB: return "-";
+        case NODE_MUL: return "*";
+        case NODE_DIV: return "/";
+        case NODE_MOD: return "%";
         case NODE_UNARY_PLUS: return "UNARY_PLUS";
         case NODE_UNARY_MINUS: return "UNARY_MINUS";
         case NODE_PRE_INC: return "PRE_INC";
         case NODE_PRE_DEC: return "PRE_DEC";
         case NODE_POST_INC: return "POST_INC";
         case NODE_POST_DEC: return "POST_DEC";
-        case NODE_IDENTIFIER: return "IDENTIFIER";
-        case NODE_INT_LITERAL: return "INT_LITERAL";
-        case NODE_CHAR_LITERAL: return "CHAR_LITERAL";
-        case NODE_STRING_LITERAL: return "STRING_LITERAL";
+        case NODE_IDENTIFIER: return "";
+        case NODE_INT_LITERAL: return "";
+        case NODE_CHAR_LITERAL: return "";
+        case NODE_STRING_LITERAL: return "";
         default: return "UNKNOWN";
     }
 }
@@ -149,7 +149,7 @@ void printAST(ASTNode* node, int indent) {
         case NODE_INT_LITERAL:
         case NODE_CHAR_LITERAL:
         case NODE_STRING_LITERAL:
-            printf(": %s", node->data.strValue);
+            printf("%s", node->data.strValue);
             break;
         default:
             break;
