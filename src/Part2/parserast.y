@@ -159,7 +159,7 @@ var_decl_list:
             $$ = $2;
         }
     }
-    | error TK_SEP { 
+    | error { 
         if (!print_lexeme_token_pairs) {
             yyerror("Syntax error in declaration");
         }

@@ -131,7 +131,9 @@ var_decl_list:
     }
     | error { 
         yyerrok; 
-        syntax_errors++; 
+        syntax_errors++;
+        printf("Syntax Error !!!\n");
+        return 0; 
     }
     ;
 
