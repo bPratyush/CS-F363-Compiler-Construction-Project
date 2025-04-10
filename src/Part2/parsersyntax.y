@@ -129,7 +129,7 @@ var_decl_list:
     | var_decl_list var_decl
     {
     }
-    | error TK_SEP { 
+    | error { 
         yyerrok; 
         syntax_errors++; 
     }
