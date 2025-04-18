@@ -265,6 +265,15 @@ iteration_statement:
          printf("goto %s\n", Lstart);
          printf("%s:\n", Lend);
      }
+  | TK_WHILE expression TK_DO compound_statement TK_SEP
+    {  
+         char *Lstart = newlabel();
+         char *Lend = newlabel();
+         printf("%s:\n", Lstart);
+         printf("if not %s goto %s\n", $2, Lend);
+         printf("goto %s\n", Lstart);
+         printf("%s:\n", Lend);
+    }
   | TK_FOR LPAREN IDENTIFIER ASSIGN expression TK_TO expression optional_inc expression RPAREN TK_DO compound_statement TK_SEP {
          if(!is_declared($3)){
             char err[100];
