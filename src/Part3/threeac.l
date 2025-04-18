@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "code1.tab.h"
+#include "threeac.tab.h"
 #define MAX_COMMENT_SIZE 2048
 static char comment_buffer[MAX_COMMENT_SIZE];
 static int comment_index = 0;
