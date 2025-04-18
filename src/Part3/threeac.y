@@ -46,6 +46,7 @@ int is_declared(const char* id) {
 }
 void print_result() {
     if(!output_printed) {
+        printf("I am Here\n");
         if(syntax_errors==0 && semantic_errors==0)
             printf("Successfully Parsed !!!\n");
         else
@@ -70,6 +71,7 @@ void print_result() {
 %token<str> ASSIGN PLUS_ASSIGN MINUS_ASSIGN MULT_ASSIGN DIV_ASSIGN MOD_ASSIGN
 %token<str> TK_BLOCKBEGIN
 %token<str> OR AND NOT
+%token<str> UNARY
 
 %nonassoc IFX
 %nonassoc TK_ELSE
@@ -83,7 +85,7 @@ void print_result() {
 %right UNARY
 %start program
 
-%type<str> expression assignment_expression equality_expression relational_expression additive_expression multiplicative_expression unary_expression primary_expression postfix_expression boolean_expression ifexpr conditional_statement selection_statement compound_statement
+%type<str> expression assignment_expression equality_expression relational_expression additive_expression multiplicative_expression unary_expression primary_expression postfix_expression  ifexpr conditional_statement selection_statement compound_statement optional_inc assignment_operator postfix_expression_tail
 
 %%
 program:
@@ -211,8 +213,9 @@ compound_statement:
     TK_BLOCKBEGIN statement_list TK_END { }
   ;
 selection_statement:
-
-    TK_IF LPAREN relational_expression RPAREN compound_statement TK_SEP %prec IFX
+     TK_IF ifexpr compound_statement TK_SEP %prec IFX
+    | TK_IF ifexpr compound_statement TK_ELSE compound_statement TK_SEP
+    | TK_IF LPAREN relational_expression RPAREN compound_statement TK_SEP %prec IFX
     {
         char *L1 = newlabel();
         
@@ -265,7 +268,7 @@ iteration_statement:
          printf("goto %s\n", Lstart);
          printf("%s:\n", Lend);
      }
-  | TK_WHILE expression TK_DO compound_statement TK_SEP
+   | TK_WHILE expression TK_DO compound_statement TK_SEP
     {  
          char *Lstart = newlabel();
          char *Lend = newlabel();
@@ -275,18 +278,47 @@ iteration_statement:
          printf("%s:\n", Lend);
     }
   | TK_FOR LPAREN IDENTIFIER ASSIGN expression TK_TO expression optional_inc expression RPAREN TK_DO compound_statement TK_SEP {
-         if(!is_declared($3)){
-            char err[100];
-            snprintf(err, sizeof(err),"Variable '%s' not declared", $3);
-            semantic_error(err);
-         }
-     }
-  | TK_FOR IDENTIFIER ASSIGN expression TK_TO expression optional_inc expression RPAREN TK_DO compound_statement TK_SEP {
-         if(!is_declared($2)){
-            char err[100];
-            snprintf(err, sizeof(err),"Variable '%s' not declared", $2);
-            semantic_error(err);
-         }
+    
+
+   printf("%s = %s\n", $3, $5);
+
+    char *L1 = newlabel();
+    char *L2 = newlabel();
+    char *tmp_cmp = newtemp();
+    char *tmp_inc = $8 ? $8 : "1";
+
+    printf("%s:\n", L1);
+
+    printf("if %s >= %s goto %s\n", $3, $7, L2);
+
+    char *tmp_add = newtemp();
+    printf("%s = %s + %s\n", tmp_add, $3, tmp_inc);
+    printf("%s = %s\n", $3, tmp_add);
+
+    printf("goto %s\n", L1);
+
+    printf("%s:\n", L2);
+  }
+  | TK_FOR IDENTIFIER ASSIGN expression TK_TO expression optional_inc expression TK_DO compound_statement TK_SEP {
+      
+
+   printf("%s = %s\n", $2, $4);
+
+    char *L1 = newlabel();
+    char *L2 = newlabel();
+    char *tmp_cmp = newtemp();
+    char *tmp_inc = $7 ? $7 : "1"; 
+    printf("%s:\n", L1);
+
+    printf("if %s >= %s goto %s\n", $2, $6, L2);
+
+    char *tmp_add = newtemp();
+    printf("%s = %s + %s\n", tmp_add, $2, tmp_inc);
+    printf("%s = %s\n", $2, tmp_add);
+
+    printf("goto %s\n", L1);
+
+    printf("%s:\n", L2);
      }
   ;
 optional_inc:
@@ -296,11 +328,11 @@ optional_inc:
   ;
 expression:
     assignment_expression { $$ = $1; }
-  | boolean_expression { $$ = $1; }
+  | conditional_statement  { $$ = $1; }
   ;
 assignment_expression:
     equality_expression { $$ = $1; }
-  | IDENTIFIER ASSIGN assignment_expression {
+  | IDENTIFIER assignment_operator assignment_expression {
          if(!is_declared($1)){
              char err[100];
              snprintf(err, sizeof(err),"Variable '%s' not declared", $1);
@@ -319,26 +351,28 @@ assignment_expression:
          $$ = $1;
      }
   ;
+assignment_operator:
+    ASSIGN
+    { $$ = $1;
+    }
+    | PLUS_ASSIGN
+    { $$ = $1;
+    }
+    | MINUS_ASSIGN
+    { $$ = $1;
+    }
+    | MULT_ASSIGN
+    { $$ = $1;
+    }
+    | DIV_ASSIGN
+    { $$ = $1;
+    }
+    | MOD_ASSIGN
+    { $$ = $1;
+    }
+    ;
 equality_expression:
     relational_expression { $$ = $1; }
-  ;
-boolean_expression:
-    boolean_expression OR boolean_expression {
-         char *temp = newtemp();
-         printf("%s = %s or %s\n", temp, $1, $3);
-         $$ = temp;
-     }
-  | boolean_expression AND boolean_expression {
-         char *temp = newtemp();
-         printf("%s = %s and %s\n", temp, $1, $3);
-         $$ = temp;
-     }
-  | NOT boolean_expression {
-         char *temp = newtemp();
-         printf("%s = not %s\n", temp, $2);
-         $$ = temp;
-     }
-  | relational_expression { $$ = $1; }
   ;
 relational_expression:
     additive_expression { $$ = $1; }
@@ -386,8 +420,9 @@ additive_expression:
          $$ = temp;
      }
   ;
+  
 multiplicative_expression:
-    unary_expression { $$ = $1; }
+    unary_expression {  }
   | multiplicative_expression MULT unary_expression {
          char *temp = newtemp();
          printf("%s = %s * %s\n", temp, $1, $3);
@@ -406,8 +441,8 @@ multiplicative_expression:
   ;
 unary_expression:
     postfix_expression { $$ = $1; }
-  | PLUS unary_expression { $$ = $2; }
-  | MINUS unary_expression {
+  | PLUS unary_expression %prec UNARY { $$ = $2; }
+  | MINUS unary_expression %prec UNARY {
          char *temp = newtemp();
          printf("%s = 0 - %s\n", temp, $2);
          $$ = temp;
@@ -416,8 +451,19 @@ unary_expression:
   | TK_DEC unary_expression { $$ = $2; }
   ;
 postfix_expression:
-    primary_expression { $$ = $1; }
+    primary_expression postfix_expression_tail { $$ = $1; }
   ;
+postfix_expression_tail:
+    /* empty */
+    {
+    }
+    | TK_INC
+    {
+    }
+    | TK_DEC
+    {
+    }
+    ;
 primary_expression:
     IDENTIFIER {
          if(!is_declared($1)){
