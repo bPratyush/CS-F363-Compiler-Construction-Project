@@ -83,22 +83,22 @@ void addToList(ASTNode* list, ASTNode* node) {
 /* Get a string representation of node type */
 const char* getNodeTypeName(NodeType type) {
     switch (type) {
-        case NODE_PROGRAM: return "PROGRAM";
-        case NODE_VARDECL_SECTION: return "VARDECL_SECTION";
-        case NODE_MAIN_SECTION: return "MAIN_SECTION";
-        case NODE_STATEMENT_LIST: return "STATEMENT_LIST";
-        case NODE_VARDECL: return "VARDECL";
+        case NODE_PROGRAM: return "|";
+        case NODE_VARDECL_SECTION: return "|";
+        case NODE_MAIN_SECTION: return "|";
+        case NODE_STATEMENT_LIST: return "|";
+        case NODE_VARDECL: return "|";
         case NODE_TYPE_INT: return "int";
         case NODE_TYPE_CHAR: return "char";
-        case NODE_COMPOUND_STMT: return "BLOCK_STMT";
-        case NODE_IF_STMT: return "IF_STMT";
-        case NODE_IF_ELSE_STMT: return "IF_ELSE_STMT";
+        case NODE_COMPOUND_STMT: return "|";
+        case NODE_IF_STMT: return "|";
+        case NODE_IF_ELSE_STMT: return "|";
         case NODE_WHILE_STMT: return "while";
         case NODE_FOR_STMT: return "for";
-        case NODE_DO_WHILE_STMT: return "DO_WHILE_STMT";
+        case NODE_DO_WHILE_STMT: return "|";
         case NODE_PRINT_STMT: return "print";
         case NODE_SCAN_STMT: return "scan";
-        case NODE_EXPR_STMT: return "EXPR_STMT";
+        case NODE_EXPR_STMT: return "|";
         case NODE_ASSIGN: return ":=";
         case NODE_PLUS_ASSIGN: return "+=";
         case NODE_MINUS_ASSIGN: return "-=";
@@ -116,12 +116,12 @@ const char* getNodeTypeName(NodeType type) {
         case NODE_MUL: return "*";
         case NODE_DIV: return "/";
         case NODE_MOD: return "%";
-        case NODE_UNARY_PLUS: return "UNARY_PLUS";
-        case NODE_UNARY_MINUS: return "UNARY_MINUS";
-        case NODE_PRE_INC: return "PRE_INC";
-        case NODE_PRE_DEC: return "PRE_DEC";
-        case NODE_POST_INC: return "POST_INC";
-        case NODE_POST_DEC: return "POST_DEC";
+        case NODE_UNARY_PLUS: return "|";
+        case NODE_UNARY_MINUS: return "|";
+        case NODE_PRE_INC: return "|";
+        case NODE_PRE_DEC: return "|";
+        case NODE_POST_INC: return "|";
+        case NODE_POST_DEC: return "|";
         case NODE_IDENTIFIER: return "";
         case NODE_INT_LITERAL: return "";
         case NODE_CHAR_LITERAL: return "";
@@ -171,10 +171,10 @@ void printAST(ASTNode* node, int indent) {
             
         case NODE_IF_STMT:
             printIndent(indent + 1);
-            printf("CONDITION\n");
+            printf("|\n");
             printAST(node->data.children.left, indent + 2);
             printIndent(indent + 1);
-            printf("IF BLOCK\n");
+            printf("|\n");
             printAST(node->data.children.right, indent + 2);
             break;
         case NODE_WHILE_STMT:
@@ -216,13 +216,13 @@ void printAST(ASTNode* node, int indent) {
 
         case NODE_IF_ELSE_STMT:
             printIndent(indent + 1);
-            printf("CONDITION\n");
+            printf("|\n");
             printAST(node->data.ternary.first, indent + 2);
             printIndent(indent + 1);
-            printf("IF BLOCK\n");
+            printf("|\n");
             printAST(node->data.ternary.second, indent + 2);
             printIndent(indent + 1);
-            printf("ELSE BLOCK\n");
+            printf("|\n");
             printAST(node->data.ternary.third, indent + 2);
             break;
              
