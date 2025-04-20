@@ -1,0 +1,22 @@
+begin program:
+begin VarDecl:
+(i, int); (limit, int); (result, int); (temp, int);
+end VarDecl
+i := (1, 4);
+limit := (5, 4);
+result := (0, 4);
+while i <= limit do
+begin
+    if i % (2, 5) = (0, 5)
+    begin
+        result += i;
+    end
+    else
+    begin
+        temp := i * (3, 6);
+        result += temp;
+    end;
+    i += (1, 7);
+end;
+print("Final Result = @", result);
+end program

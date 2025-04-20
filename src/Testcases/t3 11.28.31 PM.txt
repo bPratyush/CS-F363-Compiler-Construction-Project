@@ -1,0 +1,6 @@
+begin program:
+begin VarDecl:
+(x, int); (msg, char);
+end VarDecl
+y := (10, 4); // Error: y not declared
+end program

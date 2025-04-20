@@ -1,0 +1,10 @@
+begin program: 
+begin VarDecl: 
+(a, int); (sum, int);
+end VarDecl 
+sum=(0,0);
+while a < (10, 10) do
+begin
+a += sum;
+end;
+end program

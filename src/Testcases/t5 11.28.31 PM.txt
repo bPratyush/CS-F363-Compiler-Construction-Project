@@ -1,0 +1,12 @@
+begin program:
+begin VarDecl:
+(x, int); (y, int); (z, int); (flag, char);
+end VarDecl
+x := (10, 5);
+y := (20, 6);
+begin
+    z := x + y;
+        print("z is large: @", z);
+        print("z is small: @", z);
+end
+end program

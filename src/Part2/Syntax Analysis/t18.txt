@@ -1,6 +1,0 @@
-begin program:
-// single line comment
-begin VarDecl:
-(a, int); (sum, int); (count, int);
-end VarDecl
-end program

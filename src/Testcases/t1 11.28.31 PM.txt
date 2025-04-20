@@ -1,0 +1,16 @@
+begin program:
+// Testing char and int interactions
+begin VarDecl:
+(a, int); (b, int);
+end VarDecl
+if a > (20, 12)
+begin
+a -= (1, 10);
+print("Value of a = @", a);
+end
+else
+begin
+b := b + (1, 8);
+print("Value of b = @", b);
+end;
+end program
