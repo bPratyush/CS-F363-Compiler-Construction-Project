@@ -1,0 +1,8 @@
+begin program: 
+begin VarDecl: 
+(x, int); 
+end VarDecl 
+x := (1, 10); 
+if (x > (0, 10)) 
+x := (2, 10); // compound block is missing 
+end program

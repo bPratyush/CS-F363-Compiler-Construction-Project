@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "parser.tab.h"  // Include Bison-generated header
+#include "parsersyntax.tab.h"  // Include Bison-generated header
 
 #define MAX_COMMENT_SIZE 2048
 static char comment_buffer[MAX_COMMENT_SIZE];
@@ -18,14 +18,13 @@ static int varDeclPos = 0;
 char* symbolTable[256];
 int symbolCount = 0;
 static int varDeclFlag = 0;
-
+int suppress_lexer_output = 1;
 // External variable from parser to check if we should print tokens
 extern int print_lexeme_token_pairs;
 
-// Function to print lexeme-token pairs
 void print_token(const char* lexeme, const char* token_type) {
-    if (print_lexeme_token_pairs) {
-        printf("%-20s  %-20s\n", lexeme, token_type);
+    if (print_lexeme_token_pairs && !suppress_lexer_output) {
+        fprintf(stderr, "%-20s  %-20s\n", lexeme, token_type);
     }
 }
 
@@ -54,22 +53,12 @@ void count_at_symbols(const char* s) {
 }
 
 void finalize_print_statement() {
+    // Removed any direct output here
     char temp[1204];
     if(strlen(print_args) > 0)
          snprintf(temp, sizeof(temp), "print(\"%s\", %s);", print_string, print_args);
     else
          snprintf(temp, sizeof(temp), "print(\"%s\");", print_string);
-    
-    if (!print_state_string_captured) {
-         print_token(temp, "Error: Invalid output statement");
-         return;
-    }
-    if (at_count != arg_count) {
-         print_token(temp, "Error: Invalid output statement");
-         return;
-    }
-    
-    print_token(temp, "Valid output statement");
 }
 
 int validate_identifier(const char *text) {
@@ -158,7 +147,6 @@ void count_all_symbols(char*str)
         idx++;
     }
 }
-
 int validate_scan_placeholders(const char *s) {
     int atCount = 0, commaCount = 0;
     int len = strlen(s);
@@ -206,7 +194,10 @@ int isKeyword(const char *word) {
 "//".*                       { }
 "/*"                    { }
 
-"begin"                 { print_token(yytext, "KEYWORD"); return TK_BEGIN; }
+"begin"/[ \t]*("program"|"VarDecl")[ \t]*               { print_token(yytext, "KEYWORD"); return TK_BEGIN; }
+
+"begin"      {
+     print_token(yytext, "KEYWORD"); return   TK_BLOCKBEGIN; }
 "end"                   { print_token(yytext, "KEYWORD"); return TK_END; }
 "program"               { print_token(yytext, "KEYWORD"); return TK_PROGRAM; }
 
@@ -272,7 +263,36 @@ int isKeyword(const char *word) {
                           print_token(yytext, "KEYWORD"); 
                           return TK_CHAR; 
                         }
-
+<VARDECL>[A-Za-z][A-Za-z0-9_]*\[[0-9]+\] {
+         char arrName[256], sizeStr[64];
+         if (sscanf(yytext, "%[^[][%[0-9]]", arrName, sizeStr) == 2) {
+             if (varDeclPos == 0) {
+                 if (isKeyword(arrName)) {
+                     // Changed to use print_token() which checks flag
+                     print_token(yytext, "Error: Keyword is used as an identifier");
+                 } else if (validate_identifier(arrName)) {
+                     int size = atoi(sizeStr);
+                     if (size > 0) {
+                         print_token(yytext, "array declaration");
+                         yylval.str = strdup(yytext);
+                         return IDENTIFIER;
+                         if (!isDeclared(arrName)) {
+                             symbolTable[symbolCount++] = strdup(arrName);
+                         }
+                     } else {
+                         print_token(yytext, "Error: invalid array size");
+                     }
+                 } else {
+                     print_token(yytext, "Error: invalid identifier");
+                 }
+             } else {  
+                 print_token(yytext, "keyword");
+             }
+             varDeclPos++;
+         } else {
+             print_token(yytext, "Error: invalid array declaration");
+         }
+    }
 <VARDECL>[a-z][a-z0-9_]* { 
                           if (varDeclPos == 0) { 
                               if (!validate_identifier(yytext)) {
@@ -335,14 +355,14 @@ int isKeyword(const char *word) {
 "%="                    { print_token(yytext, "OPERATOR"); return MOD_ASSIGN; }
 
 "print"                 { 
-                        //  print_token(yytext, "KEYWORD"); 
+                          print_token(yytext, "KEYWORD"); 
                           reset_print_buffers();
                           BEGIN(PRINT);
                           return TK_PRINT;
                         }
 
 <PRINT>"("              { 
-                    //      print_token(yytext, "SEPARATOR"); 
+                          print_token(yytext, "SEPARATOR"); 
                           parentheses_count++;
                           return LPAREN;
                         }
@@ -362,12 +382,12 @@ int isKeyword(const char *word) {
                         }
 
 <PRINT>","              { 
-                     //     print_token(yytext, "SEPARATOR"); 
+                          print_token(yytext, "SEPARATOR"); 
                           return COMMA; 
                         }
 
 <PRINT>[a-z][a-z0-9_]*  { 
-                    //      print_token(yytext, "IDENTIFIER");
+                          print_token(yytext, "IDENTIFIER");
                           arg_count++;
                           if(print_args[0] != '\0')
                               strncat(print_args, ", ", sizeof(print_args)-strlen(print_args)-1);
@@ -375,29 +395,58 @@ int isKeyword(const char *word) {
                           yylval.str = strdup(yytext);
                           return IDENTIFIER;
                         }
-
+<PRINT>[A-Za-z][A-Za-z0-9_]*\[[0-9]+\] {
+         char arrName[256], sizeStr[64];
+         if (sscanf(yytext, "%[^[][%[0-9]]", arrName, sizeStr) == 2) {
+             if (varDeclPos == 0) {
+                 if (isKeyword(arrName)) {
+                     print_token(yytext, "Error: Keyword is used as an identifier");
+                 } else if (validate_identifier(arrName)) {
+                     int size = atoi(sizeStr);
+                     if (size > 0) {
+                         print_token(yytext, "array declaration");
+                         yylval.str = strdup(yytext);
+                         return IDENTIFIER;
+                         if (!isDeclared(arrName)) {
+                             symbolTable[symbolCount++] = strdup(arrName);
+                         }
+                     } else {
+                         print_token(yytext, "Error: invalid array size");
+                     }
+                 } else {
+                     print_token(yytext, "Error: invalid identifier");
+                 }
+             } else {  
+                 print_token(yytext, "keyword");
+             }
+             varDeclPos++;
+         } else {
+             print_token(yytext, "Error: invalid array declaration");
+         }
+    }
+    
 <PRINT>\([ \t]*[0-9]+[ \t]*,[ \t]*(2|8|10)[ \t]*\) {
-                    //      print_token(yytext, "INTEGER_CONST");
+                          print_token(yytext, "INTEGER_CONST");
                           arg_count++;
                           yylval.str = strdup(yytext);
                           return INTEGER_CONST;
                         }
 
 <PRINT>\'([^']|\\.)+\'  {
-                     //     print_token(yytext, "CHARACTER_CONST");
+                          print_token(yytext, "CHARACTER_CONST");
                           arg_count++;
                           yylval.str = strdup(yytext);
                           return CHAR_CONST;
                         }
 
 <PRINT>")"              { 
-                       //   print_token(yytext, "SEPARATOR");
+                          print_token(yytext, "SEPARATOR");
                           parentheses_count--;
                           return RPAREN; 
                         }
 
 <PRINT>";"              { 
-                       //   print_token(yytext, "SEPARATOR");
+                          print_token(yytext, "SEPARATOR");
                           finalize_print_statement();
                           BEGIN(INITIAL);
                           return TK_SEP; 
@@ -414,20 +463,20 @@ int isKeyword(const char *word) {
 
 
 "scan"                  { 
-                         // print_token(yytext, "KEYWORD");
+                          print_token(yytext, "KEYWORD");
                           reset_scan_buffers();
                           BEGIN(SCAN);
                           return TK_SCAN;
                         }
 
 <SCAN>"("               { 
-                         // print_token(yytext, "SEPARATOR");
+                          print_token(yytext, "SEPARATOR");
                           scan_paranthesis_count++;
                           return LPAREN; 
                         }
 
 <SCAN>\"[^\"]*\"        { 
-                       //   print_token(yytext, "STRING_LITERAL");
+                          print_token(yytext, "STRING_LITERAL");
                           strncpy(scan_string, yytext, yyleng);
                           scan_string[yyleng] = '\0';
                           count_all_symbols(scan_string);
@@ -436,12 +485,12 @@ int isKeyword(const char *word) {
                         }
 
 <SCAN>","               { 
-                        //  print_token(yytext, "SEPARATOR"); 
+                          print_token(yytext, "SEPARATOR"); 
                           return COMMA; 
                         }
 
 <SCAN>[a-z][a-z0-9_]*   { 
-                         // print_token(yytext, "IDENTIFIER");
+                          print_token(yytext, "IDENTIFIER");
                           scan_arg_count++;
                           if(!validate_identifier(yytext))
                               scan_fl = 1;
@@ -453,28 +502,56 @@ int isKeyword(const char *word) {
                           yylval.str = strdup(yytext);
                           return IDENTIFIER;
                         }
+<SCAN>[A-Za-z][A-Za-z0-9_]*\[[0-9]+\] {
+         char arrName[256], sizeStr[64];
+         if (sscanf(yytext, "%[^[][%[0-9]]", arrName, sizeStr) == 2) {
+             if (varDeclPos == 0) {
+                 if (isKeyword(arrName)) {
+                     print_token(yytext, "Error: Keyword is used as an identifier");
+                 } else if (validate_identifier(arrName)) {
+                     int size = atoi(sizeStr);
+                     if (size > 0) {
+                         print_token(yytext, "array declaration");
+                         yylval.str = strdup(yytext);
+                         return IDENTIFIER;
+                         if (!isDeclared(arrName)) {
+                             symbolTable[symbolCount++] = strdup(arrName);
+                         }
+                     } else {
+                         print_token(yytext, "Error: invalid array size");
+                     }
+                 } else {
+                     print_token(yytext, "Error: invalid identifier");
+                 }
+             } else {  
+                 print_token(yytext, "keyword");
+             }
+             varDeclPos++;
+         } else {
+             print_token(yytext, "Error: invalid array declaration");
+         }
+    }
 
+                        
 <SCAN>")"               { 
-                        //  print_token(yytext, "SEPARATOR");
+                          print_token(yytext, "SEPARATOR");
                           scan_paranthesis_count--;
                           return RPAREN; 
                         }
 
 <SCAN>";"               { 
-                        //  print_token(yytext, "SEPARATOR");
+                          print_token(yytext, "SEPARATOR");
                           char temp[1204];
                           snprintf(temp, sizeof(temp), "scan(%s, %s);", scan_string, scan_args);
-                          if (!validate_scan_placeholders(scan_string))
-                               print_token(temp, "Error: invalid input statement");
-                          else if (scan_paranthesis_count != 0)
-                               print_token(temp, "Error: invalid input statement");
-                          else if (scan_arg_count != scan_symbol_count)
-                               print_token(temp, "Error: invalid input statement");
-                          else
-                               print_token(temp, "Valid input statement");
+                          if (!validate_scan_placeholders(scan_string) ||
+                              scan_paranthesis_count != 0 ||
+                              scan_arg_count != scan_symbol_count) {
+                          }
                           BEGIN(INITIAL);
                           return TK_SEP; 
                         }
+
+
 
 [a-z][a-z0-9_]*         { 
                           if (validate_identifier(yytext)) {
@@ -485,71 +562,77 @@ int isKeyword(const char *word) {
                           yylval.str = strdup(yytext);
                           return IDENTIFIER; 
                         }
+                        
+[A-Za-z][A-Za-z0-9_]*\[[0-9]+\] {
+         char arrName[256], sizeStr[64];
+         if (sscanf(yytext, "%[^[][%[0-9]]", arrName, sizeStr) == 2) {
+             if (varDeclPos == 0) {
+                 if (isKeyword(arrName)) {
+                     print_token(yytext, "Error: Keyword is used as an identifier");
+                 } else if (validate_identifier(arrName)) {
+                     int size = atoi(sizeStr);
+                     if (size > 0) {
+                         print_token(yytext, "array declaration");
+                         yylval.str = strdup(yytext);
+                         return IDENTIFIER;
+                         if (!isDeclared(arrName)) {
+                             symbolTable[symbolCount++] = strdup(arrName);
+                         }
+                     } else {
+                         print_token(yytext, "Error: invalid array size");
+                     }
+                 } else {
+                     print_token(yytext, "Error: invalid identifier");
+                 }
+             } else {  
+                 print_token(yytext, "keyword");
+             }
+             varDeclPos++;
+         } else {
+             print_token(yytext, "Error: invalid array declaration");
+         }
+    }
 
-\([ \t]*[0-9]+[ \t]*,[ \t]*2[ \t]*\)  {
-                          char tmp[128];
-                          char *start = yytext + 1;
-                          while (*start == ' ' || *start == '\t') start++;
-                          int value_len = (int)(strchr(yytext, ',') - start);
-                          strncpy(tmp, start, value_len);
-                          tmp[value_len] = '\0';
-                          if (validate_binary(tmp)) {
-                              print_token(yytext, "BINARY_INTEGER");
-                          } else {
-                              print_token(yytext, "ERROR: Invalid binary integer");
-                          }
-                          yylval.str = strdup(yytext);
-                          return INTEGER_CONST;
-                        }
+\([ \t]*[0-1]+[ \t]*,[ \t]*2[ \t]*\)  {
+    char tmp[128];
+    char *start = yytext + 1;
+    while (*start == ' ' || *start == '\t') start++;
+    int value_len = (int)(strchr(yytext, ',') - start);
+    strncpy(tmp, start, value_len);
+    tmp[value_len] = '\0';
+    print_token(yytext, validate_binary(tmp) ? "BINARY_INTEGER" : "ERROR: Invalid binary integer");
+    yylval.str = strdup(yytext);
+    return INTEGER_CONST;
+}
 
-\([ \t]*[0-9]+[ \t]*,[ \t]*8[ \t]*\)  {
-                          char tmp[128];
-                          char *start = yytext + 1;
-                          while (*start == ' ' || *start == '\t') start++;
-                          char *comma_ptr = strchr(start, ',');
-                          int value_len = (int)(comma_ptr - start);
-                          strncpy(tmp, start, value_len);
-                          tmp[value_len] = '\0';
-                          
-                          if (validate_octal(tmp)) {
-                              print_token(yytext, "OCTAL_INTEGER");
-                          } else {
-                              print_token(yytext, "ERROR: Invalid octal integer");
-                          }
-                          yylval.str = strdup(yytext);
-                          return INTEGER_CONST;
-                        }
+\([ \t]*[0-7]+[ \t]*,[ \t]*8[ \t]*\)  {
+    char tmp[128];
+    char *start = yytext + 1;
+    while (*start == ' ' || *start == '\t') start++;
+    char *comma_ptr = strchr(start, ',');
+    int value_len = (int)(comma_ptr - start);
+    strncpy(tmp, start, value_len);
+    tmp[value_len] = '\0';
+    print_token(yytext, validate_octal(tmp) ? "OCTAL_INTEGER" : "ERROR: Invalid octal integer");
+    yylval.str = strdup(yytext);
+    return INTEGER_CONST;
+}
 
 \([ \t]*[0-9]+[ \t]*,[ \t]*10[ \t]*\) {
-                          char tmp[128];
-                          char *start = yytext + 1;
-                          while (*start == ' ' || *start == '\t') start++;
-                          char *comma_ptr = strchr(start, ',');
-                          int value_len = (int)(comma_ptr - start);
-                          strncpy(tmp, start, value_len);
-                          tmp[value_len] = '\0';
-                          
-                          if (validate_decimal(tmp)) {
-                              print_token(yytext, "DECIMAL_INTEGER");
-                          } else {
-                              print_token(yytext, "ERROR: Invalid decimal integer");
-                          }
-                          yylval.str = strdup(yytext);
-                          return INTEGER_CONST;
-                        }
-
-\([ \t]*[0-9]+[ \t]*,[ \t]*[0-9]+[ \t]*\) {
-                          print_token(yytext, "ERROR: Invalid integer format");
-                          yylval.str = strdup(yytext);
-                          return INTEGER_CONST;  
-                        }
+    char tmp[128];
+    char *start = yytext + 1;
+    while (*start == ' ' || *start == '\t') start++;
+    char *comma_ptr = strchr(start, ',');
+    int value_len = (int)(comma_ptr - start);
+    strncpy(tmp, start, value_len);
+    tmp[value_len] = '\0';
+    print_token(yytext, validate_decimal(tmp) ? "DECIMAL_INTEGER" : "ERROR: Invalid decimal integer");
+    yylval.str = strdup(yytext);
+    return INTEGER_CONST;
+}
 
 '([^']|\\.)+\'          {
-                          if (validate_char_const(yytext)) {
-                              print_token(yytext, "CHARACTER_CONST");
-                          } else {
-                              print_token(yytext, "ERROR: Invalid character constant");
-                          }
+                          print_token(yytext, validate_char_const(yytext) ? "CHARACTER_CONST" : "ERROR: Invalid character constant");
                           yylval.str = strdup(yytext);
                           return CHAR_CONST;
                         }
@@ -561,7 +644,7 @@ int isKeyword(const char *word) {
                         }
 
 [ \t]+                  { /* skip whitespace */ }
-\n                      { /* skip newlines */ }
+\n                      {  }
 .                       { print_token(yytext, "ERROR: unexpected character"); return yytext[0]; }
 
 %%

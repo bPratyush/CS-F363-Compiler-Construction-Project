@@ -1,0 +1,8 @@
+begin program:
+begin VarDecl:
+(a, int);
+(b, int);
+end VarDecl
+a := (5, 10);
+b := (7, 8);
+end program

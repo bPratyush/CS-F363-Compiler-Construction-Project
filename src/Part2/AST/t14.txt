@@ -1,0 +1,10 @@
+begin program: 
+begin VarDecl: 
+(i, int); 
+end VarDecl 
+i := (5, 10); 
+if (i < (10, 10)) 
+begin i := (1, 10); 
+print("@", i); 
+end //this line has error semicolon(;) is missing after end 
+end program
