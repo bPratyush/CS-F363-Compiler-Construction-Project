@@ -82,7 +82,7 @@ program:
         
         if (!print_lexeme_token_pairs) {
             if (syntax_errors == 0) {
-                printAST(astRoot, 0);
+                //printAST(astRoot, 0);
                 evaluate(astRoot);
                 printSymbolTable();
             } else {

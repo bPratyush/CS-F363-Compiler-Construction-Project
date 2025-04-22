@@ -7,5 +7,5 @@ begin VarDecl:
 (b, char);
 end VarDecl 
 number := (5, 10); 
-sum := (7, 10) - (7,10);
+sum := (2,10) + (5,10);
 end program

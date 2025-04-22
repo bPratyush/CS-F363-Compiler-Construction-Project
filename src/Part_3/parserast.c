@@ -317,7 +317,6 @@ ASTNode* evaluateExpression(ASTNode* node) {
 
         case NODE_ADD:
         {
-            printf("%d", valuetaker(node->data.children.left));
             if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 10){
                 int val1 = valuetaker(evaluateExpression((node->data.children.left)));
                 int val2 = valuetaker(evaluateExpression((node->data.children.right)));
@@ -474,10 +473,241 @@ ASTNode* evaluateExpression(ASTNode* node) {
                 }
             }
             break;
-
+            case NODE_MOD:
+            {
+                if(valuetaker(evaluateExpression(node->data.children.right ))==0){
+                    printf("Runtime Error: Division by zero\n");
+                    return 0;
+                } 
+                if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 10){
+                    int val1 = valuetaker(evaluateExpression((node->data.children.left)));
+                    int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+                    int result = val1 % val2;
+                    char result_str[50];
+                    sprintf(result_str, "(%d,10)", result);
+                    return createStrNode(NODE_INT_LITERAL, result_str);
+                }
+                else if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 8){
+                    int val1 = valuetaker(evaluateExpression((node->data.children.left)));
+                    int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+                    int octval1= octaltoint(val1);
+                    int octval2= octaltoint(val2);
+                    int result = octval1 % octval2;
+                    int octalresult = inttooctal(result);
+                    char result_str[50];
+                    sprintf(result_str, "(%d,8)", octalresult);
+                    return createStrNode(NODE_INT_LITERAL, result_str);
+                }
+                else if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 2){
+                    int val1 = valuetaker(evaluateExpression((node->data.children.left)));
+                    int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+                    int binval1= binarytoint(val1);
+                    int binval2= binarytoint(val2);
+                    int result = binval1 % binval2;
+                    int binaryresult = inttobinary(result);
+                    char result_str[50];
+                    sprintf(result_str, "(%d,2)", binaryresult);
+                    return createStrNode(NODE_INT_LITERAL, result_str);
+                }
+                else{
+                    printf("Runtime Error: Type Mismatch\n");
+                    return 0;
+                }
+            }
+            break;
+        case NODE_EQ:
+            if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 10){
+                int val1 = valuetaker(evaluateExpression((node->data.children.left)));
+                int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+                return (val1 == val2) ? createStrNode(NODE_INT_LITERAL,"(1,10)") : createStrNode(NODE_INT_LITERAL,"(0,10)");
+            }
+            else if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 8){
+                int val1 = valuetaker(evaluateExpression((node->data.children.left)));
+                int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+                int octval1= octaltoint(val1);
+                int octval2= octaltoint(val2);
+                return (octval1 == octval2) ? createStrNode(NODE_INT_LITERAL,"(1,8)") : createStrNode(NODE_INT_LITERAL,"(0,8)");
+            }
+            else if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 2){
+                int val1 = valuetaker(evaluateExpression((node->data.children.left)));
+                int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+                int binval1= binarytoint(val1);
+                int binval2= binarytoint(val2);
+                return (binval1 == binval2) ? createStrNode(NODE_INT_LITERAL,"(1,2)") : createStrNode(NODE_INT_LITERAL,"(0,2)");
+            }
+            else{
+                printf("Runtime Error: Type Mismatch\n");
+                return 0;
+            }  
+            break;
+        case NODE_NE:
+            if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 10){
+                int val1 = valuetaker(evaluateExpression((node->data.children.left)));
+                int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+                return (val1 != val2) ? createStrNode(NODE_INT_LITERAL,"(1,10)") : createStrNode(NODE_INT_LITERAL,"(0,10)");
+            }
+            else if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 8){
+                int val1 = valuetaker(evaluateExpression((node->data.children.left)));
+                int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+                int octval1= octaltoint(val1);
+                int octval2= octaltoint(val2);
+                return (octval1 != octval2) ? createStrNode(NODE_INT_LITERAL,"(1,8)") : createStrNode(NODE_INT_LITERAL,"(0,8)");
+            }
+            else if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 2){
+                int val1 = valuetaker(evaluateExpression((node->data.children.left)));
+                int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+                int binval1= binarytoint(val1);
+                int binval2= binarytoint(val2);
+                return (binval1 != binval2) ? createStrNode(NODE_INT_LITERAL,"(1,2)") : createStrNode(NODE_INT_LITERAL,"(0,2)");
+            }
+            else{
+                printf("Runtime Error: Type Mismatch\n");
+                return 0;
+            }  
+            break;
+        case NODE_LT:
+            if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 10){
+                int val1 = valuetaker(evaluateExpression((node->data.children.left)));
+                int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+                return (val1 < val2) ? createStrNode(NODE_INT_LITERAL,"(1,10)") : createStrNode(NODE_INT_LITERAL,"(0,10)");
+            }
+            else if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 8){
+                int val1 = valuetaker(evaluateExpression((node->data.children.left)));
+                int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+                int octval1= octaltoint(val1);
+                int octval2= octaltoint(val2);
+                return (octval1 < octval2) ? createStrNode(NODE_INT_LITERAL,"(1,8)") : createStrNode(NODE_INT_LITERAL,"(0,8)");
+            }
+            else if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 2){
+                int val1 = valuetaker(evaluateExpression((node->data.children.left)));
+                int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+                int binval1= binarytoint(val1);
+                int binval2= binarytoint(val2);
+                return (binval1 < binval2) ? createStrNode(NODE_INT_LITERAL,"(1,2)") : createStrNode(NODE_INT_LITERAL,"(0,2)");
+            }
+            else{
+                printf("Runtime Error: Type Mismatch\n");
+                return 0;
+            }  
+            break;
+        case NODE_GT:
+            if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 10){
+                int val1 = valuetaker(evaluateExpression((node->data.children.left)));
+                int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+                return (val1 > val2) ? createStrNode(NODE_INT_LITERAL,"(1,10)") : createStrNode(NODE_INT_LITERAL,"(0,10)");
+            }
+            else if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 8){
+                int val1 = valuetaker(evaluateExpression((node->data.children.left)));
+                int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+                int octval1= octaltoint(val1);
+                int octval2= octaltoint(val2);
+                return (octval1 > octval2) ? createStrNode(NODE_INT_LITERAL,"(1,8)") : createStrNode(NODE_INT_LITERAL,"(0,8)");
+            }
+            else if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 2){
+                int val1 = valuetaker(evaluateExpression((node->data.children.left)));
+                int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+                int binval1= binarytoint(val1);
+                int binval2= binarytoint(val2);
+                return (binval1 > binval2) ? createStrNode(NODE_INT_LITERAL,"(1,2)") : createStrNode(NODE_INT_LITERAL,"(0,2)");
+            }
+            else{
+                printf("Runtime Error: Type Mismatch\n");
+                return 0;
+            }  
+            break;
+        case NODE_LE:
+            if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 10){
+                int val1 = valuetaker(evaluateExpression((node->data.children.left)));
+                int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+                return (val1 <= val2) ? createStrNode(NODE_INT_LITERAL,"(1,10)") : createStrNode(NODE_INT_LITERAL,"(0,10)");
+            }
+            else if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 8){
+                int val1 = valuetaker(evaluateExpression((node->data.children.left)));
+                int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+                int octval1= octaltoint(val1);
+                int octval2= octaltoint(val2);
+                return (octval1 <= octval2) ? createStrNode(NODE_INT_LITERAL,"(1,8)") : createStrNode(NODE_INT_LITERAL,"(0,8)");
+            }
+            else if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 2){
+                int val1 = valuetaker(evaluateExpression((node->data.children.left)));
+                int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+                int binval1= binarytoint(val1);
+                int binval2= binarytoint(val2);
+                return (binval1 <= binval2) ? createStrNode(NODE_INT_LITERAL,"(1,2)") : createStrNode(NODE_INT_LITERAL,"(0,2)");
+            }
+            else{
+                printf("Runtime Error: Type Mismatch\n");
+                return 0;
+            }  
+            break;
+        case NODE_GE:
+            if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 10){
+                int val1 = valuetaker(evaluateExpression((node->data.children.left)));
+                int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+                return (val1 >= val2) ? createStrNode(NODE_INT_LITERAL,"(1,10)") : createStrNode(NODE_INT_LITERAL,"(0,10)");
+            }
+            else if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 8){
+                int val1 = valuetaker(evaluateExpression((node->data.children.left)));
+                int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+                int octval1= octaltoint(val1);
+                int octval2= octaltoint(val2);
+                return (octval1 >= octval2) ? createStrNode(NODE_INT_LITERAL,"(1,8)") : createStrNode(NODE_INT_LITERAL,"(0,8)");
+            }
+            else if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 2){
+                int val1 = valuetaker(evaluateExpression((node->data.children.left)));
+                int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+                int binval1= binarytoint(val1);
+                int binval2= binarytoint(val2);
+                return (binval1 >= binval2) ? createStrNode(NODE_INT_LITERAL,"(1,2)") : createStrNode(NODE_INT_LITERAL,"(0,2)");
+            }
+            else{
+                printf("Runtime Error: Type Mismatch\n");
+                return 0;
+            }  
+            break;
+        case NODE_PRE_INC:
+        case NODE_PRE_DEC:
+            if (node->data.children.left->type == NODE_IDENTIFIER) {
+                Symbol* sym = lookupSymbol(node->data.children.left->data.strValue);
+                if (sym && sym->initialized) {
+                    int value = atoi(sym->value);
+                    if (node->type == NODE_PRE_INC) {
+                        value++;
+                    } else {
+                        value--;
+                    }
+                    sprintf(sym->value, "%d", value);
+                    return createStrNode(NODE_INT_LITERAL, sym->value);
+                } else {
+                    printf("Runtime Error: Variable '%s' not initialized\n", node->data.children.left->data.strValue);
+                    return NULL;
+                }
+            }
+            break;
+        case NODE_POST_INC:
+        case NODE_POST_DEC:
+            if (node->data.children.left->type == NODE_IDENTIFIER) {
+                Symbol* sym = lookupSymbol(node->data.children.left->data.strValue);
+                if (sym && sym->initialized) {
+                    int value = atoi(sym->value);
+                    if (node->type == NODE_POST_INC) {
+                        value++;
+                    } else {
+                        value--;
+                    }
+                    sprintf(sym->value, "%d", value);
+                    return createStrNode(NODE_INT_LITERAL, sym->value);
+                } else {
+                    printf("Runtime Error: Variable '%s' not initialized\n", node->data.children.left->data.strValue);
+                    return NULL;
+                }
+            }
+            break;
+        
         default:
-            return 0;
+            return NULL;
     }
+    return NULL;
 }
 
 void executePrint(ASTNode* node) {
