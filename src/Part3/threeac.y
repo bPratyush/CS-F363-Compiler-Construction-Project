@@ -46,11 +46,11 @@ int is_declared(const char* id) {
 }
 void print_result() {
     if(!output_printed) {
-        printf("I am Here\n");
-        if(syntax_errors==0 && semantic_errors==0)
-            printf("Successfully Parsed !!!\n");
-        else
-            printf("Syntax Error !!!\n");
+      //  printf("I am Here\n");
+    //    if(syntax_errors==0 && semantic_errors==0)
+        //    printf("Successfully Parsed !!!\n");
+  //      else
+      //      printf("Syntax Error !!!\n");
         output_printed = 1;
     }
 }
@@ -133,6 +133,8 @@ statement:
   ;
 conditional_statement:
     IDENTIFIER GE INTEGER_CONST {
+         char*c = strcat($1 , $2);
+         $$ = strcat(c , $3);
          if(!is_declared($1)){
             char err[100];
             snprintf(err, sizeof(err),"Variable '%s' not declared", $1);
@@ -140,6 +142,8 @@ conditional_statement:
          }
     }
   | IDENTIFIER EQ INTEGER_CONST {
+         char*c = strcat($1 , $2);
+         $$ = strcat(c , $3);
          if(!is_declared($1)){
             char err[100];
             snprintf(err, sizeof(err),"Variable '%s' not declared", $1);
@@ -147,6 +151,9 @@ conditional_statement:
          }
     }
   | IDENTIFIER GT INTEGER_CONST {
+       //  printf("DEBUG: %s   GT\n" , $3);
+         char*c = strcat($1 , $2);
+         $$ = strcat(c , $3);
          if(!is_declared($1)){
             char err[100];
             snprintf(err, sizeof(err),"Variable '%s' not declared", $1);
@@ -154,6 +161,8 @@ conditional_statement:
          }
     }
   | IDENTIFIER LE INTEGER_CONST {
+         char*c = strcat($1 , $2);
+         $$ = strcat(c , $3);
          if(!is_declared($1)){
             char err[100];
             snprintf(err, sizeof(err),"Variable '%s' not declared", $1);
@@ -161,6 +170,8 @@ conditional_statement:
          }
     }
   | IDENTIFIER LT INTEGER_CONST {
+         char*c = strcat($1 , $2);
+         $$ = strcat(c , $3);
          if(!is_declared($1)){
             char err[100];
             snprintf(err, sizeof(err),"Variable '%s' not declared", $1);
@@ -168,6 +179,8 @@ conditional_statement:
          }
     }
   | IDENTIFIER NE INTEGER_CONST {
+         char*c = strcat($1 , $2);
+         $$ = strcat(c , $3);
          if(!is_declared($1)){
             char err[100];
             snprintf(err, sizeof(err),"Variable '%s' not declared", $1);
@@ -259,72 +272,76 @@ ifexpr:
      }
   | conditional_statement { $$ = $1; }
   ;
+/* Updated iteration_statement with boolean temp for while conditions */
 iteration_statement:
-    TK_WHILE LPAREN expression RPAREN TK_DO compound_statement TK_SEP {
-         char *Lstart = newlabel();
-         char *Lend = newlabel();
-         printf("%s:\n", Lstart);
-         printf("if not %s goto %s\n", $3, Lend);
-         printf("goto %s\n", Lstart);
-         printf("%s:\n", Lend);
-     }
-   | TK_WHILE expression TK_DO compound_statement TK_SEP
-    {  
-         char *Lstart = newlabel();
-         char *Lend = newlabel();
-         printf("%s:\n", Lstart);
-         printf("if not %s goto %s\n", $2, Lend);
-         printf("goto %s\n", Lstart);
-         printf("%s:\n", Lend);
+    /* while loop with explicit parentheses */
+    TK_WHILE LPAREN expression RPAREN TK_DO compound_statement TK_SEP
+    {   
+       // printf("DEBUG:\n expression:  %s \n  compound_statement: %s \n" , $3 , $6); 
+        char *Lstart   = newlabel();
+        char *Lend     = newlabel();
+        /* evaluate condition into a boolean temp */
+        char *tmp_cond = newtemp();
+
+        printf("%s:\n", Lstart);
+        printf("%s = %s\n", tmp_cond, $3);            /* assign full condition (e.g., x > (12,10)) */
+        printf("if not %s goto %s\n", tmp_cond, Lend); /* test the temp */
+        printf("goto %s\n", Lstart);
+        printf("%s:\n", Lend);
     }
-  | TK_FOR LPAREN IDENTIFIER ASSIGN expression TK_TO expression optional_inc expression RPAREN TK_DO compound_statement TK_SEP {
-    
 
-   printf("%s = %s\n", $3, $5);
+  | /* while loop without parentheses */
+    TK_WHILE expression TK_DO compound_statement TK_SEP
+    {
+        char *Lstart   = newlabel();
+        char *Lend     = newlabel();
+        /* evaluate condition into a boolean temp */
+        char *tmp_cond = newtemp();
 
-    char *L1 = newlabel();
-    char *L2 = newlabel();
-    char *tmp_cmp = newtemp();
-    char *tmp_inc = $8 ? $8 : "1";
+        printf("%s:\n", Lstart);
+        printf("%s = %s\n", tmp_cond, $2);            /* assign full condition */
+        printf("if not %s goto %s\n", tmp_cond, Lend); /* test the temp */
+        printf("goto %s\n", Lstart);
+        printf("%s:\n", Lend);
+    }
 
-    printf("%s:\n", L1);
+  | /* existing for loops remain unchanged */
+    TK_FOR LPAREN IDENTIFIER ASSIGN expression TK_TO expression optional_inc expression RPAREN TK_DO compound_statement TK_SEP {
+     //   printf("DEBUG: %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n" , $1 , $2 , $3 , $4 , $5 , $6 , $7 ,$8 , $9 , $10 , $11 , $12 , $13);  
+        printf("%s = %s\n", $3, $5);
+        char *L1 = newlabel();
+        char *L2 = newlabel();
+        char *tmp_inc = $8 ? $8 : "1";
 
-    printf("if %s >= %s goto %s\n", $3, $7, L2);
+        printf("%s:\n", L1);
+        printf("if %s >= %s goto %s\n", $3, $7, L2);
+        char *tmp_add = newtemp();
+        printf("%s = %s + %s\n", tmp_add, $3, tmp_inc);
+        printf("%s = %s\n", $3, tmp_add);
+        printf("goto %s\n", L1);
+        printf("%s:\n", L2);
+    }
 
-    char *tmp_add = newtemp();
-    printf("%s = %s + %s\n", tmp_add, $3, tmp_inc);
-    printf("%s = %s\n", $3, tmp_add);
-
-    printf("goto %s\n", L1);
-
-    printf("%s:\n", L2);
-  }
   | TK_FOR IDENTIFIER ASSIGN expression TK_TO expression optional_inc expression TK_DO compound_statement TK_SEP {
-      
+      //  printf("DEBUG: %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n" , $1 , $2 , $3 , $4 , $5 , $6 , $7 ,$8 , $9 , $10 , $11);  
+        printf("%s = %s\n", $2, $4);
+        char *L1 = newlabel();
+        char *L2 = newlabel();
+        char *tmp_inc = $7 ? $7 : "1";
 
-   printf("%s = %s\n", $2, $4);
-
-    char *L1 = newlabel();
-    char *L2 = newlabel();
-    char *tmp_cmp = newtemp();
-    char *tmp_inc = $7 ? $7 : "1"; 
-    printf("%s:\n", L1);
-
-    printf("if %s >= %s goto %s\n", $2, $6, L2);
-
-    char *tmp_add = newtemp();
-    printf("%s = %s + %s\n", tmp_add, $2, tmp_inc);
-    printf("%s = %s\n", $2, tmp_add);
-
-    printf("goto %s\n", L1);
-
-    printf("%s:\n", L2);
-     }
-  ;
+        printf("%s:\n", L1);
+        printf("if %s >= %s goto %s\n", $2, $6, L2);
+        char *tmp_add = newtemp();
+        printf("%s = %s + %s\n", tmp_add, $2, tmp_inc);
+        printf("%s = %s\n", $2, tmp_add);
+        printf("goto %s\n", L1);
+        printf("%s:\n", L2);
+    }
+;
 optional_inc:
-    { }
-  | TK_INC expression { }
-  | TK_DEC expression { }
+    {  }
+  | TK_INC expression { $$ = $1; }
+  | TK_DEC expression { $$ = $1; }
   ;
 expression:
     assignment_expression { $$ = $1; }
@@ -454,7 +471,6 @@ postfix_expression:
     primary_expression postfix_expression_tail { $$ = $1; }
   ;
 postfix_expression_tail:
-    /* empty */
     {
     }
     | TK_INC
