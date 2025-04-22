@@ -1,0 +1,11 @@
+begin program: 
+begin VarDecl: 
+(number, int); 
+(sum, int);
+(c, char);
+(a, int);
+(b, char);
+end VarDecl 
+number := (5, 10); 
+sum := (7, 10) - (7,10);
+end program
