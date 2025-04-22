@@ -566,17 +566,17 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    78,    78,    94,   105,   109,   131,   135,   142,   148,
-     155,   159,   168,   179,   188,   192,   196,   205,   211,   232,
-     236,   240,   244,   248,   252,   256,   263,   269,   275,   281,
-     287,   293,   302,   306,   313,   330,   333,   340,   344,   356,
-     373,   378,   392,   399,   403,   407,   411,   418,   422,   426,
-     433,   437,   442,   446,   450,   464,   478,   486,   489,   493,
-     500,   505,   511,   515,   524,   528,   532,   536,   540,   544,
-     551,   564,   567,   579,   594,   607,   610,   614,   618,   622,
-     629,   643,   646,   657,   671,   685,   688,   699,   710,   724,
-     728,   732,   736,   740,   747,   761,   764,   768,   775,   779,
-     783,   787
+       0,    78,    78,    94,   106,   110,   132,   136,   143,   149,
+     156,   160,   169,   181,   190,   194,   198,   207,   213,   234,
+     238,   242,   246,   250,   254,   258,   265,   271,   277,   283,
+     289,   295,   304,   308,   315,   332,   335,   342,   346,   358,
+     375,   380,   394,   401,   405,   409,   413,   420,   424,   428,
+     435,   439,   444,   448,   452,   466,   480,   488,   491,   495,
+     502,   507,   513,   517,   526,   530,   534,   538,   542,   546,
+     553,   566,   569,   581,   596,   609,   612,   616,   620,   624,
+     631,   645,   648,   659,   673,   687,   690,   701,   712,   726,
+     730,   734,   738,   742,   749,   763,   766,   770,   777,   781,
+     785,   789
 };
 #endif
 
@@ -1660,6 +1660,7 @@ yyreduce:
     { 
         if (!print_lexeme_token_pairs) {
             yyerror("Syntax error in program structure");
+            exit(0);
         }
         (yyval.ast) = NULL;
         yyerrok; 
@@ -1668,14 +1669,14 @@ yyreduce:
     break;
 
   case 4:
-#line 106 "parserast.y"
+#line 107 "parserast.y"
     {
         (yyval.ast) = (yyvsp[(1) - (1)].ast);
     ;}
     break;
 
   case 5:
-#line 110 "parserast.y"
+#line 111 "parserast.y"
     {
         ASTNode* node = createNode(NODE_MAIN_SECTION);
         node->data.children.left = (yyvsp[(2) - (2)].ast);
@@ -1697,21 +1698,21 @@ yyreduce:
     break;
 
   case 6:
-#line 132 "parserast.y"
+#line 133 "parserast.y"
     {
         (yyval.ast) = (yyvsp[(1) - (1)].ast);
     ;}
     break;
 
   case 7:
-#line 136 "parserast.y"
+#line 137 "parserast.y"
     {
         (yyval.ast) = (yyvsp[(4) - (6)].ast);
     ;}
     break;
 
   case 8:
-#line 143 "parserast.y"
+#line 144 "parserast.y"
     {
         ASTNode* node = createNode(NODE_VARDECL_SECTION);
         node->data.children.left = (yyvsp[(4) - (6)].ast);
@@ -1720,21 +1721,21 @@ yyreduce:
     break;
 
   case 9:
-#line 149 "parserast.y"
+#line 150 "parserast.y"
     {
         (yyval.ast) = createNode(NODE_VARDECL_SECTION);
     ;}
     break;
 
   case 10:
-#line 156 "parserast.y"
+#line 157 "parserast.y"
     {
         (yyval.ast) = (yyvsp[(1) - (1)].ast);
     ;}
     break;
 
   case 11:
-#line 160 "parserast.y"
+#line 161 "parserast.y"
     {
         if ((yyvsp[(1) - (2)].ast)) {
             addToList((yyvsp[(1) - (2)].ast), (yyvsp[(2) - (2)].ast));
@@ -1746,10 +1747,11 @@ yyreduce:
     break;
 
   case 12:
-#line 168 "parserast.y"
+#line 169 "parserast.y"
     { 
         if (!print_lexeme_token_pairs) {
             yyerror("Syntax error in declaration");
+            exit (0);
         }
         (yyval.ast) = NULL;
         yyerrok; 
@@ -1758,7 +1760,7 @@ yyreduce:
     break;
 
   case 13:
-#line 180 "parserast.y"
+#line 182 "parserast.y"
     {
         ASTNode* idNode = createStrNode(NODE_IDENTIFIER, (yyvsp[(2) - (6)].str));
         (yyval.ast) = createBinaryNode(NODE_VARDECL, idNode, (yyvsp[(4) - (6)].typed).ast);  // For AST
@@ -1767,7 +1769,7 @@ yyreduce:
     break;
 
   case 14:
-#line 188 "parserast.y"
+#line 190 "parserast.y"
     {
         (yyval.typed).typeStr = strdup("int");
         (yyval.typed).ast = createNode(NODE_TYPE_INT);
@@ -1775,7 +1777,7 @@ yyreduce:
     break;
 
   case 15:
-#line 192 "parserast.y"
+#line 194 "parserast.y"
     {
         (yyval.typed).typeStr = strdup("char");
         (yyval.typed).ast = createNode(NODE_TYPE_CHAR);
@@ -1783,7 +1785,7 @@ yyreduce:
     break;
 
   case 16:
-#line 196 "parserast.y"
+#line 198 "parserast.y"
     {
         yyerror("Invalid data type");
         syntax_errors++;
@@ -1793,7 +1795,7 @@ yyreduce:
     break;
 
   case 17:
-#line 206 "parserast.y"
+#line 208 "parserast.y"
     {
         ASTNode* node = createNode(NODE_STATEMENT_LIST);
         node->data.children.left = (yyvsp[(1) - (1)].ast);
@@ -1802,7 +1804,7 @@ yyreduce:
     break;
 
   case 18:
-#line 212 "parserast.y"
+#line 214 "parserast.y"
     {
         if ((yyvsp[(2) - (2)].ast)) {
             ASTNode* stmtList = (yyvsp[(2) - (2)].ast);
@@ -1823,56 +1825,56 @@ yyreduce:
     break;
 
   case 19:
-#line 233 "parserast.y"
+#line 235 "parserast.y"
     {
         (yyval.ast) = (yyvsp[(1) - (1)].ast);
     ;}
     break;
 
   case 20:
-#line 237 "parserast.y"
+#line 239 "parserast.y"
     {
         (yyval.ast) = (yyvsp[(1) - (1)].ast);
     ;}
     break;
 
   case 21:
-#line 241 "parserast.y"
+#line 243 "parserast.y"
     {
         (yyval.ast) = (yyvsp[(1) - (1)].ast);
     ;}
     break;
 
   case 22:
-#line 245 "parserast.y"
+#line 247 "parserast.y"
     {
         (yyval.ast) = (yyvsp[(1) - (1)].ast);
     ;}
     break;
 
   case 23:
-#line 249 "parserast.y"
+#line 251 "parserast.y"
     {
         (yyval.ast) = (yyvsp[(1) - (1)].ast);
     ;}
     break;
 
   case 24:
-#line 253 "parserast.y"
+#line 255 "parserast.y"
     {
         (yyval.ast) = (yyvsp[(1) - (1)].ast);
     ;}
     break;
 
   case 25:
-#line 257 "parserast.y"
+#line 259 "parserast.y"
     {
         (yyval.ast) = (yyvsp[(1) - (1)].ast);
     ;}
     break;
 
   case 26:
-#line 264 "parserast.y"
+#line 266 "parserast.y"
     {
         ASTNode* idNode = createStrNode(NODE_IDENTIFIER, (yyvsp[(1) - (3)].str));
         ASTNode* constNode = createStrNode(NODE_INT_LITERAL, (yyvsp[(3) - (3)].str));
@@ -1881,7 +1883,7 @@ yyreduce:
     break;
 
   case 27:
-#line 270 "parserast.y"
+#line 272 "parserast.y"
     {
         ASTNode* idNode = createStrNode(NODE_IDENTIFIER, (yyvsp[(1) - (3)].str));
         ASTNode* constNode = createStrNode(NODE_INT_LITERAL, (yyvsp[(3) - (3)].str));
@@ -1890,7 +1892,7 @@ yyreduce:
     break;
 
   case 28:
-#line 276 "parserast.y"
+#line 278 "parserast.y"
     {
         ASTNode* idNode = createStrNode(NODE_IDENTIFIER, (yyvsp[(1) - (3)].str));
         ASTNode* constNode = createStrNode(NODE_INT_LITERAL, (yyvsp[(3) - (3)].str));
@@ -1899,7 +1901,7 @@ yyreduce:
     break;
 
   case 29:
-#line 282 "parserast.y"
+#line 284 "parserast.y"
     {
         ASTNode* idNode = createStrNode(NODE_IDENTIFIER, (yyvsp[(1) - (3)].str));
         ASTNode* constNode = createStrNode(NODE_INT_LITERAL, (yyvsp[(3) - (3)].str));
@@ -1908,7 +1910,7 @@ yyreduce:
     break;
 
   case 30:
-#line 288 "parserast.y"
+#line 290 "parserast.y"
     {
         ASTNode* idNode = createStrNode(NODE_IDENTIFIER, (yyvsp[(1) - (3)].str));
         ASTNode* constNode = createStrNode(NODE_INT_LITERAL, (yyvsp[(3) - (3)].str));
@@ -1917,7 +1919,7 @@ yyreduce:
     break;
 
   case 31:
-#line 294 "parserast.y"
+#line 296 "parserast.y"
     {
         ASTNode* idNode = createStrNode(NODE_IDENTIFIER, (yyvsp[(1) - (3)].str));
         ASTNode* constNode = createStrNode(NODE_INT_LITERAL, (yyvsp[(3) - (3)].str));
@@ -1926,21 +1928,21 @@ yyreduce:
     break;
 
   case 32:
-#line 303 "parserast.y"
+#line 305 "parserast.y"
     {
         (yyval.ast) = createBinaryNode(NODE_EXPR_STMT, (yyvsp[(1) - (2)].ast), NULL);
     ;}
     break;
 
   case 33:
-#line 307 "parserast.y"
+#line 309 "parserast.y"
     {
         (yyval.ast) = createNode(NODE_EXPR_STMT);
     ;}
     break;
 
   case 34:
-#line 314 "parserast.y"
+#line 316 "parserast.y"
     {
         char *src = (yyvsp[(3) - (6)].str), *dst = (yyvsp[(3) - (6)].str);
         while (*src) {
@@ -1956,28 +1958,28 @@ yyreduce:
     break;
 
   case 35:
-#line 330 "parserast.y"
+#line 332 "parserast.y"
     {
         (yyval.ast) = NULL;
     ;}
     break;
 
   case 36:
-#line 334 "parserast.y"
+#line 336 "parserast.y"
     {
         (yyval.ast) = (yyvsp[(2) - (2)].ast);
     ;}
     break;
 
   case 37:
-#line 341 "parserast.y"
+#line 343 "parserast.y"
     {
         (yyval.ast) = (yyvsp[(1) - (1)].ast);
     ;}
     break;
 
   case 38:
-#line 345 "parserast.y"
+#line 347 "parserast.y"
     {
         if ((yyvsp[(1) - (3)].ast)) {
             addToList((yyvsp[(1) - (3)].ast), (yyvsp[(3) - (3)].ast));
@@ -1989,7 +1991,7 @@ yyreduce:
     break;
 
   case 39:
-#line 357 "parserast.y"
+#line 359 "parserast.y"
     {   
         char *src = (yyvsp[(3) - (7)].str), *dst = (yyvsp[(3) - (7)].str);
         while (*src) {
@@ -2006,7 +2008,7 @@ yyreduce:
     break;
 
   case 40:
-#line 374 "parserast.y"
+#line 376 "parserast.y"
     {
         (yyval.ast) = createStrNode(NODE_IDENTIFIER, (yyvsp[(1) - (1)].str));
        
@@ -2014,7 +2016,7 @@ yyreduce:
     break;
 
   case 41:
-#line 379 "parserast.y"
+#line 381 "parserast.y"
     {
         ASTNode* newNode = createStrNode(NODE_IDENTIFIER, (yyvsp[(3) - (3)].str));
         if ((yyvsp[(1) - (3)].ast)) {
@@ -2028,91 +2030,91 @@ yyreduce:
     break;
 
   case 42:
-#line 393 "parserast.y"
+#line 395 "parserast.y"
     {
         (yyval.ast) = createBinaryNode(NODE_COMPOUND_STMT, (yyvsp[(2) - (3)].ast), NULL);
     ;}
     break;
 
   case 43:
-#line 400 "parserast.y"
+#line 402 "parserast.y"
     {
         (yyval.ast) = createBinaryNode(NODE_IF_STMT, (yyvsp[(2) - (4)].ast), (yyvsp[(3) - (4)].ast));
     ;}
     break;
 
   case 44:
-#line 404 "parserast.y"
+#line 406 "parserast.y"
     {
         (yyval.ast) = createTernaryNode(NODE_IF_ELSE_STMT, (yyvsp[(2) - (6)].ast), (yyvsp[(3) - (6)].ast), (yyvsp[(5) - (6)].ast));
     ;}
     break;
 
   case 45:
-#line 408 "parserast.y"
+#line 410 "parserast.y"
     {
         (yyval.ast) = createBinaryNode(NODE_IF_STMT, (yyvsp[(3) - (6)].ast), (yyvsp[(5) - (6)].ast));
     ;}
     break;
 
   case 46:
-#line 412 "parserast.y"
+#line 414 "parserast.y"
     {
         (yyval.ast) = createTernaryNode(NODE_IF_ELSE_STMT, (yyvsp[(3) - (8)].ast), (yyvsp[(5) - (8)].ast), (yyvsp[(7) - (8)].ast));
     ;}
     break;
 
   case 47:
-#line 419 "parserast.y"
+#line 421 "parserast.y"
     {
         (yyval.ast) = createStrNode(NODE_INT_LITERAL, (yyvsp[(1) - (1)].str));
     ;}
     break;
 
   case 48:
-#line 423 "parserast.y"
+#line 425 "parserast.y"
     {
         (yyval.ast) = createStrNode(NODE_IDENTIFIER, (yyvsp[(1) - (1)].str));
     ;}
     break;
 
   case 49:
-#line 427 "parserast.y"
+#line 429 "parserast.y"
     {
         (yyval.ast) = (yyvsp[(1) - (1)].ast);
     ;}
     break;
 
   case 50:
-#line 434 "parserast.y"
+#line 436 "parserast.y"
     {
         (yyval.ast) = createBinaryNode(NODE_WHILE_STMT, (yyvsp[(3) - (7)].ast), (yyvsp[(6) - (7)].ast));
     ;}
     break;
 
   case 51:
-#line 438 "parserast.y"
+#line 440 "parserast.y"
     {
         (yyval.ast) = createBinaryNode(NODE_WHILE_STMT, (yyvsp[(2) - (5)].ast), (yyvsp[(4) - (5)].ast));
     ;}
     break;
 
   case 52:
-#line 443 "parserast.y"
+#line 445 "parserast.y"
     {
         (yyval.ast) = createBinaryNode(NODE_WHILE_STMT, (yyvsp[(3) - (6)].ast), (yyvsp[(5) - (6)].ast));
     ;}
     break;
 
   case 53:
-#line 447 "parserast.y"
+#line 449 "parserast.y"
     {
         (yyval.ast) = createBinaryNode(NODE_WHILE_STMT, (yyvsp[(2) - (4)].ast), (yyvsp[(3) - (4)].ast));
     ;}
     break;
 
   case 54:
-#line 451 "parserast.y"
+#line 453 "parserast.y"
     {
         ASTNode* idNode = createStrNode(NODE_IDENTIFIER, (yyvsp[(3) - (13)].str));
         ASTNode* initNode = createBinaryNode(NODE_ASSIGN, idNode, (yyvsp[(5) - (13)].ast));
@@ -2129,7 +2131,7 @@ yyreduce:
     break;
 
   case 55:
-#line 465 "parserast.y"
+#line 467 "parserast.y"
     {
         ASTNode* idNode = createStrNode(NODE_IDENTIFIER, (yyvsp[(2) - (11)].str));
         ASTNode* initNode = createBinaryNode(NODE_ASSIGN, idNode, (yyvsp[(4) - (11)].ast));
@@ -2146,56 +2148,56 @@ yyreduce:
     break;
 
   case 56:
-#line 479 "parserast.y"
+#line 481 "parserast.y"
     {
         (yyval.ast) = createBinaryNode(NODE_DO_WHILE_STMT, (yyvsp[(2) - (7)].ast), (yyvsp[(5) - (7)].ast));
     ;}
     break;
 
   case 57:
-#line 486 "parserast.y"
+#line 488 "parserast.y"
     {
         (yyval.ast) = NULL;
     ;}
     break;
 
   case 58:
-#line 490 "parserast.y"
+#line 492 "parserast.y"
     {
         (yyval.ast) = createBinaryNode(NODE_PRE_INC, (yyvsp[(2) - (2)].ast), NULL);
     ;}
     break;
 
   case 59:
-#line 494 "parserast.y"
+#line 496 "parserast.y"
     {
         (yyval.ast) = createBinaryNode(NODE_PRE_DEC, (yyvsp[(2) - (2)].ast), NULL);
     ;}
     break;
 
   case 60:
-#line 501 "parserast.y"
+#line 503 "parserast.y"
     {
         (yyval.ast) = (yyvsp[(1) - (1)].ast);
     ;}
     break;
 
   case 61:
-#line 505 "parserast.y"
+#line 507 "parserast.y"
     {
         (yyval.ast)=(yyvsp[(1) - (1)].ast);
     ;}
     break;
 
   case 62:
-#line 512 "parserast.y"
+#line 514 "parserast.y"
     {
         (yyval.ast) = (yyvsp[(1) - (1)].ast);
     ;}
     break;
 
   case 63:
-#line 516 "parserast.y"
+#line 518 "parserast.y"
     {
         ASTNode* idNode = createStrNode(NODE_IDENTIFIER, (yyvsp[(1) - (3)].str));
         (yyval.ast) = createBinaryNode((yyvsp[(2) - (3)].ast)->type, idNode, (yyvsp[(3) - (3)].ast));
@@ -2204,49 +2206,49 @@ yyreduce:
     break;
 
   case 64:
-#line 525 "parserast.y"
+#line 527 "parserast.y"
     {
         (yyval.ast) = createNode(NODE_ASSIGN);
     ;}
     break;
 
   case 65:
-#line 529 "parserast.y"
+#line 531 "parserast.y"
     {
         (yyval.ast) = createNode(NODE_PLUS_ASSIGN);
     ;}
     break;
 
   case 66:
-#line 533 "parserast.y"
+#line 535 "parserast.y"
     {
         (yyval.ast) = createNode(NODE_MINUS_ASSIGN);
     ;}
     break;
 
   case 67:
-#line 537 "parserast.y"
+#line 539 "parserast.y"
     {
         (yyval.ast) = createNode(NODE_MULT_ASSIGN);
     ;}
     break;
 
   case 68:
-#line 541 "parserast.y"
+#line 543 "parserast.y"
     {
         (yyval.ast) = createNode(NODE_DIV_ASSIGN);
     ;}
     break;
 
   case 69:
-#line 545 "parserast.y"
+#line 547 "parserast.y"
     {
         (yyval.ast) = createNode(NODE_MOD_ASSIGN);
     ;}
     break;
 
   case 70:
-#line 552 "parserast.y"
+#line 554 "parserast.y"
     {
         if ((yyvsp[(2) - (2)].ast)) {
             /* The tail will have created a node with $1 as the left child */
@@ -2258,14 +2260,14 @@ yyreduce:
     break;
 
   case 71:
-#line 564 "parserast.y"
+#line 566 "parserast.y"
     {
         (yyval.ast) = NULL;
     ;}
     break;
 
   case 72:
-#line 568 "parserast.y"
+#line 570 "parserast.y"
     {
         ASTNode* node = createBinaryNode(NODE_EQ, (yyvsp[(2) - (3)].ast), NULL);
         
@@ -2280,7 +2282,7 @@ yyreduce:
     break;
 
   case 73:
-#line 580 "parserast.y"
+#line 582 "parserast.y"
     {
         ASTNode* node = createBinaryNode(NODE_NE, (yyvsp[(2) - (3)].ast), NULL);
         
@@ -2295,7 +2297,7 @@ yyreduce:
     break;
 
   case 74:
-#line 595 "parserast.y"
+#line 597 "parserast.y"
     {
         if ((yyvsp[(2) - (2)].ast)) {
             /* The tail will have created a node with $1 as the left child */
@@ -2307,42 +2309,42 @@ yyreduce:
     break;
 
   case 75:
-#line 607 "parserast.y"
+#line 609 "parserast.y"
     {
         (yyval.ast) = NULL;
     ;}
     break;
 
   case 76:
-#line 611 "parserast.y"
+#line 613 "parserast.y"
     {
         (yyval.ast) = createBinaryNode(NODE_LT, (yyvsp[(2) - (2)].ast), NULL);
     ;}
     break;
 
   case 77:
-#line 615 "parserast.y"
+#line 617 "parserast.y"
     {
         (yyval.ast) = createBinaryNode(NODE_GT, (yyvsp[(2) - (2)].ast), NULL);
     ;}
     break;
 
   case 78:
-#line 619 "parserast.y"
+#line 621 "parserast.y"
     {
         (yyval.ast) = createBinaryNode(NODE_LE, (yyvsp[(2) - (2)].ast), NULL);
     ;}
     break;
 
   case 79:
-#line 623 "parserast.y"
+#line 625 "parserast.y"
     {
         (yyval.ast) = createBinaryNode(NODE_GE, (yyvsp[(2) - (2)].ast), NULL);
     ;}
     break;
 
   case 80:
-#line 630 "parserast.y"
+#line 632 "parserast.y"
     {
         if ((yyvsp[(2) - (2)].ast)) {
             /* Set the multiplicative expression as the left child of the additive expression */
@@ -2355,14 +2357,14 @@ yyreduce:
     break;
 
   case 81:
-#line 643 "parserast.y"
+#line 645 "parserast.y"
     {
         (yyval.ast) = NULL;
     ;}
     break;
 
   case 82:
-#line 647 "parserast.y"
+#line 649 "parserast.y"
     {
         ASTNode* node = createBinaryNode(NODE_ADD, NULL, (yyvsp[(2) - (3)].ast));
         
@@ -2376,7 +2378,7 @@ yyreduce:
     break;
 
   case 83:
-#line 658 "parserast.y"
+#line 660 "parserast.y"
     {
         ASTNode* node = createBinaryNode(NODE_SUB, NULL, (yyvsp[(2) - (3)].ast));
         
@@ -2390,7 +2392,7 @@ yyreduce:
     break;
 
   case 84:
-#line 672 "parserast.y"
+#line 674 "parserast.y"
     {
         if ((yyvsp[(2) - (2)].ast)) {
             /* Set the unary expression as the left child of the multiplicative expression */
@@ -2403,14 +2405,14 @@ yyreduce:
     break;
 
   case 85:
-#line 685 "parserast.y"
+#line 687 "parserast.y"
     {
         (yyval.ast) = NULL;
     ;}
     break;
 
   case 86:
-#line 689 "parserast.y"
+#line 691 "parserast.y"
     {
         ASTNode* node = createBinaryNode(NODE_MUL, NULL, (yyvsp[(2) - (3)].ast));
         
@@ -2424,7 +2426,7 @@ yyreduce:
     break;
 
   case 87:
-#line 700 "parserast.y"
+#line 702 "parserast.y"
     {
         ASTNode* node = createBinaryNode(NODE_DIV, NULL, (yyvsp[(2) - (3)].ast));
         
@@ -2438,7 +2440,7 @@ yyreduce:
     break;
 
   case 88:
-#line 711 "parserast.y"
+#line 713 "parserast.y"
     {
         ASTNode* node = createBinaryNode(NODE_MOD, NULL, (yyvsp[(2) - (3)].ast));
         
@@ -2452,42 +2454,42 @@ yyreduce:
     break;
 
   case 89:
-#line 725 "parserast.y"
+#line 727 "parserast.y"
     {
         (yyval.ast) = (yyvsp[(1) - (1)].ast);
     ;}
     break;
 
   case 90:
-#line 729 "parserast.y"
+#line 731 "parserast.y"
     {
         (yyval.ast) = createBinaryNode(NODE_UNARY_PLUS, (yyvsp[(2) - (2)].ast), NULL);
     ;}
     break;
 
   case 91:
-#line 733 "parserast.y"
+#line 735 "parserast.y"
     {
         (yyval.ast) = createBinaryNode(NODE_UNARY_MINUS, (yyvsp[(2) - (2)].ast), NULL);
     ;}
     break;
 
   case 92:
-#line 737 "parserast.y"
+#line 739 "parserast.y"
     {
         (yyval.ast) = createBinaryNode(NODE_PRE_INC, (yyvsp[(2) - (2)].ast), NULL);
     ;}
     break;
 
   case 93:
-#line 741 "parserast.y"
+#line 743 "parserast.y"
     {
         (yyval.ast) = createBinaryNode(NODE_PRE_DEC, (yyvsp[(2) - (2)].ast), NULL);
     ;}
     break;
 
   case 94:
-#line 748 "parserast.y"
+#line 750 "parserast.y"
     {
         if ((yyvsp[(2) - (2)].ast)) {
             /* Apply the postfix operator to the primary expression */
@@ -2500,49 +2502,49 @@ yyreduce:
     break;
 
   case 95:
-#line 761 "parserast.y"
+#line 763 "parserast.y"
     {
         (yyval.ast) = NULL;
     ;}
     break;
 
   case 96:
-#line 765 "parserast.y"
+#line 767 "parserast.y"
     {
         (yyval.ast) = createNode(NODE_POST_INC);
     ;}
     break;
 
   case 97:
-#line 769 "parserast.y"
+#line 771 "parserast.y"
     {
         (yyval.ast) = createNode(NODE_POST_DEC);
     ;}
     break;
 
   case 98:
-#line 776 "parserast.y"
+#line 778 "parserast.y"
     {
         (yyval.ast) = createStrNode(NODE_IDENTIFIER, (yyvsp[(1) - (1)].str));
     ;}
     break;
 
   case 99:
-#line 780 "parserast.y"
+#line 782 "parserast.y"
     {
         (yyval.ast) = createStrNode(NODE_INT_LITERAL, (yyvsp[(1) - (1)].str));
     ;}
     break;
 
   case 100:
-#line 784 "parserast.y"
+#line 786 "parserast.y"
     {
         (yyval.ast) = createStrNode(NODE_CHAR_LITERAL, (yyvsp[(1) - (1)].str));
     ;}
     break;
 
   case 101:
-#line 788 "parserast.y"
+#line 790 "parserast.y"
     {
         (yyval.ast) = (yyvsp[(2) - (3)].ast);
     ;}
@@ -2550,7 +2552,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 2554 "parserast.tab.c"
+#line 2556 "parserast.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2764,7 +2766,7 @@ yyreturn:
 }
 
 
-#line 793 "parserast.y"
+#line 795 "parserast.y"
 
 
 void yyerror(const char *s) {

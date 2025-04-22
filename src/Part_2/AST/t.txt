@@ -5,9 +5,7 @@ begin VarDecl:
 (c, char);
 (a, int);
 (b, char);
-(a[6],char);
 end VarDecl 
 number := (5, 10); 
-sum := (2,10);
-a := sum + (3,10);
+sum := (7,10) > (5,10);
 end program

@@ -94,6 +94,7 @@ program:
     | error { 
         if (!print_lexeme_token_pairs) {
             yyerror("Syntax error in program structure");
+            exit(0);
         }
         $$ = NULL;
         yyerrok; 
@@ -168,6 +169,7 @@ var_decl_list:
     | error { 
         if (!print_lexeme_token_pairs) {
             yyerror("Syntax error in declaration");
+            exit (0);
         }
         $$ = NULL;
         yyerrok; 

@@ -463,8 +463,8 @@ ASTNode* evaluateExpression(ASTNode* node) {
                     printf("Runtime Error: Type Mismatch\n");
                     return 0;
                 }
+                break;
             }
-            break;
             case NODE_MOD:
             {
                 if(valuetaker(evaluateExpression(node->data.children.right ))==0){
@@ -505,8 +505,8 @@ ASTNode* evaluateExpression(ASTNode* node) {
                     printf("Runtime Error: Type Mismatch\n");
                     return 0;
                 }
+                break;
             }
-            break;
         case NODE_EQ:
             if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 10){
                 int val1 = valuetaker(evaluateExpression((node->data.children.left)));
