@@ -104,8 +104,10 @@ void printSymbolTable() {
     printf("\n--- Symbol Table ---\n");
     Symbol* temp = symbolTable2;
     while (temp != NULL) {
-        int base = printypeinsymboltable(temp->value);
-        updatetypeinsymboltable(base, temp);
+        if(temp->initialized==1){
+            int base = printypeinsymboltable(temp->value);
+            updatetypeinsymboltable(base, temp);
+        }
         printf("Name: %s, Type: %s, Initialized: %s, Value: %s\n",
                temp->name, temp->type, temp->initialized ? "Yes" : "No", temp->initialized ? temp->value : "NULL");
         temp = temp->next;

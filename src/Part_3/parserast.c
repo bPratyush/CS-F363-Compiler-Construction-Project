@@ -178,23 +178,18 @@ void evaluate(ASTNode* node) {
 
     switch (node->type) {
         case NODE_PROGRAM:
-            // Evaluate the program body
             evaluate(node->data.children.left);
             break;
             
         case NODE_VARDECL_SECTION:
-            // Skip variable declarations as they're already processed
-            // Move to the next section (main section)
             evaluate(node->next);
             break;
             
         case NODE_MAIN_SECTION:
-            // Evaluate the main section (statement list)
             evaluate(node->data.children.left);
             break;
             
         case NODE_STATEMENT_LIST:
-            // Process current statement
             if (node->data.children.left) {
                 evaluate(node->data.children.left);
             }
@@ -202,17 +197,14 @@ void evaluate(ASTNode* node) {
             break;
 
         case NODE_EXPR_STMT:
-            // Evaluate the expression
             evaluate(node->data.children.left);
             break;
 
         case NODE_ASSIGN:
-            // Execute the assignment
             executeAssignment(node);
             break;
 
         case NODE_PRINT_STMT:
-            // Execute the print statement
             executePrint(node);
             break;
         
