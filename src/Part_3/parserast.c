@@ -123,7 +123,6 @@ int valuetaker(ASTNode* node) {
                 }
                 return atoi(sym->value);
             } else {
-                printf("Runtime Error: Variable '%s' not initialized\n", node->data.strValue);
                 return 0;
             }
         }
@@ -177,7 +176,6 @@ int basetaker(ASTNode* node) {
                 }
                 return 10; 
             } else {
-                printf("Runtime Error: Variable '%s' not initialized\n", node->data.strValue);
                 return 0;
             }
         }
@@ -242,8 +240,8 @@ void evaluate(ASTNode* node) {
             break;
         
         default:
-            printf("Runtime Error\n");
-            break;
+        printf("Runtime Error\n");
+        exit(1);
     }
     if (node->next) {
         evaluate(node->next);
@@ -334,8 +332,8 @@ ASTNode* evaluateExpression(ASTNode* node) {
             if (sym && sym->initialized) {
                 return node;
             } else {
-                printf("Runtime Error: Variable '%s' not initialized\n", node->data.strValue);
-                return NULL;
+                printf("Runtime Error\n");
+                exit(1);
             }
             break;
         }
@@ -373,8 +371,8 @@ ASTNode* evaluateExpression(ASTNode* node) {
                 return createStrNode(NODE_INT_LITERAL, result_str);
             }
             else{
-                printf("Runtime Error: Type Mismatch\n");
-                return 0;
+                printf("Runtime Error\n");
+                exit(1);
             }
         }
         break;
@@ -412,8 +410,8 @@ ASTNode* evaluateExpression(ASTNode* node) {
                 return createStrNode(NODE_INT_LITERAL, result_str);
             }
             else{
-                printf("Runtime Error: Type Mismatch\n");
-                return 0;
+                printf("Runtime Error\n");
+                exit(1);
             }
         }
         break; 
@@ -451,16 +449,16 @@ ASTNode* evaluateExpression(ASTNode* node) {
                 return createStrNode(NODE_INT_LITERAL, result_str);
             }
             else{
-                printf("Runtime Error: Type Mismatch\n");
-                return 0;
+                printf("Runtime Error\n");
+                exit(1);
             }
         }
         break;
 
         case NODE_DIV: {
             if(valuetaker(evaluateExpression(node->data.children.right ))==0){
-                printf("Runtime Error: Division by zero\n");
-                return 0;
+                printf("Runtime Error\n");
+                exit(1);
             } 
                 if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 10){
                     int val1 = valuetaker(evaluateExpression((node->data.children.left)));
@@ -493,16 +491,16 @@ ASTNode* evaluateExpression(ASTNode* node) {
                     return createStrNode(NODE_INT_LITERAL, result_str);
                 }
                 else{
-                    printf("Runtime Error: Type Mismatch\n");
-                    return 0;
+                    printf("Runtime Error\n");
+                    exit(1);
                 }
                 break;
             }
             case NODE_MOD:
             {
                 if(valuetaker(evaluateExpression(node->data.children.right ))==0){
-                    printf("Runtime Error: Division by zero\n");
-                    return 0;
+                    printf("Runtime Error\n");
+                    exit(1);
                 } 
                 if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 10){
                     int val1 = valuetaker(evaluateExpression((node->data.children.left)));
@@ -535,8 +533,8 @@ ASTNode* evaluateExpression(ASTNode* node) {
                     return createStrNode(NODE_INT_LITERAL, result_str);
                 }
                 else{
-                    printf("Runtime Error: Type Mismatch\n");
-                    return 0;
+                    printf("Runtime Error\n");
+                    exit(1);
                 }
                 break;
             }
@@ -561,8 +559,8 @@ ASTNode* evaluateExpression(ASTNode* node) {
                 return (binval1 == binval2) ? createStrNode(NODE_INT_LITERAL,"(1,2)") : createStrNode(NODE_INT_LITERAL,"(0,2)");
             }
             else{
-                printf("Runtime Error: Type Mismatch\n");
-                return 0;
+                printf("Runtime Error\n");
+                exit(1);
             }  
             break;
         case NODE_NE:
@@ -586,8 +584,8 @@ ASTNode* evaluateExpression(ASTNode* node) {
                 return (binval1 != binval2) ? createStrNode(NODE_INT_LITERAL,"(1,2)") : createStrNode(NODE_INT_LITERAL,"(0,2)");
             }
             else{
-                printf("Runtime Error: Type Mismatch\n");
-                return 0;
+                printf("Runtime Error\n");
+                exit(1);
             }  
             break;
         case NODE_LT:
@@ -611,8 +609,8 @@ ASTNode* evaluateExpression(ASTNode* node) {
                 return (binval1 < binval2) ? createStrNode(NODE_INT_LITERAL,"(1,2)") : createStrNode(NODE_INT_LITERAL,"(0,2)");
             }
             else{
-                printf("Runtime Error: Type Mismatch\n");
-                return 0;
+                printf("Runtime Error\n");
+                exit(1);
             }  
             break;
         case NODE_GT:
@@ -636,8 +634,8 @@ ASTNode* evaluateExpression(ASTNode* node) {
                 return (binval1 > binval2) ? createStrNode(NODE_INT_LITERAL,"(1,2)") : createStrNode(NODE_INT_LITERAL,"(0,2)");
             }
             else{
-                printf("Runtime Error: Type Mismatch\n");
-                return 0;
+                printf("Runtime Error\n");
+                exit(1);
             }  
             break;
         case NODE_LE:
@@ -661,8 +659,8 @@ ASTNode* evaluateExpression(ASTNode* node) {
                 return (binval1 <= binval2) ? createStrNode(NODE_INT_LITERAL,"(1,2)") : createStrNode(NODE_INT_LITERAL,"(0,2)");
             }
             else{
-                printf("Runtime Error: Type Mismatch\n");
-                return 0;
+                printf("Runtime Error\n");
+                exit(1);
             }  
             break;
         case NODE_GE:
@@ -686,8 +684,8 @@ ASTNode* evaluateExpression(ASTNode* node) {
                 return (binval1 >= binval2) ? createStrNode(NODE_INT_LITERAL,"(1,2)") : createStrNode(NODE_INT_LITERAL,"(0,2)");
             }
             else{
-                printf("Runtime Error: Type Mismatch\n");
-                return 0;
+                printf("Runtime Error\n");
+                exit(1);
             }  
             break;
         case NODE_POST_INC:
@@ -730,8 +728,8 @@ ASTNode* evaluateExpression(ASTNode* node) {
                         return createStrNode(NODE_INT_LITERAL, sym->value);
                         }
                 } else {
-                    printf("Runtime Error: Variable '%s' not initialized\n", node->data.children.left->data.strValue);
-                    return NULL;
+                    printf("Runtime Error\n");
+                    exit(1);
                 }
             }
             break;
@@ -768,8 +766,8 @@ ASTNode* evaluateExpression(ASTNode* node) {
                         }
                     
             } else {
-                printf("Runtime Error: Variable '%s' not initialized\n", node->data.children.left->data.strValue);
-                return NULL;
+                printf("Runtime Error\n");
+                exit(1);
             }
         }
         break;
@@ -806,8 +804,8 @@ ASTNode* evaluateExpression(ASTNode* node) {
                         }
                     
             } else {
-                printf("Runtime Error: Variable '%s' not initialized\n", node->data.children.left->data.strValue);
-                return NULL;
+                printf("Runtime Error\n");
+                exit(1);
             }
         }
         break;
@@ -844,15 +842,15 @@ ASTNode* evaluateExpression(ASTNode* node) {
                         }
                     
             } else {
-                printf("Runtime Error: Variable '%s' not initialized\n", node->data.children.left->data.strValue);
-                return NULL;
+                printf("Runtime Error\n");
+                exit(1);
             }
         }
         break;
         case NODE_DIV_ASSIGN:
         if(valuetaker(evaluateExpression(node->data.children.right ))==0){
-            printf("Runtime Error: Division by zero\n");
-            return 0;
+            printf("Runtime Error\n");
+            exit(1);
         } 
         if(node->data.children.left->type == NODE_IDENTIFIER) {
             Symbol* sym = lookupSymbol(node->data.children.left->data.strValue);
@@ -886,8 +884,8 @@ ASTNode* evaluateExpression(ASTNode* node) {
                         }
                     
             } else {
-                printf("Runtime Error: Variable '%s' not initialized\n", node->data.children.left->data.strValue);
-                return NULL;
+                printf("Runtime Error\n");
+                exit(1);
             }
         }
         break;
@@ -931,8 +929,8 @@ ASTNode* evaluateExpression(ASTNode* node) {
                         return createStrNode(NODE_INT_LITERAL, sym->value);
                         }
                 } else {
-                    printf("Runtime Error: Variable '%s' not initialized\n", node->data.children.left->data.strValue);
-                    return NULL;
+                    printf("Runtime Error\n");
+                    exit(1);
                 }
             }
             break;
@@ -952,16 +950,16 @@ ASTNode* evaluateExpression(ASTNode* node) {
                     return createStrNode(NODE_INT_LITERAL, sym->value);
                     }
                     else if(basetaker(node->data.children.left)==8){
-                        printf("Runtime Error: Unary operations not possible for given base\n");
-                        return NULL;
+                        printf("Runtime Error\n");
+                        exit(1);
                     }
                     else if(basetaker(node->data.children.left)==2){
-                        printf("Runtime Error: Not Possible for given base\n");
-                        return NULL;
+                        printf("Runtime Error\n");
+                        exit(1);
                         }
                 } else {
-                    printf("Runtime Error: Variable '%s' not initialized\n", node->data.children.left->data.strValue);
-                    return NULL;
+                    printf("Runtime Error\n");
+                    exit(1);
                 }
             }
             break;
