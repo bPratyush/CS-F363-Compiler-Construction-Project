@@ -329,7 +329,6 @@ void evaluate(ASTNode* node) {
             exit(1);
         } else {
             ASTNode* current = elseBlock;
-            int stmtCount = 0;
             while (current) {
                 current = current->next;
             }
