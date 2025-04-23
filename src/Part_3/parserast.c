@@ -1322,4 +1322,3 @@ void freeAST(ASTNode* node) {
     
     freeAST(next);
 }
-
