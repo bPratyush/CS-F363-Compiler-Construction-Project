@@ -81,6 +81,50 @@ void addToList(ASTNode* list, ASTNode* node) {
     node->next=NULL;
 }
 
+int octaltoint(int num){
+    int decimal = 0, base = 1, rem;
+    while (num > 0) {
+        rem = num % 10;
+        decimal = decimal + rem * base;
+        num = num / 10;
+        base = base * 8;
+    }
+    return decimal;
+}
+
+int inttooctal(int num){
+    int decimal = 0, base = 1, rem;
+    while (num > 0) {
+        rem = num % 8;
+        decimal = decimal + rem * base;
+        num = num / 8;
+        base = base * 10;
+    }
+    return decimal;
+}
+
+int inttobinary(int num){
+    int decimal = 0, base = 1, rem;
+    while (num > 0) {
+        rem = num % 2;
+        decimal = decimal + rem * base;
+        num = num / 2;
+        base = base * 10;
+    }
+    return decimal;
+}
+
+int binarytoint(int num){
+    int decimal = 0, base = 1, rem;
+    while (num > 0) {
+        rem = num % 10;
+        decimal = decimal + rem * base;
+        num = num / 10;
+        base = base * 2;
+    }
+    return decimal;
+}
+
 int valuetaker(ASTNode* node) {
     if (!node) return 0;
 
@@ -259,8 +303,7 @@ void evaluate(ASTNode* node) {
             }
             break;
 
-            case NODE_IF_ELSE_STMT:
-{
+            case NODE_IF_ELSE_STMT:{
     ASTNode* condition = node->data.ternary.first;
     ASTNode* thenBlock = node->data.ternary.second;
     ASTNode* elseBlock = node->data.ternary.third;
@@ -296,59 +339,6 @@ void evaluate(ASTNode* node) {
     }
 }
 break;
-            case NODE_WHILE_STMT:
-            {
-                ASTNode* condition = node->data.children.left;
-                ASTNode* body = node->data.children.right;
-                
-                ASTNode* result;
-                
-                while (1) {
-                    result = evaluateExpression(condition);
-                    if (!result) {
-                        printf("Runtime Error: Invalid condition in while loop\n");
-                        exit(1);
-                    }
-                    
-                    if (valuetaker(result) == 0) {
-                        break; 
-                    }
-                    
-                    evaluate(body);
-                }
-            }
-            break;
-        
-            case NODE_FOR_STMT:
-            {
-                ASTNode* init = node->data.ternary.first;
-                ASTNode* condition = node->data.ternary.second;
-                ASTNode* body = node->data.ternary.third;
-                ASTNode* increment = condition->next; 
-                ASTNode* step = increment ? increment->next : NULL; 
-            
-                evaluate(init);
-                
-                while (1) {
-                    ASTNode* result = evaluateExpression(condition);
-                    if (!result) {
-                        printf("Runtime Error: Invalid condition in for loop\n");
-                        exit(1);
-                    }
-                    
-                    if (valuetaker(result) == 0) {
-                        break;  
-                    }
-                    evaluate(body);
-                    if (increment) {
-                        evaluateExpression(increment);
-                    }
-                    if (step) {
-                        evaluateExpression(step);
-                    }
-                }
-            }
-            break;
         default:
         printf("Runtime Error\n");
         exit(1);
@@ -382,50 +372,6 @@ char* converttostring(int num){
         sprintf(str, "%d", num);
     }
     return str;
-}
-
-int octaltoint(int num){
-    int decimal = 0, base = 1, rem;
-    while (num > 0) {
-        rem = num % 10;
-        decimal = decimal + rem * base;
-        num = num / 10;
-        base = base * 8;
-    }
-    return decimal;
-}
-
-int inttooctal(int num){
-    int decimal = 0, base = 1, rem;
-    while (num > 0) {
-        rem = num % 8;
-        decimal = decimal + rem * base;
-        num = num / 8;
-        base = base * 10;
-    }
-    return decimal;
-}
-
-int inttobinary(int num){
-    int decimal = 0, base = 1, rem;
-    while (num > 0) {
-        rem = num % 2;
-        decimal = decimal + rem * base;
-        num = num / 2;
-        base = base * 10;
-    }
-    return decimal;
-}
-
-int binarytoint(int num){
-    int decimal = 0, base = 1, rem;
-    while (num > 0) {
-        rem = num % 10;
-        decimal = decimal + rem * base;
-        num = num / 10;
-        base = base * 2;
-    }
-    return decimal;
 }
 
 ASTNode* evaluateExpression(ASTNode* node) {
