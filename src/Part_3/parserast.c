@@ -238,7 +238,117 @@ void evaluate(ASTNode* node) {
         case NODE_UNARY_PLUS:
             evaluateExpression(node);
             break;
+            case NODE_COMPOUND_STMT:
+            if (node->data.children.left) {
+                evaluate(node->data.children.left);
+            }
+            break;
+
+            case NODE_IF_STMT:
+            {
+                ASTNode* condition = node->data.children.left;
+                ASTNode* thenBlock = node->data.children.right;
+                ASTNode* result = evaluateExpression(condition);
+                if (!result) {
+                    printf("Runtime Error\n");
+                    exit(1);
+                }
+                if (valuetaker(result) != 0) {
+                    evaluate(thenBlock);
+                }
+            }
+            break;
+
+            case NODE_IF_ELSE_STMT:
+{
+    ASTNode* condition = node->data.ternary.first;
+    ASTNode* thenBlock = node->data.ternary.second;
+    ASTNode* elseBlock = node->data.ternary.third;
+    if (!condition) {
+        printf("Runtime Error\n");
+        exit(1);
+    } 
+    ASTNode* result = evaluateExpression(condition);
+    if (!result) {
+        printf("Runtime Error\n");
+        exit(1);
+    }
+
+    if (valuetaker(result) != 0) {
+        if (!thenBlock) {
+            printf("Runtime Error\n");
+            exit(1);
+        }
+        evaluate(thenBlock);
+    } else {
+        if (!elseBlock) {
+            printf("Runtime Error\n");
+            exit(1);
+        } else {
+            printf("\n");
+            ASTNode* current = elseBlock;
+            int stmtCount = 0;
+            while (current) {
+                current = current->next;
+            }
+            evaluate(elseBlock);
+        }
+    }
+}
+break;
+            case NODE_WHILE_STMT:
+            {
+                ASTNode* condition = node->data.children.left;
+                ASTNode* body = node->data.children.right;
+                
+                ASTNode* result;
+                
+                while (1) {
+                    result = evaluateExpression(condition);
+                    if (!result) {
+                        printf("Runtime Error: Invalid condition in while loop\n");
+                        exit(1);
+                    }
+                    
+                    if (valuetaker(result) == 0) {
+                        break; 
+                    }
+                    
+                    evaluate(body);
+                }
+            }
+            break;
         
+            case NODE_FOR_STMT:
+            {
+                ASTNode* init = node->data.ternary.first;
+                ASTNode* condition = node->data.ternary.second;
+                ASTNode* body = node->data.ternary.third;
+                ASTNode* increment = condition->next; 
+                ASTNode* step = increment ? increment->next : NULL; 
+            
+                evaluate(init);
+                
+                while (1) {
+                    ASTNode* result = evaluateExpression(condition);
+                    if (!result) {
+                        printf("Runtime Error: Invalid condition in for loop\n");
+                        exit(1);
+                    }
+                    
+                    if (valuetaker(result) == 0) {
+                        break;  
+                    }
+                    evaluate(body);
+                    if (increment) {
+                        evaluateExpression(increment);
+                    }
+                    if (step) {
+                        evaluateExpression(step);
+                    }
+                }
+            }
+            break;
         default:
         printf("Runtime Error\n");
         exit(1);
