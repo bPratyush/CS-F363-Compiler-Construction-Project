@@ -518,7 +518,7 @@ assignment_expression:
     {
         ASTNode* idNode = createStrNode(NODE_IDENTIFIER, $1);
         $$ = createBinaryNode($2->type, idNode, $3);
-        free($2); /* Free the temporary node */
+        free($2); 
     }
     ;
 
@@ -553,7 +553,8 @@ equality_expression:
     relational_expression equality_expression_tail
     {
         if ($2) {
-            /* The tail will have created a node with $1 as the left child */
+            /* Set the relational_expression as the left child of the equality expression */
+            $2->data.children.left = $1;
             $$ = $2;
         } else {
             $$ = $1;
@@ -566,29 +567,13 @@ equality_expression_tail:
     {
         $$ = NULL;
     }
-    | EQ relational_expression equality_expression_tail
+    | EQ relational_expression
     {
-        ASTNode* node = createBinaryNode(NODE_EQ, $2, NULL);
-        
-        if ($3) {
-            /* Chain the expressions - current equality becomes left child of next operation */
-            $3->data.children.left = node;
-            $$ = $3;
-        } else {
-            $$ = node;
-        }
+        $$ = createBinaryNode(NODE_EQ, NULL, $2);
     }
-    | NE relational_expression equality_expression_tail
+    | NE relational_expression
     {
-        ASTNode* node = createBinaryNode(NODE_NE, $2, NULL);
-        
-        if ($3) {
-            /* Chain the expressions - current equality becomes left child of next operation */
-            $3->data.children.left = node;
-            $$ = $3;
-        } else {
-            $$ = node;
-        }
+        $$ = createBinaryNode(NODE_NE, NULL, $2);
     }
     ;
 
@@ -596,7 +581,8 @@ relational_expression:
     additive_expression relational_expression_tail
     {
         if ($2) {
-            /* The tail will have created a node with $1 as the left child */
+            /* Set the additive_expression as the left child of the relational expression */
+            $2->data.children.left = $1;
             $$ = $2;
         } else {
             $$ = $1;
@@ -611,19 +597,19 @@ relational_expression_tail:
     }
     | LT additive_expression
     {
-        $$ = createBinaryNode(NODE_LT, $2, NULL);
+        $$ = createBinaryNode(NODE_LT, NULL, $2);
     }
     | GT additive_expression
     {
-        $$ = createBinaryNode(NODE_GT, $2, NULL);
+        $$ = createBinaryNode(NODE_GT, NULL, $2);
     }
     | LE additive_expression
     {
-        $$ = createBinaryNode(NODE_LE, $2, NULL);
+        $$ = createBinaryNode(NODE_LE, NULL, $2);
     }
     | GE additive_expression
     {
-        $$ = createBinaryNode(NODE_GE, $2, NULL);
+        $$ = createBinaryNode(NODE_GE, NULL, $2);
     }
     ;
 

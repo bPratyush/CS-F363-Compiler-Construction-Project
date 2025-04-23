@@ -4,10 +4,11 @@ begin VarDecl:
 (sum, int);
 (c, char);
 (a, int);
-(b, char);
-(a[6],char);
+(b, int);
 end VarDecl 
 number := (5, 10); 
-sum := (2,10);
-a := sum + (3,10);
+sum := (10,8);
+number += (1,10);
+sum := dec sum;
+sum := -sum;
 end program

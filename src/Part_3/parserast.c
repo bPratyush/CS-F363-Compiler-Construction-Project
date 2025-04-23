@@ -85,8 +85,7 @@ int valuetaker(ASTNode* node) {
     if (!node) return 0;
 
     switch (node->type) {
-        case NODE_INT_LITERAL: {
-            
+        case NODE_INT_LITERAL: {    
             char* str = node->data.strValue;
             char* comma = strchr(str, '(');
             if (comma) {
@@ -107,6 +106,21 @@ int valuetaker(ASTNode* node) {
         case NODE_IDENTIFIER: {
             Symbol* sym = lookupSymbol(node->data.strValue);
             if (sym && sym->initialized) {
+                char* str = sym->value;
+                char* comma = strchr(str, '(');
+                if (comma) {
+                    comma++;
+                    char* end = strchr(comma, ',');
+                    if (end) {
+                        char value_str[32] = {0};
+                        int len = end - comma;
+                        if (len < 31) {
+                            strncpy(value_str, comma, len);
+                            value_str[len] = '\0';
+                            return atoi(value_str);
+                        }
+                    }
+                }
                 return atoi(sym->value);
             } else {
                 printf("Runtime Error: Variable '%s' not initialized\n", node->data.strValue);
@@ -206,6 +220,20 @@ void evaluate(ASTNode* node) {
 
         case NODE_PRINT_STMT:
             executePrint(node);
+            break;
+
+        case NODE_PLUS_ASSIGN:
+        case NODE_MINUS_ASSIGN:
+        case NODE_MULT_ASSIGN:
+        case NODE_DIV_ASSIGN:
+            evaluateExpression(node);
+            break;
+
+        case NODE_POST_DEC:
+        case NODE_POST_INC:
+        case NODE_PRE_DEC:
+        case NODE_PRE_INC:
+            evaluateExpression(node);
             break;
         
         default:
@@ -311,7 +339,7 @@ ASTNode* evaluateExpression(ASTNode* node) {
         {
             if((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 10){
                 int val1 = valuetaker(evaluateExpression((node->data.children.left)));
-                int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+                int val2 = valuetaker(evaluateExpression((node->data.children.right))); 
                 int result = val1 + val2;
                 char result_str[50];
                 sprintf(result_str, "(%d,10)", result);
@@ -657,45 +685,252 @@ ASTNode* evaluateExpression(ASTNode* node) {
                 return 0;
             }  
             break;
-        case NODE_PRE_INC:
-        case NODE_PRE_DEC:
-            if (node->data.children.left->type == NODE_IDENTIFIER) {
-                Symbol* sym = lookupSymbol(node->data.children.left->data.strValue);
-                if (sym && sym->initialized) {
-                    int value = atoi(sym->value);
-                    if (node->type == NODE_PRE_INC) {
-                        value++;
-                    } else {
-                        value--;
-                    }
-                    sprintf(sym->value, "%d", value);
-                    return createStrNode(NODE_INT_LITERAL, sym->value);
-                } else {
-                    printf("Runtime Error: Variable '%s' not initialized\n", node->data.children.left->data.strValue);
-                    return NULL;
-                }
-            }
-            break;
         case NODE_POST_INC:
         case NODE_POST_DEC:
             if (node->data.children.left->type == NODE_IDENTIFIER) {
                 Symbol* sym = lookupSymbol(node->data.children.left->data.strValue);
                 if (sym && sym->initialized) {
-                    int value = atoi(sym->value);
+                    if(basetaker(node->data.children.left)==10){
+                        int value = valuetaker(evaluateExpression(node->data.children.left));
                     if (node->type == NODE_POST_INC) {
                         value++;
                     } else {
                         value--;
                     }
-                    sprintf(sym->value, "%d", value);
+                    sprintf(sym->value, "(%d,10)", value);
                     return createStrNode(NODE_INT_LITERAL, sym->value);
+                    }
+                    else if(basetaker(node->data.children.left)==8){
+                    int value = valuetaker(evaluateExpression(node->data.children.left));
+                    int octval= octaltoint(value);
+                    if (node->type == NODE_POST_INC) {
+                        octval++;
+                    } else {
+                        octval--;
+                    }
+                    int octresult = inttooctal(octval);
+                    sprintf(sym->value, "(%d,8)", octresult);
+                    return createStrNode(NODE_INT_LITERAL, sym->value);
+                    }
+                    else if(basetaker(node->data.children.left)==2){
+                        int value = valuetaker(evaluateExpression(node->data.children.left));
+                        int octval= binarytoint(value);
+                        if (node->type == NODE_POST_INC) {
+                            octval++;
+                        } else {
+                            octval--;
+                        }
+                        int octresult = inttobinary(octval);
+                        sprintf(sym->value, "(%d,2)", octresult);
+                        return createStrNode(NODE_INT_LITERAL, sym->value);
+                        }
                 } else {
                     printf("Runtime Error: Variable '%s' not initialized\n", node->data.children.left->data.strValue);
                     return NULL;
                 }
             }
             break;
-        
+        case NODE_PLUS_ASSIGN:
+        if(node->data.children.left->type == NODE_IDENTIFIER) {
+            Symbol* sym = lookupSymbol(node->data.children.left->data.strValue);
+            if (sym && sym->initialized) {
+                if((basetaker(node->data.children.left)==10)&&(basetaker(node->data.children.right))==10){
+                int value = valuetaker(evaluateExpression(node->data.children.left));
+                int addValue = valuetaker(evaluateExpression(node->data.children.right));
+                value += addValue;
+                sprintf(sym->value, "(%d,10)", value);
+                return createStrNode(NODE_INT_LITERAL, sym->value);
+                }
+                else if((basetaker(node->data.children.left)==2)&&(basetaker(node->data.children.right))==2){
+                    int val1 = valuetaker(evaluateExpression(node->data.children.left));
+                    int val2 = valuetaker(evaluateExpression(node->data.children.right));
+                    int binval1= binarytoint(val1);
+                    int binval2= binarytoint(val2);
+                    int result = binval1 + binval2;
+                    int binaryresult = inttobinary(result);
+                    sprintf(sym->value, "(%d,2)", binaryresult);
+                    return createStrNode(NODE_INT_LITERAL, sym->value);
+                    }
+                    else if((basetaker(node->data.children.left)==8)&&(basetaker(node->data.children.right))==8){
+                        int val1 = valuetaker(evaluateExpression(node->data.children.left));
+                        int val2 = valuetaker(evaluateExpression(node->data.children.right));
+                        int binval1= octaltoint(val1);
+                        int binval2= octaltoint(val2);
+                        int result = binval1 + binval2;
+                        int binaryresult = inttooctal(result);
+                        sprintf(sym->value, "(%d,8)", binaryresult);
+                        return createStrNode(NODE_INT_LITERAL, sym->value);
+                        }
+                    
+            } else {
+                printf("Runtime Error: Variable '%s' not initialized\n", node->data.children.left->data.strValue);
+                return NULL;
+            }
+        }
+        break;
+        case NODE_MINUS_ASSIGN:
+        if(node->data.children.left->type == NODE_IDENTIFIER) {
+            Symbol* sym = lookupSymbol(node->data.children.left->data.strValue);
+            if (sym && sym->initialized) {
+                if((basetaker(node->data.children.left)==10)&&(basetaker(node->data.children.right))==10){
+                int value = valuetaker(evaluateExpression(node->data.children.left));
+                int addValue = valuetaker(evaluateExpression(node->data.children.right));
+                value -= addValue;
+                sprintf(sym->value, "(%d,10)", value);
+                return createStrNode(NODE_INT_LITERAL, sym->value);
+                }
+                else if((basetaker(node->data.children.left)==2)&&(basetaker(node->data.children.right))==2){
+                    int val1 = valuetaker(evaluateExpression(node->data.children.left));
+                    int val2 = valuetaker(evaluateExpression(node->data.children.right));
+                    int binval1= binarytoint(val1);
+                    int binval2= binarytoint(val2);
+                    int result = binval1 - binval2;
+                    int binaryresult = inttobinary(result);
+                    sprintf(sym->value, "(%d,2)", binaryresult);
+                    return createStrNode(NODE_INT_LITERAL, sym->value);
+                    }
+                    else if((basetaker(node->data.children.left)==8)&&(basetaker(node->data.children.right))==8){
+                        int val1 = valuetaker(evaluateExpression(node->data.children.left));
+                        int val2 = valuetaker(evaluateExpression(node->data.children.right));
+                        int binval1= octaltoint(val1);
+                        int binval2= octaltoint(val2);
+                        int result = binval1 - binval2;
+                        int binaryresult = inttooctal(result);
+                        sprintf(sym->value, "(%d,8)", binaryresult);
+                        return createStrNode(NODE_INT_LITERAL, sym->value);
+                        }
+                    
+            } else {
+                printf("Runtime Error: Variable '%s' not initialized\n", node->data.children.left->data.strValue);
+                return NULL;
+            }
+        }
+        break;
+        case NODE_MULT_ASSIGN:
+        if(node->data.children.left->type == NODE_IDENTIFIER) {
+            Symbol* sym = lookupSymbol(node->data.children.left->data.strValue);
+            if (sym && sym->initialized) {
+                if((basetaker(node->data.children.left)==10)&&(basetaker(node->data.children.right))==10){
+                int value = valuetaker(evaluateExpression(node->data.children.left));
+                int addValue = valuetaker(evaluateExpression(node->data.children.right));
+                value *= addValue;
+                sprintf(sym->value, "(%d,10)", value);
+                return createStrNode(NODE_INT_LITERAL, sym->value);
+                }
+                else if((basetaker(node->data.children.left)==2)&&(basetaker(node->data.children.right))==2){
+                    int val1 = valuetaker(evaluateExpression(node->data.children.left));
+                    int val2 = valuetaker(evaluateExpression(node->data.children.right));
+                    int binval1= binarytoint(val1);
+                    int binval2= binarytoint(val2);
+                    int result = binval1 * binval2;
+                    int binaryresult = inttobinary(result);
+                    sprintf(sym->value, "(%d,2)", binaryresult);
+                    return createStrNode(NODE_INT_LITERAL, sym->value);
+                    }
+                    else if((basetaker(node->data.children.left)==8)&&(basetaker(node->data.children.right))==8){
+                        int val1 = valuetaker(evaluateExpression(node->data.children.left));
+                        int val2 = valuetaker(evaluateExpression(node->data.children.right));
+                        int binval1= octaltoint(val1);
+                        int binval2= octaltoint(val2);
+                        int result = binval1 * binval2;
+                        int binaryresult = inttooctal(result);
+                        sprintf(sym->value, "(%d,8)", binaryresult);
+                        return createStrNode(NODE_INT_LITERAL, sym->value);
+                        }
+                    
+            } else {
+                printf("Runtime Error: Variable '%s' not initialized\n", node->data.children.left->data.strValue);
+                return NULL;
+            }
+        }
+        break;
+        case NODE_DIV_ASSIGN:
+        if(valuetaker(evaluateExpression(node->data.children.right ))==0){
+            printf("Runtime Error: Division by zero\n");
+            return 0;
+        } 
+        if(node->data.children.left->type == NODE_IDENTIFIER) {
+            Symbol* sym = lookupSymbol(node->data.children.left->data.strValue);
+            if (sym && sym->initialized) {
+                if((basetaker(node->data.children.left)==10)&&(basetaker(node->data.children.right))==10){
+                int value = valuetaker(evaluateExpression(node->data.children.left));
+                int addValue = valuetaker(evaluateExpression(node->data.children.right));
+                value /= addValue;
+                sprintf(sym->value, "(%d,10)", value);
+                return createStrNode(NODE_INT_LITERAL, sym->value);
+                }
+                else if((basetaker(node->data.children.left)==2)&&(basetaker(node->data.children.right))==2){
+                    int val1 = valuetaker(evaluateExpression(node->data.children.left));
+                    int val2 = valuetaker(evaluateExpression(node->data.children.right));
+                    int binval1= binarytoint(val1);
+                    int binval2= binarytoint(val2);
+                    int result = binval1 / binval2;
+                    int binaryresult = inttobinary(result);
+                    sprintf(sym->value, "(%d,2)", binaryresult);
+                    return createStrNode(NODE_INT_LITERAL, sym->value);
+                    }
+                    else if((basetaker(node->data.children.left)==8)&&(basetaker(node->data.children.right))==8){
+                        int val1 = valuetaker(evaluateExpression(node->data.children.left));
+                        int val2 = valuetaker(evaluateExpression(node->data.children.right));
+                        int binval1= octaltoint(val1);
+                        int binval2= octaltoint(val2);
+                        int result = binval1 / binval2;
+                        int binaryresult = inttooctal(result);
+                        sprintf(sym->value, "(%d,8)", binaryresult);
+                        return createStrNode(NODE_INT_LITERAL, sym->value);
+                        }
+                    
+            } else {
+                printf("Runtime Error: Variable '%s' not initialized\n", node->data.children.left->data.strValue);
+                return NULL;
+            }
+        }
+        break;
+        case NODE_PRE_INC:
+        case NODE_PRE_DEC:
+            if (node->data.children.left->type == NODE_IDENTIFIER) {
+                Symbol* sym = lookupSymbol(node->data.children.left->data.strValue);
+                if (sym && sym->initialized) {
+                    if(basetaker(node->data.children.left)==10){
+                        int value = valuetaker(evaluateExpression(node->data.children.left));
+                    if (node->type == NODE_PRE_INC) {
+                        value++;
+                    } else {
+                        value--;
+                    }
+                    sprintf(sym->value, "(%d,10)", value);
+                    return createStrNode(NODE_INT_LITERAL, sym->value);
+                    }
+                    else if(basetaker(node->data.children.left)==8){
+                    int value = valuetaker(evaluateExpression(node->data.children.left));
+                    int octval= octaltoint(value);
+                    if (node->type == NODE_PRE_INC) {
+                        octval++;
+                    } else {
+                        octval--;
+                    }
+                    int octresult = inttooctal(octval);
+                    sprintf(sym->value, "(%d,8)", octresult);
+                    return createStrNode(NODE_INT_LITERAL, sym->value);
+                    }
+                    else if(basetaker(node->data.children.left)==2){
+                        int value = valuetaker(evaluateExpression(node->data.children.left));
+                        int octval= binarytoint(value);
+                        if (node->type == NODE_PRE_INC) {
+                            octval++;
+                        } else {
+                            octval--;
+                        }
+                        int octresult = inttobinary(octval);
+                        sprintf(sym->value, "(%d,2)", octresult);
+                        return createStrNode(NODE_INT_LITERAL, sym->value);
+                        }
+                } else {
+                    printf("Runtime Error: Variable '%s' not initialized\n", node->data.children.left->data.strValue);
+                    return NULL;
+                }
+            }
+            break;
         default:
             return NULL;
     }

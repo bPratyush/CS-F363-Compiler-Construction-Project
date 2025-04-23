@@ -4,8 +4,10 @@ begin VarDecl:
 (sum, int);
 (c, char);
 (a, int);
-(b, char);
+(b, int);
 end VarDecl 
 number := (5, 10); 
-sum := (799,8) + (5,10);
+sum := (10,10);
+sum++;
+b := number <> (100, 2);
 end program
