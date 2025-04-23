@@ -188,41 +188,41 @@ int isKeyword(const char *word) {
 }
 <VARDECL>[^a-z0-9_(),; \t\n]+ { print_token(yytext, "ERROR: Invalid token in VarDecl"); return yytext[0]; }
 <VARDECL>[ \t\n]+ { }
-"if" { print_token(yytext, "KEYWORD"); return TK_IF; }
-"else" { print_token(yytext, "KEYWORD"); return TK_ELSE; }
-"while" { print_token(yytext, "KEYWORD"); return TK_WHILE; }
-"for" { print_token(yytext, "KEYWORD"); return TK_FOR; }
-"do" { print_token(yytext, "KEYWORD"); return TK_DO; }
-"to" { print_token(yytext, "KEYWORD"); return TK_TO; }
-"inc" { print_token(yytext, "KEYWORD"); return TK_INC; }
-"dec" { print_token(yytext, "KEYWORD"); return TK_DEC; }
-"main" { print_token(yytext, "KEYWORD"); return TK_MAIN; }
-"int" { print_token(yytext, "KEYWORD"); return TK_INT; }
-"char" { print_token(yytext, "KEYWORD"); return TK_CHAR; }
-"or" { print_token(yytext, "KEYWORD"); return OR; }
-"and" { print_token(yytext, "KEYWORD"); return AND; }
-"not" { print_token(yytext, "KEYWORD"); return NOT; }
-";" { print_token(yytext, "SEPARATOR"); return TK_SEP; }
-"(" { print_token(yytext, "SEPARATOR"); return LPAREN; }
-")" { print_token(yytext, "SEPARATOR"); return RPAREN; }
-"," { print_token(yytext, "SEPARATOR"); return COMMA; }
-"+" { print_token(yytext, "OPERATOR"); return PLUS; }
-"-" { print_token(yytext, "OPERATOR"); return MINUS; }
-"*" { print_token(yytext, "OPERATOR"); return MULT; }
-"/" { print_token(yytext, "OPERATOR"); return DIV; }
-"%" { print_token(yytext, "OPERATOR"); return MOD; }
-"=" { print_token(yytext, "OPERATOR"); return EQ; }
-">" { print_token(yytext, "OPERATOR"); return GT; }
-"<" { print_token(yytext, "OPERATOR"); return LT; }
-">=" { print_token(yytext, "OPERATOR"); return GE; }
-"<=" { print_token(yytext, "OPERATOR"); return LE; }
-"<>" { print_token(yytext, "OPERATOR"); return NE; }
-":=" { print_token(yytext, "Assignment operator"); return ASSIGN; }
-"+=" { print_token(yytext, "OPERATOR"); return PLUS_ASSIGN; }
-"-=" { print_token(yytext, "OPERATOR"); return MINUS_ASSIGN; }
-"*=" { print_token(yytext, "OPERATOR"); return MULT_ASSIGN; }
-"/=" { print_token(yytext, "OPERATOR"); return DIV_ASSIGN; }
-"%=" { print_token(yytext, "OPERATOR"); return MOD_ASSIGN; }
+"if" {yylval.str = strdup_safe(yytext); print_token(yytext, "KEYWORD"); return TK_IF; }
+"else" {yylval.str = strdup_safe(yytext); print_token(yytext, "KEYWORD"); return TK_ELSE; }
+"while" {yylval.str = strdup_safe(yytext); print_token(yytext, "KEYWORD"); return TK_WHILE; }
+"for" {yylval.str = strdup_safe(yytext); print_token(yytext, "KEYWORD"); return TK_FOR; }
+"do" {yylval.str = strdup_safe(yytext); print_token(yytext, "KEYWORD"); return TK_DO; }
+"to" {yylval.str = strdup_safe(yytext); print_token(yytext, "KEYWORD"); return TK_TO; }
+"inc" {yylval.str = strdup_safe(yytext); print_token(yytext, "KEYWORD"); return TK_INC; }
+"dec" {yylval.str = strdup_safe(yytext); print_token(yytext, "KEYWORD"); return TK_DEC; }
+"main" {yylval.str = strdup_safe(yytext); print_token(yytext, "KEYWORD"); return TK_MAIN; }
+"int" {yylval.str = strdup_safe(yytext); print_token(yytext, "KEYWORD"); return TK_INT; }
+"char" {yylval.str = strdup_safe(yytext); print_token(yytext, "KEYWORD"); return TK_CHAR; }
+"or" {yylval.str = strdup_safe(yytext); print_token(yytext, "KEYWORD"); return OR; }
+"and" {yylval.str = strdup_safe(yytext); print_token(yytext, "KEYWORD"); return AND; }
+"not" {yylval.str = strdup_safe(yytext); print_token(yytext, "KEYWORD"); return NOT; }
+";" {yylval.str = strdup_safe(yytext); print_token(yytext, "SEPARATOR"); return TK_SEP; }
+"(" {yylval.str = strdup_safe(yytext); print_token(yytext, "SEPARATOR"); return LPAREN; }
+")" {yylval.str = strdup_safe(yytext); print_token(yytext, "SEPARATOR"); return RPAREN; }
+"," {yylval.str = strdup_safe(yytext); print_token(yytext, "SEPARATOR"); return COMMA; }
+"+" {yylval.str = strdup_safe(yytext); print_token(yytext, "OPERATOR"); return PLUS; }
+"-" {yylval.str = strdup_safe(yytext); print_token(yytext, "OPERATOR"); return MINUS; }
+"*" {yylval.str = strdup_safe(yytext); print_token(yytext, "OPERATOR"); return MULT; }
+"/" {yylval.str = strdup_safe(yytext); print_token(yytext, "OPERATOR"); return DIV; }
+"%" {yylval.str = strdup_safe(yytext); print_token(yytext, "OPERATOR"); return MOD; }
+"=" {yylval.str = strdup_safe(yytext); print_token(yytext, "OPERATOR"); return EQ; }
+">" {yylval.str = strdup_safe(yytext); print_token(yytext, "OPERATOR"); return GT; }
+"<" {yylval.str = strdup_safe(yytext); print_token(yytext, "OPERATOR"); return LT; }
+">=" {yylval.str = strdup_safe(yytext); print_token(yytext, "OPERATOR"); return GE; }
+"<=" {yylval.str = strdup_safe(yytext); print_token(yytext, "OPERATOR"); return LE; }
+"<>" {yylval.str = strdup_safe(yytext); print_token(yytext, "OPERATOR"); return NE; }
+":=" {yylval.str = strdup_safe(yytext); print_token(yytext, "Assignment operator"); return ASSIGN; }
+"+=" {yylval.str = strdup_safe(yytext); print_token(yytext, "OPERATOR"); return PLUS_ASSIGN; }
+"-=" {yylval.str = strdup_safe(yytext); print_token(yytext, "OPERATOR"); return MINUS_ASSIGN; }
+"*=" {yylval.str = strdup_safe(yytext); print_token(yytext, "OPERATOR"); return MULT_ASSIGN; }
+"/=" {yylval.str = strdup_safe(yytext); print_token(yytext, "OPERATOR"); return DIV_ASSIGN; }
+"%=" {yylval.str = strdup_safe(yytext); print_token(yytext, "OPERATOR"); return MOD_ASSIGN; }
 "print" { print_token(yytext, "KEYWORD"); reset_print_buffers(); BEGIN(PRINT); return TK_PRINT; }
 <PRINT>"(" { print_token(yytext, "SEPARATOR"); parentheses_count++; return LPAREN; }
 <PRINT>\" { BEGIN(STRING); }
