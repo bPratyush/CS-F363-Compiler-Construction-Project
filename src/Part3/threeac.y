@@ -276,10 +276,9 @@ ifexpr:
      }
   | conditional_statement { $$ = $1; }
   ;
-/* Updated iteration_statement with boolean temp for while conditions */
+  
 iteration_statement:
-    /* while loop with explicit parentheses */
-    /* --- while with parentheses --- */
+
   TK_WHILE LPAREN expression RPAREN TK_DO
   {
     /* 1) make labels and temp */
@@ -289,8 +288,8 @@ iteration_statement:
 
     /* 2) emit loop‐entry and test */
     printf("%s:\n",             W_Lstart);
-    printf("%s = %s\n",         W_tmpcond, $3);
-    printf("if not %s goto %s\n", W_tmpcond, W_Lend);
+    printf("%s := %s\n",         W_tmpcond, $3);
+    printf("if %s := 0 goto %s\n", W_tmpcond, W_Lend);
   }
   compound_statement
   {
@@ -308,8 +307,8 @@ iteration_statement:
     W_tmpcond= newtemp();
 
     printf("%s:\n",             W_Lstart);
-    printf("%s = %s\n",         W_tmpcond, $2);
-    printf("if not %s goto %s\n", W_tmpcond, W_Lend);
+    printf("%s := %s\n",         W_tmpcond, $2);
+    printf("if %s := 0 goto %s\n", W_tmpcond, W_Lend);
   }
   compound_statement
   {
@@ -330,16 +329,16 @@ iteration_statement:
       F_Lend   = newlabel();
       F_tmpcond= newtemp();
    
-      printf("%s = %s\n", F_var, $5);    /* var = lower */
+      printf("%s := %s\n", F_var, $5);    /* var = lower */
       printf("%s:\n",    F_Lstart);      /* Lstart: */
     
-      printf("%s = %s <= %s\n", F_tmpcond, F_var, F_end);
-      printf("if not %s goto %s\n", F_tmpcond, F_Lend);
+      printf("%s := %s > %s\n", F_tmpcond,   F_var , F_end);
+      printf("if %s == 1 goto %s\n", F_tmpcond, F_Lend);
     }
     compound_statement  /* ← body will be emitted here by its own actions */
     {
       /* 5) after the body, emit increment/jump/end */
-      printf("%s = %s + %s\n", F_var, F_var, F_inc);
+      printf("%s := %s + %s\n", F_var, F_var, F_inc);
       printf("goto %s\n",     F_Lstart);
       printf("%s:\n",         F_Lend);
     }
@@ -355,14 +354,14 @@ iteration_statement:
       F_Lstart = newlabel();
       F_Lend   = newlabel();
       F_tmpcond= newtemp();
-      printf("%s = %s\n", F_var, $4);
+      printf("%s := %s\n", F_var, $4);
       printf("%s:\n",    F_Lstart);
-      printf("%s = %s <= %s\n", F_tmpcond, F_var, F_end);
-      printf("if not %s goto %s\n", F_tmpcond, F_Lend);
+      printf("%s := %s > %s\n", F_tmpcond,  F_var , F_end);
+      printf("if %s == 1 goto %s\n", F_tmpcond, F_Lend);
     }
     compound_statement
     {
-      printf("%s = %s + %s\n", F_var, F_var, F_inc);
+      printf("%s := %s + %s\n", F_var, F_var, F_inc);
       printf("goto %s\n",     F_Lstart);
       printf("%s:\n",         F_Lend);
     }
@@ -389,12 +388,12 @@ assignment_expression:
          if($3 && $3[0]=='(') {
              int val, base;
              if(sscanf($3, "(%d,%d)", &val, &base)==2) {
-                 printf("%s = %s\n", $1, $3);
+                 printf("%s := %s\n", $1, $3);
              } else {
-                 printf("%s = %s\n", $1, $3);
+                 printf("%s := %s\n", $1, $3);
              }
          } else {
-             printf("%s = %s\n", $1, $3);
+             printf("%s := %s\n", $1, $3);
          }
          $$ = $1;
      }
@@ -459,12 +458,12 @@ additive_expression:
     multiplicative_expression { $$ = $1; }
   | additive_expression PLUS multiplicative_expression {
          char *temp = newtemp();
-         printf("%s = %s + %s\n", temp, $1, $3);
+         printf("%s := %s + %s\n", temp, $1, $3);
          $$ = temp;
      }
   | additive_expression MINUS multiplicative_expression {
          char *temp = newtemp();
-         printf("%s = %s - %s\n", temp, $1, $3);
+         printf("%s := %s - %s\n", temp, $1, $3);
          $$ = temp;
      }
   ;
@@ -473,17 +472,17 @@ multiplicative_expression:
     unary_expression {  }
   | multiplicative_expression MULT unary_expression {
          char *temp = newtemp();
-         printf("%s = %s * %s\n", temp, $1, $3);
+         printf("%s := %s * %s\n", temp, $1, $3);
          $$ = temp;
      }
   | multiplicative_expression DIV unary_expression {
          char *temp = newtemp();
-         printf("%s = %s / %s\n", temp, $1, $3);
+         printf("%s := %s / %s\n", temp, $1, $3);
          $$ = temp;
      }
   | multiplicative_expression MOD unary_expression {
          char *temp = newtemp();
-         printf("%s = %s %% %s\n", temp, $1, $3);
+         printf("%s := %s %% %s\n", temp, $1, $3);
          $$ = temp;
      }
   ;
@@ -492,7 +491,7 @@ unary_expression:
   | PLUS unary_expression %prec UNARY { $$ = $2; }
   | MINUS unary_expression %prec UNARY {
          char *temp = newtemp();
-         printf("%s = 0 - %s\n", temp, $2);
+         printf("%s := 0 - %s\n", temp, $2);
          $$ = temp;
      }
   | TK_INC unary_expression { $$ = $2; }
