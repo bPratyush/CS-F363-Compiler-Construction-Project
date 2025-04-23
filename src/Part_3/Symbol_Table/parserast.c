@@ -58,7 +58,7 @@ void printList(ASTNode* list) {
         printf("%s -> ", current->data.strValue);
         current = current->next;
     }
-    printf("NULL\n");
+    printf("NULL");
 }
 
 
@@ -328,7 +328,6 @@ void evaluate(ASTNode* node) {
             printf("Runtime Error\n");
             exit(1);
         } else {
-            printf("\n");
             ASTNode* current = elseBlock;
             int stmtCount = 0;
             while (current) {
@@ -362,7 +361,7 @@ void executeAssignment(ASTNode* node) {
         sprintf(sym->value, "%s", temp->data.strValue);
         markInitialized(sym->name);
     } else {
-        printf("Semantic Error: Variable '%s' not declared\n", left->data.strValue);
+        printf("Runtime Error\n");
     }
 }
 
