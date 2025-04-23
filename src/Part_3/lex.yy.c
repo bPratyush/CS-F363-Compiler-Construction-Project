@@ -2045,7 +2045,7 @@ YY_RULE_SETUP
 case 84:
 YY_RULE_SETUP
 #line 665 "parserast.l"
-{}
+{return yytext[0];}
 	YY_BREAK
 case 85:
 /* rule 85 can match eol */

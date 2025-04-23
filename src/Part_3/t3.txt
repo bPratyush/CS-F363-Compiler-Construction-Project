@@ -6,9 +6,7 @@ begin VarDecl:
 (a, int);
 (b, int);
 end VarDecl 
-number := (5, 10); 
-sum := (10,8);
-number += (1,10);
-sum := dec sum;
-sum := -sum;
+number := (5, 8); 
+sum := (7,8);
+number := (799,8) + (3,10) ;
 end program

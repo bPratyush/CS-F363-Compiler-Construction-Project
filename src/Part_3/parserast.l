@@ -662,7 +662,7 @@ int isKeyword(const char *word) {
                           return INTEGER_CONST;
                         }
 
-\([ \t]*[0-9]+[ \t]*,[ \t]*[0-9]+[ \t]*\) {}
+\([ \t]*[0-9]+[ \t]*,[ \t]*[0-9]+[ \t]*\) {return yytext[0];}
 
 '([^']|\\.)+\'          {
                           if (validate_char_const(yytext)) {

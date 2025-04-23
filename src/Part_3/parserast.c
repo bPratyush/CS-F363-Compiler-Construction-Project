@@ -235,9 +235,14 @@ void evaluate(ASTNode* node) {
         case NODE_PRE_INC:
             evaluateExpression(node);
             break;
+
+        case NODE_UNARY_MINUS:
+        case NODE_UNARY_PLUS:
+            evaluateExpression(node);
+            break;
         
         default:
-            printf("Unhandled node type: %d\n", node->type);
+            printf("Runtime Error\n");
             break;
     }
     if (node->next) {
@@ -924,6 +929,35 @@ ASTNode* evaluateExpression(ASTNode* node) {
                         int octresult = inttobinary(octval);
                         sprintf(sym->value, "(%d,2)", octresult);
                         return createStrNode(NODE_INT_LITERAL, sym->value);
+                        }
+                } else {
+                    printf("Runtime Error: Variable '%s' not initialized\n", node->data.children.left->data.strValue);
+                    return NULL;
+                }
+            }
+            break;
+            case NODE_UNARY_PLUS:
+            case NODE_UNARY_MINUS:
+            if (node->data.children.left->type == NODE_IDENTIFIER) {
+                Symbol* sym = lookupSymbol(node->data.children.left->data.strValue);
+                if (sym && sym->initialized) {
+                    if(basetaker(node->data.children.left)==10){
+                        int value = valuetaker(evaluateExpression(node->data.children.left));
+                    if (node->type == NODE_UNARY_PLUS) {
+                        value = value;
+                    } else {
+                        value = -value;
+                    }
+                    sprintf(sym->value, "(%d,10)", value);
+                    return createStrNode(NODE_INT_LITERAL, sym->value);
+                    }
+                    else if(basetaker(node->data.children.left)==8){
+                        printf("Runtime Error: Unary operations not possible for given base\n");
+                        return NULL;
+                    }
+                    else if(basetaker(node->data.children.left)==2){
+                        printf("Runtime Error: Not Possible for given base\n");
+                        return NULL;
                         }
                 } else {
                     printf("Runtime Error: Variable '%s' not initialized\n", node->data.children.left->data.strValue);

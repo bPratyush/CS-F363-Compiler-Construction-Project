@@ -2760,6 +2760,7 @@ void yyerror(const char *s) {
     if (!print_lexeme_token_pairs) {
         fprintf(stderr, "%s\n", s);
     }
+    exit(1);
 }
 
 int main(int argc, char *argv[]) {
