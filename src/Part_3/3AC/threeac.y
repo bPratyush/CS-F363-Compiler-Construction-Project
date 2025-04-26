@@ -14,7 +14,7 @@ int syntax_errors = 0;
 int semantic_errors = 0;
 int output_printed = 0;
 int temp_count = 0;
-int if_else_flag = -1;
+char *if_dum;
 char* newtemp() {
     char *temp = (char *)malloc(10);
     sprintf(temp, "t%d", temp_count++);
@@ -47,14 +47,18 @@ int is_declared(const char* id) {
 }
 void print_result() {
     if(!output_printed) {
+      //  printf("I am Here\n");
+    //    if(syntax_errors==0 && semantic_errors==0)
+        //    printf("Successfully Parsed !!!\n");
+  //      else
+      //      printf("Syntax Error !!!\n");
+        output_printed = 1;
     }
 }
 char *F_var, *F_end, *F_inc;
 char *F_Lstart, *F_Lend;
 char *F_tmpcond;
 char *W_Lstart, *W_Lend, *W_tmpcond;
-char* If_end , *If_Else_end;
-char* L3;
 %}
 
 %union {
@@ -226,23 +230,37 @@ id_list:
 compound_statement:
     TK_BLOCKBEGIN statement_list TK_END { }
   ;
-selection_statement: 
-    TK_IF LPAREN expression RPAREN 
-    {
-      if_else_flag = 0;
-      If_Else_end = newlabel();
-      printf("t1 := %s\n", $3);
-      printf("if t1 == 0 goto %s\n", If_Else_end);      
-    }
-    compound_statement TK_ELSE 
-    { if_else_flag = 1; 
-      L3 = newlabel();
-      printf("goto %s\n" , L3);
-      printf("%s:\n" , If_Else_end);
-    }
-    compound_statement TK_SEP
-    {
-     printf("%s:\n" , L3);
+selection_statement:
+     TK_IF ifexpr compound_statement TK_SEP %prec IFX
+    | TK_IF ifexpr compound_statement TK_ELSE compound_statement TK_SEP
+    | TK_IF LPAREN expression RPAREN compound_statement TK_SEP  %prec IFX
+    {   
+        if_dum = newlabel();
+        
+        printf("t1 := %s\n", $3);
+       
+        printf("if t1 == 0 goto %s\n", if_dum);
+ 
+        printf("%s:\n", if_dum);
+       }
+  | 
+    TK_IF LPAREN expression RPAREN compound_statement
+    TK_ELSE compound_statement TK_SEP
+    { //  printf("I am in else if\n");
+        char *L1 = newlabel();
+        char *L2 = newlabel();
+        
+        printf("t1 := %s\n", $3);
+        printf("if t1 == 1 goto %s\n", L1);
+       
+        printf("goto %s\n", L2);
+        
+        printf("%s:\n", L1);
+        
+     //   printf("goto %s\n", L2);
+       
+        printf("%s:\n", L2);
+        
     }
   ;
   
@@ -263,24 +281,25 @@ iteration_statement:
 
   TK_WHILE LPAREN expression RPAREN TK_DO
   {
-   
+    /* 1) make labels and temp */
     W_Lstart = newlabel();
     W_Lend   = newlabel();
     W_tmpcond= newtemp();
 
+    /* 2) emit loop‐entry and test */
     printf("%s:\n",             W_Lstart);
     printf("%s := %s\n",         W_tmpcond, $3);
     printf("if %s := 0 goto %s\n", W_tmpcond, W_Lend);
   }
   compound_statement
   {
-   
+    /* 3) after body, jump back + end label */
     printf("goto %s\n", W_Lstart);
     printf("%s:\n",     W_Lend);
   }
   TK_SEP
 
-  | 
+  | /* while loop without parentheses */
     TK_WHILE expression TK_DO
   {
     W_Lstart = newlabel();
@@ -298,37 +317,37 @@ iteration_statement:
   }
   TK_SEP
   
-  | 
+  | /* FOR with explicit parentheses */
     TK_FOR LPAREN IDENTIFIER ASSIGN expression TK_TO expression optional_inc expression RPAREN TK_DO
     {
 
-      F_var    = $3;                
-      F_end    = $7;                
-      F_inc    = $8 ? $9 : "1";     
+      F_var    = $3;                /* loop variable */
+      F_end    = $7;                /* upper bound */
+      F_inc    = $8 ? $9 : "1";     /* optional step */
     
       F_Lstart = newlabel();
       F_Lend   = newlabel();
       F_tmpcond= newtemp();
    
-      printf("%s := %s\n", F_var, $5);    
-      printf("%s:\n",    F_Lstart);      
+      printf("%s := %s\n", F_var, $5);    /* var = lower */
+      printf("%s:\n",    F_Lstart);      /* Lstart: */
     
       printf("%s := %s > %s\n", F_tmpcond,   F_var , F_end);
       printf("if %s == 1 goto %s\n", F_tmpcond, F_Lend);
     }
-    compound_statement  
+    compound_statement  /* ← body will be emitted here by its own actions */
     {
-      
+      /* 5) after the body, emit increment/jump/end */
       printf("%s := %s + %s\n", F_var, F_var, F_inc);
       printf("goto %s\n",     F_Lstart);
       printf("%s:\n",         F_Lend);
     }
     TK_SEP
    
-  | 
+  | /* FOR without parentheses */
     TK_FOR IDENTIFIER ASSIGN expression TK_TO expression optional_inc expression TK_DO
     {
-      
+      /* same as above but shift the $‑indices down by one */
       F_var    = $2;
       F_end    = $6;
       F_inc    = $7 ? $8 : "1";
@@ -520,9 +539,6 @@ int main(int argc, char *argv[]) {
     temp_count = 0;
     label_count = 0;
     yyparse();
-    if(if_else_flag == 0){
-      printf("%s:\n" , If_Else_end);
-    }
     fclose(yyin);
     return 0;
 }
