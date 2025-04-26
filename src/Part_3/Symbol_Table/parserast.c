@@ -411,7 +411,7 @@ void evaluate(ASTNode *node)
     case NODE_FOR_STMT:
     {
         ASTNode * initNode = node->data.ternary.first;
-        ASTNode * upperLimit = node->data.ternary.second;
+        ASTNode * upperLimit = node->data.ternary.second->data.children.left;
         ASTNode * body = node->data.ternary.third;
         evaluate(initNode);
         ASTNode * lowerLimit = initNode->data.children.left;
@@ -453,9 +453,10 @@ void evaluate(ASTNode *node)
         // if (stepBase == 2)  stepVal = binarytoint(stepVal);
 
         // }
-        printf("%d %d\n",lowerLimitVal,upperLimitVal);
-        // lowerLimitVal = 0;
-        // upperLimitVal = 1;
+        // // printf("%d %d\n",lowerLimitVal,upperLimitVal);
+        // // // lowerLimitVal = 0;
+        // // // upperLimitVal = 1;
+        // // printf("%d\n",stepVal);
         while(lowerLimitVal <= upperLimitVal){
             evaluate(body);
             lowerLimitVal++;
