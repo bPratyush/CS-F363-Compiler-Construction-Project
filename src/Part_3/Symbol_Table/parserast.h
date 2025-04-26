@@ -52,7 +52,6 @@ typedef enum {
     NODE_PRE_DEC,
     NODE_POST_INC,
     NODE_POST_DEC,
-    
     /* Terminal nodes */
     NODE_IDENTIFIER,
     NODE_INT_LITERAL,

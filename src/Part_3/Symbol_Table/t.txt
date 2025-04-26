@@ -24,4 +24,8 @@ begin
 end;
 c := (10,8);
 print("The value of a is @",a);
+<<<<<<< Updated upstream
 end program
+=======
+end program
+>>>>>>> Stashed changes
