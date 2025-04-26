@@ -14,6 +14,7 @@ int syntax_errors = 0;
 int semantic_errors = 0;
 int output_printed = 0;
 int temp_count = 0;
+int if_else_flag = 0;
 char* newtemp() {
     char *temp = (char *)malloc(10);
     sprintf(temp, "t%d", temp_count++);
@@ -234,40 +235,31 @@ compound_statement:
 selection_statement: 
     TK_IF LPAREN expression RPAREN 
     {
-     // printf(" I am in if-else(if)\n");
-    //  char *L1 = newlabel();
+      if_else_flag = 0;
       If_Else_end = newlabel();
       printf("t1 := %s\n", $3);
-      printf("if t1 == 0 goto %s\n", If_Else_end);
-    //  printf("goto %s\n", );
-    //  printf("%s:\n" , L1);
-      
+      printf("if t1 == 0 goto %s\n", If_Else_end);      
     }
     compound_statement TK_ELSE 
-    { 
+    { if_else_flag = 1; 
       L3 = newlabel();
       printf("goto %s\n" , L3);
       printf("%s:\n" , If_Else_end);
-    //  printf(" I am in if-else(else)\n");
     }
     compound_statement TK_SEP
     {
-    // printf(" I am in if-else(else-block)\n");
      printf("%s:\n" , L3);
     }
     | TK_IF LPAREN expression RPAREN
-    {   printf("I am in if\n"); 
+    { 
+     
         If_end = newlabel();
-       // char *L1 = newlabel();
         printf("t1 := %s\n", $3);
-       
-        printf("if t1 == 0 goto %s\n", If_end);
-      //  printf("goto %s\n" , L1);
-      //  printf("%s:\n", L1);
-        
+        printf("if t1 == 0 goto %s\n", If_end); 
     }
      compound_statement TK_SEP %prec IFX
      {
+      
         printf("%s:\n", If_end);
      }
   
@@ -547,6 +539,9 @@ int main(int argc, char *argv[]) {
     temp_count = 0;
     label_count = 0;
     yyparse();
+    if(if_else_flag == 0){
+      printf("%s:\n" , If_Else_end);
+    }
     fclose(yyin);
     return 0;
 }
