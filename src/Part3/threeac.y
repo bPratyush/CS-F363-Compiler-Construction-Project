@@ -14,7 +14,7 @@ int syntax_errors = 0;
 int semantic_errors = 0;
 int output_printed = 0;
 int temp_count = 0;
-int if_else_flag = 0;
+int if_else_flag = -1;
 char* newtemp() {
     char *temp = (char *)malloc(10);
     sprintf(temp, "t%d", temp_count++);
@@ -47,12 +47,6 @@ int is_declared(const char* id) {
 }
 void print_result() {
     if(!output_printed) {
-      //s  printf("I am Here\n");
-     /*   if(syntax_errors==0 && semantic_errors==0) 
-            printf("Successfully Parsed !!!\n");
-      else
-            printf("Syntax Error !!!\n");*/
-        output_printed = 1;
     }
 }
 char *F_var, *F_end, *F_inc;
@@ -250,19 +244,6 @@ selection_statement:
     {
      printf("%s:\n" , L3);
     }
-    | TK_IF LPAREN expression RPAREN
-    { 
-     
-        If_end = newlabel();
-        printf("t1 := %s\n", $3);
-        printf("if t1 == 0 goto %s\n", If_end); 
-    }
-     compound_statement TK_SEP %prec IFX
-     {
-      
-        printf("%s:\n", If_end);
-     }
-  
   ;
   
 ifexpr:
