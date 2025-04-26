@@ -383,8 +383,6 @@ int isKeyword(const char *word) {
                           strncat(print_string, yytext, sizeof(print_string)-strlen(print_string)-1);
                         }
 
-
-
 <STRING>\"              { 
                           print_state_string_captured = 1;
                           count_at_symbols(print_string);

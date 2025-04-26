@@ -322,6 +322,14 @@ expression_statement:
 print_statement:
     TK_PRINT LPAREN STRING_LITERAL optional_print_args RPAREN TK_SEP
     {
+        char *src = $3, *dst = $3;
+        while (*src) {
+            if (*src != ' ') {
+            *dst++ = *src;
+            }
+            src++;
+        }
+        *dst = '\0';
         ASTNode* formatNode = createStrNode(NODE_STRING_LITERAL, $3);
         $$ = createIONode(NODE_PRINT_STMT, formatNode, $4);
     }
