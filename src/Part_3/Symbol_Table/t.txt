@@ -1,0 +1,27 @@
+begin program:
+begin VarDecl:
+(number, int);
+(sum, int);
+(a, int);
+(b, int);
+(c,int);
+(arr[6], char);
+end VarDecl
+
+number := (3, 10);
+sum := (0, 10);
+while (number > (0, 10)) do
+begin
+    sum := sum + number;
+    number := number - (1, 10);
+end;
+
+b := (20,10);
+for a := (10, 10) to b inc (1, 10) do
+begin
+    a := a + (1,10);
+    b := b + (2,10); 
+end;
+c := (10,8);
+print("The value of a is @",a);
+end program
