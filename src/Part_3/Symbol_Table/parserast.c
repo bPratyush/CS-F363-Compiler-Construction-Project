@@ -518,8 +518,14 @@ void executeAssignment(ASTNode *node)
     Symbol *sym = lookupSymbol(left->data.strValue);
     if (sym)
     {
+        if (temp->type == NODE_CHAR_LITERAL) {
+            char charValue = temp->data.strValue[1]; 
+            sprintf(sym->value, "%c", charValue);
+            markInitialized(sym->name);
+        } else {
         sprintf(sym->value, "%s", temp->data.strValue);
         markInitialized(sym->name);
+        }
     }
     else
     {
@@ -549,7 +555,11 @@ ASTNode *evaluateExpression(ASTNode *node)
         return node;
         break;
     }
-
+    case NODE_CHAR_LITERAL:
+{
+    return node;  
+    break;
+}
     case NODE_IDENTIFIER:
     {
         Symbol *sym = lookupSymbol(node->data.strValue);
