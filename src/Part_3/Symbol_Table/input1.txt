@@ -6,9 +6,8 @@ begin VarDecl:
 (z, int);
 (ch, char);
 end VarDecl
-
 a := (10, 10);
-if (a > (20, 10))
+if (a < (20, 10))
 begin
 print("a is less than 20");
 x := (8, 10);

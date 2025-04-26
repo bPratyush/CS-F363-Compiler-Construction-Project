@@ -15,7 +15,6 @@ while (counter > (0, 10)) do
 begin
 print("Counter = @", counter);
 counter := counter - (1, 10);
-
 end;
 end program
 
