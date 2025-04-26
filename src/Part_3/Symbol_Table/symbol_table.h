@@ -20,4 +20,6 @@ int isdeclared(char* name);
 int isInitialized(char* name);
 void markInitialized(char* name);
 void printSymbolTable();
+void updatetypeinsymboltable(int base, Symbol* temp);
+int printypeinsymboltable(char* str);
 #endif
