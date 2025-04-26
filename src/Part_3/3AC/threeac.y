@@ -14,6 +14,7 @@ int syntax_errors = 0;
 int semantic_errors = 0;
 int output_printed = 0;
 int temp_count = 0;
+int for_flag = -1;
 char *if_dum;
 char* newtemp() {
     char *temp = (char *)malloc(10);
@@ -281,25 +282,25 @@ iteration_statement:
 
   TK_WHILE LPAREN expression RPAREN TK_DO
   {
-    /* 1) make labels and temp */
+    
     W_Lstart = newlabel();
     W_Lend   = newlabel();
     W_tmpcond= newtemp();
 
-    /* 2) emit loop‐entry and test */
+    
     printf("%s:\n",             W_Lstart);
     printf("%s := %s\n",         W_tmpcond, $3);
     printf("if %s := 0 goto %s\n", W_tmpcond, W_Lend);
   }
   compound_statement
   {
-    /* 3) after body, jump back + end label */
+   
     printf("goto %s\n", W_Lstart);
     printf("%s:\n",     W_Lend);
   }
   TK_SEP
 
-  | /* while loop without parentheses */
+  | 
     TK_WHILE expression TK_DO
   {
     W_Lstart = newlabel();
@@ -317,56 +318,87 @@ iteration_statement:
   }
   TK_SEP
   
-  | /* FOR with explicit parentheses */
-    TK_FOR LPAREN IDENTIFIER ASSIGN expression TK_TO expression optional_inc expression RPAREN TK_DO
-    {
+  | 
 
-      F_var    = $3;                /* loop variable */
-      F_end    = $7;                /* upper bound */
-      F_inc    = $8 ? $9 : "1";     /* optional step */
-    
-      F_Lstart = newlabel();
-      F_Lend   = newlabel();
-      F_tmpcond= newtemp();
+TK_FOR LPAREN IDENTIFIER ASSIGN expression TK_TO expression optional_inc expression RPAREN TK_DO
+{   //printf("%s %s %s %s %s %s %s %s %s\n" , $1 , $2 , $3 , $4 , $5 , $6 , $7 , $8 , $9); 
+    F_var    = $3;              
+    F_end    = $7;              
+    F_inc    = $8 ? $9 : "1";   
+
+    F_Lstart = newlabel();
+    F_Lend   = newlabel();
+    F_tmpcond= newtemp();
+
    
-      printf("%s := %s\n", F_var, $5);    /* var = lower */
-      printf("%s:\n",    F_Lstart);      /* Lstart: */
+    printf("%s := %s\n", F_var, $5);
+
+ 
+    printf("%s:\n",    F_Lstart);
+
+    if (for_flag) {
+      
+      printf("%s := %s > %s\n", F_tmpcond, F_var, F_end);
+    } else if(for_flag == 0) {
+     
+      printf("%s := %s < %s\n", F_tmpcond, F_var, F_end);
+    }
+    printf("if %s == 1 goto %s\n", F_tmpcond, F_Lend);
+}
+compound_statement
+{
+    if (for_flag) {
     
-      printf("%s := %s > %s\n", F_tmpcond,   F_var , F_end);
-      printf("if %s == 1 goto %s\n", F_tmpcond, F_Lend);
-    }
-    compound_statement  /* ← body will be emitted here by its own actions */
-    {
-      /* 5) after the body, emit increment/jump/end */
       printf("%s := %s + %s\n", F_var, F_var, F_inc);
-      printf("goto %s\n",     F_Lstart);
-      printf("%s:\n",         F_Lend);
+    } else if(for_flag == 0) {
+     
+      printf("%s := %s - %s\n", F_var, F_var, F_inc);
     }
-    TK_SEP
+    printf("goto %s\n",     F_Lstart);
+    printf("%s:\n",         F_Lend);
+}
+TK_SEP
+
+|   
+TK_FOR IDENTIFIER ASSIGN expression TK_TO expression optional_inc expression TK_DO
+{   // printf("%s %s %s %s %s %s %s %s %s\n" , $1 , $2 , $3 , $4 , $5 , $6 , $7 , $8 , $9); 
+    F_var    = $2;
+    F_end    = $6;
+    F_inc    = $7 ? $8 : "1";
+    F_Lstart = newlabel();
+    F_Lend   = newlabel();
+    F_tmpcond= newtemp();
+
+
+    printf("%s := %s\n", F_var, $4);
+
    
-  | /* FOR without parentheses */
-    TK_FOR IDENTIFIER ASSIGN expression TK_TO expression optional_inc expression TK_DO
-    {
-      /* same as above but shift the $‑indices down by one */
-      F_var    = $2;
-      F_end    = $6;
-      F_inc    = $7 ? $8 : "1";
-      F_Lstart = newlabel();
-      F_Lend   = newlabel();
-      F_tmpcond= newtemp();
-      printf("%s := %s\n", F_var, $4);
-      printf("%s:\n",    F_Lstart);
-      printf("%s := %s > %s\n", F_tmpcond,  F_var , F_end);
-      printf("if %s == 1 goto %s\n", F_tmpcond, F_Lend);
+    printf("%s:\n",    F_Lstart);
+
+    if (for_flag) {
+    
+      printf("%s := %s > %s\n", F_tmpcond, F_var, F_end);
+    } else if(for_flag == 0) {
+      
+      printf("%s := %s < %s\n", F_tmpcond, F_var, F_end);
     }
-    compound_statement
-    {
+    printf("if %s == 1 goto %s\n", F_tmpcond, F_Lend);
+}
+compound_statement
+{
+    if (for_flag) {
+     
       printf("%s := %s + %s\n", F_var, F_var, F_inc);
-      printf("goto %s\n",     F_Lstart);
-      printf("%s:\n",         F_Lend);
+    } else if(for_flag == 0) {
+      
+      printf("%s := %s - %s\n", F_var, F_var, F_inc);
     }
-    TK_SEP
-    ;
+    printf("goto %s\n",     F_Lstart);
+    printf("%s:\n",         F_Lend);
+}
+TK_SEP
+;
+
  
 optional_inc:
     { } 
@@ -503,11 +535,13 @@ postfix_expression:
 postfix_expression_tail:
     {
     }
-    | TK_INC
-    {
+    | TK_INC   
+    { for_flag = 1;
+      //printf("I am in the %s for loop\n" ,  $1); 
     }
     | TK_DEC
-    {
+    { for_flag = 0;
+      //printf("I am in the %s for loop\n" ,  $1); 
     }
     ;
 primary_expression:
