@@ -284,7 +284,7 @@ void evaluate(ASTNode *node)
         break;
 
     case NODE_VARDECL_SECTION:
-        evaluate(node->next);
+        // evaluate(node->next);
         break;
 
     case NODE_MAIN_SECTION:
@@ -292,6 +292,7 @@ void evaluate(ASTNode *node)
         break;
 
     case NODE_STATEMENT_LIST:
+    
         if (node->data.children.left)
         {
             evaluate(node->data.children.left);
@@ -306,11 +307,6 @@ void evaluate(ASTNode *node)
     case NODE_ASSIGN:
         executeAssignment(node);
         break;
-
-    case NODE_PRINT_STMT:
-        executePrint(node);
-        break;
-
     case NODE_PLUS_ASSIGN:
     case NODE_MINUS_ASSIGN:
     case NODE_MULT_ASSIGN:
@@ -400,21 +396,21 @@ void evaluate(ASTNode *node)
     break;
     case NODE_WHILE_STMT:
     {
-        ASTNode * condition = node->data.children.left;
-        ASTNode * body = node->data.children.right;
-        while (valuetaker(evaluateExpression(condition))!= 0)
+        ASTNode *condition = node->data.children.left;
+        ASTNode *body = node->data.children.right;
+        while (valuetaker(evaluateExpression(condition)) != 0)
         {
-        evaluate(body);
+            evaluate(body);
         }
     }
     break;
     case NODE_FOR_STMT:
     {
-        ASTNode * initNode = node->data.ternary.first;
-        ASTNode * upperLimit = node->data.ternary.second->data.children.left;
-        ASTNode * body = node->data.ternary.third;
+        ASTNode *initNode = node->data.ternary.first;
+        ASTNode *upperLimit = node->data.ternary.second->data.children.left;
+        ASTNode *body = node->data.ternary.third;
         evaluate(initNode);
-        ASTNode * lowerLimit = initNode->data.children.left;
+        ASTNode *lowerLimit = initNode->data.children.left;
         int lowerLimitVal = valuetaker(lowerLimit);
         int lowerLimitBase = basetaker(lowerLimit);
         // ASTNode * upperLimitLit = evaluateExpression(upperLimit);
@@ -422,16 +418,20 @@ void evaluate(ASTNode *node)
         int upperLimitBase = basetaker(upperLimit);
         // int upperLimitVal = valuetaker(evaluateExpression(upperLimit));
         // printf("%d\n",lowerLimitVal);
-        if(lowerLimitBase==8){
+        if (lowerLimitBase == 8)
+        {
             lowerLimitVal = octaltoint(lowerLimitVal);
         }
-        else if(lowerLimitBase==2){
+        else if (lowerLimitBase == 2)
+        {
             lowerLimitVal = binarytoint(lowerLimitVal);
         }
-        if(upperLimitBase==8){
+        if (upperLimitBase == 8)
+        {
             upperLimitVal = octaltoint(upperLimitVal);
         }
-        else if(upperLimitBase==2){
+        else if (upperLimitBase == 2)
+        {
             upperLimitVal = binarytoint(upperLimitVal);
         }
         // ASTNode *stepExpr = NULL;
@@ -457,51 +457,130 @@ void evaluate(ASTNode *node)
         // // // lowerLimitVal = 0;
         // // // upperLimitVal = 1;
         // // printf("%d\n",stepVal);
-        while(lowerLimitVal <= upperLimitVal){
+        while (lowerLimitVal <= upperLimitVal)
+        {
             evaluate(body);
             lowerLimitVal++;
         }
-
     }
     break;
-//     case NODE_FOR_STMT: {
-//     ASTNode *initNode  = node->data.ternary.first;
-//     ASTNode *upperExpr = node->data.ternary.second;
-//     ASTNode *body      = node->data.ternary.third;
+        //     case NODE_FOR_STMT: {
+        //     ASTNode *initNode  = node->data.ternary.first;
+        //     ASTNode *upperExpr = node->data.ternary.second;
+        //     ASTNode *body      = node->data.ternary.third;
 
-//     // 1) execute initializer (e.g. a := (10,8))
-//     evaluate(initNode);
+        //     // 1) execute initializer (e.g. a := (10,8))
+        //     evaluate(initNode);
 
-//     // 2) get the current 'a' from the symbol table as a literal
-//     ASTNode *lowerId   = initNode->data.children.left;
-//     ASTNode *lowerLit  = evaluateExpression(lowerId);
-//     int      lowerRaw  = valuetaker(lowerLit);
-//     int      lowerBase = basetaker(lowerLit);
-//     if (lowerBase == 8)  lowerRaw = octaltoint(lowerRaw);
-//     else if (lowerBase == 2)  lowerRaw = binarytoint(lowerRaw);
+        //     // 2) get the current 'a' from the symbol table as a literal
+        //     ASTNode *lowerId   = initNode->data.children.left;
+        //     ASTNode *lowerLit  = evaluateExpression(lowerId);
+        //     int      lowerRaw  = valuetaker(lowerLit);
+        //     int      lowerBase = basetaker(lowerLit);
+        //     if (lowerBase == 8)  lowerRaw = octaltoint(lowerRaw);
+        //     else if (lowerBase == 2)  lowerRaw = binarytoint(lowerRaw);
 
-//     // 3) fold the upper‐bound expression fully
-//     ASTNode *upperLit  = evaluateExpression(upperExpr);
-//     int      upperRaw  = valuetaker(upperLit);
-//     int      upperBase = basetaker(upperLit);
-//     if (upperBase == 8)  upperRaw = octaltoint(upperRaw);
-//     else if (upperBase == 2)  upperRaw = binarytoint(upperRaw);
+        //     // 3) fold the upper‐bound expression fully
+        //     ASTNode *upperLit  = evaluateExpression(upperExpr);
+        //     int      upperRaw  = valuetaker(upperLit);
+        //     int      upperBase = basetaker(upperLit);
+        //     if (upperBase == 8)  upperRaw = octaltoint(upperRaw);
+        //     else if (upperBase == 2)  upperRaw = binarytoint(upperRaw);
 
-//     // 4) loop with default step = 1
-//     while (lowerRaw <= upperRaw) {
-//         evaluate(body);
-//         lowerRaw++;
-//     }
-// } break;
+        //     // 4) loop with default step = 1
+        //     while (lowerRaw <= upperRaw) {
+        //         evaluate(body);
+        //         lowerRaw++;
+        //     }
+        // } break;
+    case NODE_PRINT_STMT:
+    {
+        const char *formatString = node->data.io.format->data.strValue;
+        ASTNode *currentArg = node->data.io.args;
+        for (const char *c = formatString; *c; ++c)
+        {
+            if (*c == '@')
+            {
+                if (currentArg)
+                {
+                    ASTNode *valueNode = evaluateExpression(currentArg);
+                    int value = valuetaker(valueNode);
+                    printf("%d", value);
+                    currentArg = currentArg->next;
+                }
+                else
+                {
+                    printf("@");
+                }
+            }
+            else
+            {
+                putchar(*c);
+            }
+        }
+        putchar('\n');
+    }
+    break;
+  case NODE_SCAN_STMT:
+{
+    const char *prompt     = node->data.io.format->data.strValue;
+    ASTNode    *currentArg = node->data.io.args;
 
+    for (const char *ch = prompt; *ch; ++ch) {
+        if (*ch == '@' && currentArg) {
+            // flush any printed text before blocking
+            fflush(stdout);
+
+            int value;
+            if (scanf("%d", &value) != 1) {
+                fprintf(stderr, "Runtime Error: expected an integer\n");
+                exit(1);
+            }
+
+            // store as "(value,10)", then mark initialized
+            Symbol *sym = lookupSymbol(currentArg->data.strValue);
+            if (!sym) {
+                fprintf(stderr, "Runtime Error: '%s' not declared\n",
+                        currentArg->data.strValue);
+                exit(1);
+            }
+            int base = 10;
+            // printf("%s\n",sym->type);
+            if(strcmp(sym->type,"oct_int")==0){
+                base = 8;
+            }
+            if(strcmp(sym->type,"bin_int")==0){
+                base = 2;
+            }
+            int stored = value;
+            if(base==8){
+                stored = inttooctal(value);
+            }
+            else if(base==2){
+                stored = inttobinary(value);
+            }
+            snprintf(sym->value, sizeof sym->value, "(%d,%d)", stored,base);
+            markInitialized(sym->name);
+
+            // move on to the next variable
+            currentArg = currentArg->next;
+        }
+        // else if (*ch != '@') {
+        //     // echo everything else (spaces, text, punctuation…)
+        //     putchar(*ch);
+        // }
+        
+    }
+    putchar('\n');
+}
+break;
     default:
         printf("Runtime Error\n");
         exit(1);
     }
-    if (node->next)
-    {
+if (node->next) {
         evaluate(node->next);
-    }
+}
 }
 
 void executeAssignment(ASTNode *node)
@@ -526,6 +605,8 @@ void executeAssignment(ASTNode *node)
     {
         printf("Runtime Error\n");
     }
+    int base = printypeinsymboltable(sym->value);
+    updatetypeinsymboltable(base, sym);
 }
 
 char *converttostring(int num)
@@ -1309,45 +1390,6 @@ ASTNode *evaluateExpression(ASTNode *node)
         return NULL;
     }
     return NULL;
-}
-
-void executePrint(ASTNode *node)
-{
-    if (!node)
-        return;
-
-    ASTNode *format = node->data.io.format;
-    ASTNode *args = node->data.io.args;
-
-    printf("%s ", format->data.strValue);
-
-    while (args)
-    {
-        if (args->type == NODE_IDENTIFIER)
-        {
-            Symbol *sym = lookupSymbol(args->data.strValue);
-            if (sym && sym->initialized)
-            {
-                printf("%s ", sym->value);
-            }
-            else
-            {
-                printf("?");
-            }
-        }
-        else if (args->type == NODE_INT_LITERAL)
-        {
-            printf("%s ", args->data.strValue);
-        }
-        else
-        {
-            printf("%s ", evaluateExpression(args)->data.strValue);
-        }
-
-        args = args->next;
-    }
-
-    printf("\n");
 }
 
 const char *getNodeTypeName(NodeType type)
