@@ -439,14 +439,41 @@ assignment_expression:
              semantic_error(err);
          }
          if($3 && $3[0]=='(') {
-             int val, base;
-             if(sscanf($3, "(%d,%d)", &val, &base)==2) {
-                 printf("%s := %s\n", $1, $3);
-             } else {
-                 printf("%s := %s\n", $1, $3);
-             }
-         } else {
+               if (strcmp($2, ":=") == 0) {
+         //    printf("I am here in only :=\n");
+          
              printf("%s := %s\n", $1, $3);
+         } else {
+          //    printf("I am here in += or *= section\n");
+             char *temp = newtemp();
+             const char *op = "";
+             if (strcmp($2, "+=") == 0) op = "+";
+             else if (strcmp($2, "-=") == 0) op = "-";
+             else if (strcmp($2, "*=") == 0) op = "*";
+             else if (strcmp($2, "/=") == 0) op = "/";
+             else if (strcmp($2, "%=") == 0) op = "%";
+             
+             printf("%s := %s %s %s\n", temp, $1, op, $3);
+             printf("%s := %s\n", $1, temp);
+         }
+         } else {
+             if (strcmp($2, ":=") == 0) {
+         //    printf("I am here in only :=\n");
+          
+             printf("%s := %s\n", $1, $3);
+         } else {
+          //    printf("I am here in += or *= section\n");
+             char *temp = newtemp();
+             const char *op = "";
+             if (strcmp($2, "+=") == 0) op = "+";
+             else if (strcmp($2, "-=") == 0) op = "-";
+             else if (strcmp($2, "*=") == 0) op = "*";
+             else if (strcmp($2, "/=") == 0) op = "/";
+             else if (strcmp($2, "%=") == 0) op = "%";
+             
+             printf("%s := %s %s %s\n", temp, $1, op, $3);
+             printf("%s := %s\n", $1, temp);
+         }
          }
          $$ = $1;
      }
