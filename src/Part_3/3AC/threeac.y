@@ -248,7 +248,6 @@ compound_statement:
     TK_BLOCKBEGIN statement_list TK_END { }
   ;
 selection_statement:
-   selection_statement:
     TK_IF LPAREN expression RPAREN 
     {
         char *L_else = newlabel();
