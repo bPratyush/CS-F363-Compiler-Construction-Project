@@ -1666,5 +1666,6 @@ void freeAST(ASTNode *node)
     }
     ASTNode *next = node->next;
     free(node);
+    
     freeAST(next);
 }
