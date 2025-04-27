@@ -313,6 +313,7 @@ void evaluate(ASTNode *node)
     case NODE_MINUS_ASSIGN:
     case NODE_MULT_ASSIGN:
     case NODE_DIV_ASSIGN:
+    case NODE_MOD_ASSIGN:
         evaluateExpression(node);
         break;
 
@@ -460,10 +461,15 @@ void evaluate(ASTNode *node)
         printf("Runtime Error\n");
         exit(1);
     }
+
     while (i <= upperLimitVal) {
         evaluate(body);
+        ASTNode* stepNode = createBinaryNode(NODE_PLUS_ASSIGN, lowerLimit, stepExpr);
+        ASTNode* temp = evaluateExpression(stepNode);
+        strcpy(loopVarSym->value, temp->data.strValue);
         i += stepVal;
     }
+
 }
 else if(upperLimit->next->type==36){
     if(lowerLimitVal<upperLimitVal){
@@ -472,6 +478,9 @@ else if(upperLimit->next->type==36){
     }
     while (i >= upperLimitVal) {
         evaluate(body);
+        ASTNode* stepNode = createBinaryNode(NODE_MINUS_ASSIGN, lowerLimit, stepExpr);
+        ASTNode* temp = evaluateExpression(stepNode);
+        strcpy(loopVarSym->value, temp->data.strValue);
         i -= stepVal;
     }
 }
@@ -511,8 +520,10 @@ void executeAssignment(ASTNode *node)
     ASTNode *left = node->data.children.left;
     ASTNode *right = node->data.children.right;
 
-    if (left->type != NODE_IDENTIFIER)
-        return;
+    if (left->type != NODE_IDENTIFIER) {
+        printf("Runtime Error\n");
+        exit(1);
+    }
 
     ASTNode *temp = evaluateExpression(right);
     Symbol *sym = lookupSymbol(left->data.strValue);
@@ -576,229 +587,486 @@ ASTNode *evaluateExpression(ASTNode *node)
     }
 
     case NODE_ADD:
-    {  
-        if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 10)
-        {
-            int val1 = valuetaker(evaluateExpression((node->data.children.left)));
-            int val2 = valuetaker(evaluateExpression((node->data.children.right)));
-            int result = val1 + val2;
+{
+    node->data.children.left = evaluateExpression(node->data.children.left);
+    node->data.children.right = evaluateExpression(node->data.children.right);
+    ASTNode* result = NULL;
+    
+    if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && 
+        basetaker(node->data.children.left) == 10)
+    {
+        int val1 = valuetaker(node->data.children.left);
+        int val2 = valuetaker(node->data.children.right);
+        int sum = val1 + val2;
+        char result_str[50];
+        sprintf(result_str, "(%d,10)", sum);
+        result = createStrNode(NODE_INT_LITERAL, result_str);
+    }
+    else if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && 
+             basetaker(node->data.children.left) == 8)
+    {
+        int val1 = valuetaker(node->data.children.left);
+        int val2 = valuetaker(node->data.children.right);
+        int octval1 = octaltoint(val1);
+        int octval2 = octaltoint(val2);
+        int sum = octval1 + octval2;
+        int octalresult = inttooctal(sum);
+        char result_str[50];
+        sprintf(result_str, "(%d,8)", octalresult);
+        result = createStrNode(NODE_INT_LITERAL, result_str);
+    }
+    else if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && 
+             basetaker(node->data.children.left) == 2)
+    {
+        int val1 = valuetaker(node->data.children.left);
+        int val2 = valuetaker(node->data.children.right);
+        int binval1 = binarytoint(val1);
+        int binval2 = binarytoint(val2);
+        int sum = binval1 + binval2;
+        int binaryresult = inttobinary(sum);
+        char result_str[50];
+        sprintf(result_str, "(%d,2)", binaryresult);
+        result = createStrNode(NODE_INT_LITERAL, result_str);
+    }
+    else
+    {
+        printf("Runtime Error\n");
+        exit(1);
+    }
+    ASTNode* nextNode = node->next;
+    while (nextNode && (nextNode->type == NODE_ADD)) {
+        ASTNode* right = evaluateExpression(nextNode->data.children.right);
+        
+        if (basetaker(result) == basetaker(right) && basetaker(result) == 10) {
+            int val1 = valuetaker(result);
+            int val2 = valuetaker(right);
+            int sum = val1 + val2;
             char result_str[50];
-            sprintf(result_str, "(%d,10)", result);
-            return createStrNode(NODE_INT_LITERAL, result_str);
+            sprintf(result_str, "(%d,10)", sum);
+            free(result->data.strValue);
+            result->data.strValue = strdup(result_str);
         }
-        else if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 8)
-        {
-            int val1 = valuetaker(evaluateExpression((node->data.children.left)));
-            int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+        else if (basetaker(result) == basetaker(right) && basetaker(result) == 8) {
+            int val1 = valuetaker(result);
+            int val2 = valuetaker(right);
             int octval1 = octaltoint(val1);
             int octval2 = octaltoint(val2);
-            int result = octval1 + octval2;
-            int octalresult = inttooctal(result);
+            int sum = octval1 + octval2;
+            int octalresult = inttooctal(sum);
             char result_str[50];
             sprintf(result_str, "(%d,8)", octalresult);
-            return createStrNode(NODE_INT_LITERAL, result_str);
+            free(result->data.strValue);
+            result->data.strValue = strdup(result_str);
         }
-        else if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 2)
-        {
-            int val1 = valuetaker(evaluateExpression((node->data.children.left)));
-            int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+        else if (basetaker(result) == basetaker(right) && basetaker(result) == 2) {
+            int val1 = valuetaker(result);
+            int val2 = valuetaker(right);
             int binval1 = binarytoint(val1);
             int binval2 = binarytoint(val2);
-            int result = binval1 + binval2;
-            int binaryresult = inttobinary(result);
+            int sum = binval1 + binval2;
+            int binaryresult = inttobinary(sum);
             char result_str[50];
             sprintf(result_str, "(%d,2)", binaryresult);
-            return createStrNode(NODE_INT_LITERAL, result_str);
+            free(result->data.strValue);
+            result->data.strValue = strdup(result_str);
         }
-        else
-        {
+        else {
             printf("Runtime Error\n");
             exit(1);
         }
+        
+        nextNode = nextNode->next;
     }
+    
+    return result;
+}
     break;
 
     case NODE_SUB:
+{
+    node->data.children.left = evaluateExpression(node->data.children.left);
+    node->data.children.right = evaluateExpression(node->data.children.right);
+    ASTNode* result = NULL;
+    
+    if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && 
+        basetaker(node->data.children.left) == 10)
     {
-        if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 10)
-        {
-            int val1 = valuetaker(evaluateExpression((node->data.children.left)));
-            int val2 = valuetaker(evaluateExpression((node->data.children.right)));
-            int result = val1 - val2;
+        int val1 = valuetaker(node->data.children.left);
+        int val2 = valuetaker(node->data.children.right);
+        int sum = val1 - val2;
+        char result_str[50];
+        sprintf(result_str, "(%d,10)", sum);
+        result = createStrNode(NODE_INT_LITERAL, result_str);
+    }
+    else if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && 
+             basetaker(node->data.children.left) == 8)
+    {
+        int val1 = valuetaker(node->data.children.left);
+        int val2 = valuetaker(node->data.children.right);
+        int octval1 = octaltoint(val1);
+        int octval2 = octaltoint(val2);
+        int sum = octval1 - octval2;
+        int octalresult = inttooctal(sum);
+        char result_str[50];
+        sprintf(result_str, "(%d,8)", octalresult);
+        result = createStrNode(NODE_INT_LITERAL, result_str);
+    }
+    else if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && 
+             basetaker(node->data.children.left) == 2)
+    {
+        int val1 = valuetaker(node->data.children.left);
+        int val2 = valuetaker(node->data.children.right);
+        int binval1 = binarytoint(val1);
+        int binval2 = binarytoint(val2);
+        int sum = binval1 - binval2;
+        int binaryresult = inttobinary(sum);
+        char result_str[50];
+        sprintf(result_str, "(%d,2)", binaryresult);
+        result = createStrNode(NODE_INT_LITERAL, result_str);
+    }
+    else
+    {
+        printf("Runtime Error\n");
+        exit(1);
+    }
+    ASTNode* nextNode = node->next;
+    while (nextNode && (nextNode->type == NODE_ADD)) {
+        ASTNode* right = evaluateExpression(nextNode->data.children.right);
+        
+        if (basetaker(result) == basetaker(right) && basetaker(result) == 10) {
+            int val1 = valuetaker(result);
+            int val2 = valuetaker(right);
+            int sum = val1 - val2;
             char result_str[50];
-            sprintf(result_str, "(%d,10)", result);
-            return createStrNode(NODE_INT_LITERAL, result_str);
+            sprintf(result_str, "(%d,10)", sum);
+            free(result->data.strValue);
+            result->data.strValue = strdup(result_str);
         }
-        else if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 8)
-        {
-            int val1 = valuetaker(evaluateExpression((node->data.children.left)));
-            int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+        else if (basetaker(result) == basetaker(right) && basetaker(result) == 8) {
+            int val1 = valuetaker(result);
+            int val2 = valuetaker(right);
             int octval1 = octaltoint(val1);
             int octval2 = octaltoint(val2);
-            int result = octval1 - octval2;
-            int octalresult = inttooctal(result);
+            int sum = octval1 - octval2;
+            int octalresult = inttooctal(sum);
             char result_str[50];
             sprintf(result_str, "(%d,8)", octalresult);
-            return createStrNode(NODE_INT_LITERAL, result_str);
+            free(result->data.strValue);
+            result->data.strValue = strdup(result_str);
         }
-        else if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 2)
-        {
-            int val1 = valuetaker(evaluateExpression((node->data.children.left)));
-            int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+        else if (basetaker(result) == basetaker(right) && basetaker(result) == 2) {
+            int val1 = valuetaker(result);
+            int val2 = valuetaker(right);
             int binval1 = binarytoint(val1);
             int binval2 = binarytoint(val2);
-            int result = binval1 - binval2;
-            int binaryresult = inttobinary(result);
+            int sum = binval1 - binval2;
+            int binaryresult = inttobinary(sum);
             char result_str[50];
             sprintf(result_str, "(%d,2)", binaryresult);
-            return createStrNode(NODE_INT_LITERAL, result_str);
+            free(result->data.strValue);
+            result->data.strValue = strdup(result_str);
         }
-        else
-        {
+        else {
             printf("Runtime Error\n");
             exit(1);
         }
+        
+        nextNode = nextNode->next;
     }
+    
+    return result;
+}
     break;
 
     case NODE_MUL:
+{
+    node->data.children.left = evaluateExpression(node->data.children.left);
+    node->data.children.right = evaluateExpression(node->data.children.right);
+    ASTNode* result = NULL;
+    
+    if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && 
+        basetaker(node->data.children.left) == 10)
     {
-        if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 10)
-        {
-            int val1 = valuetaker(evaluateExpression((node->data.children.left)));
-            int val2 = valuetaker(evaluateExpression((node->data.children.right)));
-            int result = val1 * val2;
+        int val1 = valuetaker(node->data.children.left);
+        int val2 = valuetaker(node->data.children.right);
+        int sum = val1 * val2;
+        char result_str[50];
+        sprintf(result_str, "(%d,10)", sum);
+        result = createStrNode(NODE_INT_LITERAL, result_str);
+    }
+    else if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && 
+             basetaker(node->data.children.left) == 8)
+    {
+        int val1 = valuetaker(node->data.children.left);
+        int val2 = valuetaker(node->data.children.right);
+        int octval1 = octaltoint(val1);
+        int octval2 = octaltoint(val2);
+        int sum = octval1 * octval2;
+        int octalresult = inttooctal(sum);
+        char result_str[50];
+        sprintf(result_str, "(%d,8)", octalresult);
+        result = createStrNode(NODE_INT_LITERAL, result_str);
+    }
+    else if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && 
+             basetaker(node->data.children.left) == 2)
+    {
+        int val1 = valuetaker(node->data.children.left);
+        int val2 = valuetaker(node->data.children.right);
+        int binval1 = binarytoint(val1);
+        int binval2 = binarytoint(val2);
+        int sum = binval1 * binval2;
+        int binaryresult = inttobinary(sum);
+        char result_str[50];
+        sprintf(result_str, "(%d,2)", binaryresult);
+        result = createStrNode(NODE_INT_LITERAL, result_str);
+    }
+    else
+    {
+        printf("Runtime Error\n");
+        exit(1);
+    }
+    ASTNode* nextNode = node->next;
+    while (nextNode && (nextNode->type == NODE_ADD)) {
+        ASTNode* right = evaluateExpression(nextNode->data.children.right);
+        
+        if (basetaker(result) == basetaker(right) && basetaker(result) == 10) {
+            int val1 = valuetaker(result);
+            int val2 = valuetaker(right);
+            int sum = val1 * val2;
             char result_str[50];
-            sprintf(result_str, "(%d,10)", result);
-            return createStrNode(NODE_INT_LITERAL, result_str);
+            sprintf(result_str, "(%d,10)", sum);
+            free(result->data.strValue);
+            result->data.strValue = strdup(result_str);
         }
-        else if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 8)
-        {
-            int val1 = valuetaker(evaluateExpression((node->data.children.left)));
-            int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+        else if (basetaker(result) == basetaker(right) && basetaker(result) == 8) {
+            int val1 = valuetaker(result);
+            int val2 = valuetaker(right);
             int octval1 = octaltoint(val1);
             int octval2 = octaltoint(val2);
-            int result = octval1 * octval2;
-            int octalresult = inttooctal(result);
+            int sum = octval1 * octval2;
+            int octalresult = inttooctal(sum);
             char result_str[50];
             sprintf(result_str, "(%d,8)", octalresult);
-            return createStrNode(NODE_INT_LITERAL, result_str);
+            free(result->data.strValue);
+            result->data.strValue = strdup(result_str);
         }
-        else if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 2)
-        {
-            int val1 = valuetaker(evaluateExpression((node->data.children.left)));
-            int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+        else if (basetaker(result) == basetaker(right) && basetaker(result) == 2) {
+            int val1 = valuetaker(result);
+            int val2 = valuetaker(right);
             int binval1 = binarytoint(val1);
             int binval2 = binarytoint(val2);
-            int result = binval1 * binval2;
-            int binaryresult = inttobinary(result);
+            int sum = binval1 * binval2;
+            int binaryresult = inttobinary(sum);
             char result_str[50];
             sprintf(result_str, "(%d,2)", binaryresult);
-            return createStrNode(NODE_INT_LITERAL, result_str);
+            free(result->data.strValue);
+            result->data.strValue = strdup(result_str);
         }
-        else
-        {
+        else {
             printf("Runtime Error\n");
             exit(1);
         }
+        
+        nextNode = nextNode->next;
     }
+    
+    return result;
+}
     break;
 
     case NODE_DIV:
+{
+    node->data.children.left = evaluateExpression(node->data.children.left);
+    node->data.children.right = evaluateExpression(node->data.children.right);
+    ASTNode* result = NULL;
+    
+    if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && 
+        basetaker(node->data.children.left) == 10)
     {
-        if (valuetaker(evaluateExpression(node->data.children.right)) == 0)
-        {
-            printf("Runtime Error\n");
-            exit(1);
-        }
-        if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 10)
-        {
-            int val1 = valuetaker(evaluateExpression((node->data.children.left)));
-            int val2 = valuetaker(evaluateExpression((node->data.children.right)));
-            int result = val1 / val2;
+        int val1 = valuetaker(node->data.children.left);
+        int val2 = valuetaker(node->data.children.right);
+        int sum = val1 / val2;
+        char result_str[50];
+        sprintf(result_str, "(%d,10)", sum);
+        result = createStrNode(NODE_INT_LITERAL, result_str);
+    }
+    else if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && 
+             basetaker(node->data.children.left) == 8)
+    {
+        int val1 = valuetaker(node->data.children.left);
+        int val2 = valuetaker(node->data.children.right);
+        int octval1 = octaltoint(val1);
+        int octval2 = octaltoint(val2);
+        int sum = octval1 / octval2;
+        int octalresult = inttooctal(sum);
+        char result_str[50];
+        sprintf(result_str, "(%d,8)", octalresult);
+        result = createStrNode(NODE_INT_LITERAL, result_str);
+    }
+    else if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && 
+             basetaker(node->data.children.left) == 2)
+    {
+        int val1 = valuetaker(node->data.children.left);
+        int val2 = valuetaker(node->data.children.right);
+        int binval1 = binarytoint(val1);
+        int binval2 = binarytoint(val2);
+        int sum = binval1 / binval2;
+        int binaryresult = inttobinary(sum);
+        char result_str[50];
+        sprintf(result_str, "(%d,2)", binaryresult);
+        result = createStrNode(NODE_INT_LITERAL, result_str);
+    }
+    else
+    {
+        printf("Runtime Error\n");
+        exit(1);
+    }
+    ASTNode* nextNode = node->next;
+    while (nextNode && (nextNode->type == NODE_ADD)) {
+        ASTNode* right = evaluateExpression(nextNode->data.children.right);
+        
+        if (basetaker(result) == basetaker(right) && basetaker(result) == 10) {
+            int val1 = valuetaker(result);
+            int val2 = valuetaker(right);
+            int sum = val1 / val2;
             char result_str[50];
-            sprintf(result_str, "(%d,10)", result);
-            return createStrNode(NODE_INT_LITERAL, result_str);
+            sprintf(result_str, "(%d,10)", sum);
+            free(result->data.strValue);
+            result->data.strValue = strdup(result_str);
         }
-        else if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 8)
-        {
-            int val1 = valuetaker(evaluateExpression((node->data.children.left)));
-            int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+        else if (basetaker(result) == basetaker(right) && basetaker(result) == 8) {
+            int val1 = valuetaker(result);
+            int val2 = valuetaker(right);
             int octval1 = octaltoint(val1);
             int octval2 = octaltoint(val2);
-            int result = octval1 / octval2;
-            int octalresult = inttooctal(result);
+            int sum = octval1 / octval2;
+            int octalresult = inttooctal(sum);
             char result_str[50];
             sprintf(result_str, "(%d,8)", octalresult);
-            return createStrNode(NODE_INT_LITERAL, result_str);
+            free(result->data.strValue);
+            result->data.strValue = strdup(result_str);
         }
-        else if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 2)
-        {
-            int val1 = valuetaker(evaluateExpression((node->data.children.left)));
-            int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+        else if (basetaker(result) == basetaker(right) && basetaker(result) == 2) {
+            int val1 = valuetaker(result);
+            int val2 = valuetaker(right);
             int binval1 = binarytoint(val1);
             int binval2 = binarytoint(val2);
-            int result = binval1 / binval2;
-            int binaryresult = inttobinary(result);
+            int sum = binval1 / binval2;
+            int binaryresult = inttobinary(sum);
             char result_str[50];
             sprintf(result_str, "(%d,2)", binaryresult);
-            return createStrNode(NODE_INT_LITERAL, result_str);
+            free(result->data.strValue);
+            result->data.strValue = strdup(result_str);
         }
-        else
-        {
+        else {
             printf("Runtime Error\n");
             exit(1);
         }
-        break;
+        
+        nextNode = nextNode->next;
     }
+    
+    return result;
+}
+    break;
     case NODE_MOD:
+{
+    node->data.children.left = evaluateExpression(node->data.children.left);
+    node->data.children.right = evaluateExpression(node->data.children.right);
+    ASTNode* result = NULL;
+    
+    if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && 
+        basetaker(node->data.children.left) == 10)
     {
-        if (valuetaker(evaluateExpression(node->data.children.right)) == 0)
-        {
-            printf("Runtime Error\n");
-            exit(1);
-        }
-        if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 10)
-        {
-            int val1 = valuetaker(evaluateExpression((node->data.children.left)));
-            int val2 = valuetaker(evaluateExpression((node->data.children.right)));
-            int result = val1 % val2;
+        int val1 = valuetaker(node->data.children.left);
+        int val2 = valuetaker(node->data.children.right);
+        int sum = val1 % val2;
+        char result_str[50];
+        sprintf(result_str, "(%d,10)", sum);
+        result = createStrNode(NODE_INT_LITERAL, result_str);
+    }
+    else if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && 
+             basetaker(node->data.children.left) == 8)
+    {
+        int val1 = valuetaker(node->data.children.left);
+        int val2 = valuetaker(node->data.children.right);
+        int octval1 = octaltoint(val1);
+        int octval2 = octaltoint(val2);
+        int sum = octval1 % octval2;
+        int octalresult = inttooctal(sum);
+        char result_str[50];
+        sprintf(result_str, "(%d,8)", octalresult);
+        result = createStrNode(NODE_INT_LITERAL, result_str);
+    }
+    else if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && 
+             basetaker(node->data.children.left) == 2)
+    {
+        int val1 = valuetaker(node->data.children.left);
+        int val2 = valuetaker(node->data.children.right);
+        int binval1 = binarytoint(val1);
+        int binval2 = binarytoint(val2);
+        int sum = binval1 % binval2;
+        int binaryresult = inttobinary(sum);
+        char result_str[50];
+        sprintf(result_str, "(%d,2)", binaryresult);
+        result = createStrNode(NODE_INT_LITERAL, result_str);
+    }
+    else
+    {
+        printf("Runtime Error\n");
+        exit(1);
+    }
+    ASTNode* nextNode = node->next;
+    while (nextNode && (nextNode->type == NODE_ADD)) {
+        ASTNode* right = evaluateExpression(nextNode->data.children.right);
+        
+        if (basetaker(result) == basetaker(right) && basetaker(result) == 10) {
+            int val1 = valuetaker(result);
+            int val2 = valuetaker(right);
+            int sum = val1 % val2;
             char result_str[50];
-            sprintf(result_str, "(%d,10)", result);
-            return createStrNode(NODE_INT_LITERAL, result_str);
+            sprintf(result_str, "(%d,10)", sum);
+            free(result->data.strValue);
+            result->data.strValue = strdup(result_str);
         }
-        else if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 8)
-        {
-            int val1 = valuetaker(evaluateExpression((node->data.children.left)));
-            int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+        else if (basetaker(result) == basetaker(right) && basetaker(result) == 8) {
+            int val1 = valuetaker(result);
+            int val2 = valuetaker(right);
             int octval1 = octaltoint(val1);
             int octval2 = octaltoint(val2);
-            int result = octval1 % octval2;
-            int octalresult = inttooctal(result);
+            int sum = octval1 % octval2;
+            int octalresult = inttooctal(sum);
             char result_str[50];
             sprintf(result_str, "(%d,8)", octalresult);
-            return createStrNode(NODE_INT_LITERAL, result_str);
+            free(result->data.strValue);
+            result->data.strValue = strdup(result_str);
         }
-        else if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 2)
-        {
-            int val1 = valuetaker(evaluateExpression((node->data.children.left)));
-            int val2 = valuetaker(evaluateExpression((node->data.children.right)));
+        else if (basetaker(result) == basetaker(right) && basetaker(result) == 2) {
+            int val1 = valuetaker(result);
+            int val2 = valuetaker(right);
             int binval1 = binarytoint(val1);
             int binval2 = binarytoint(val2);
-            int result = binval1 % binval2;
-            int binaryresult = inttobinary(result);
+            int sum = binval1 % binval2;
+            int binaryresult = inttobinary(sum);
             char result_str[50];
             sprintf(result_str, "(%d,2)", binaryresult);
-            return createStrNode(NODE_INT_LITERAL, result_str);
+            free(result->data.strValue);
+            result->data.strValue = strdup(result_str);
         }
-        else
-        {
+        else {
             printf("Runtime Error\n");
             exit(1);
         }
-        break;
+        
+        nextNode = nextNode->next;
     }
+    
+    return result;
+}
+    break;
     case NODE_EQ:
+    node->data.children.left = evaluateExpression(node->data.children.left);
+    node->data.children.right = evaluateExpression(node->data.children.right);
         if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 10)
         {
             int val1 = valuetaker(evaluateExpression((node->data.children.left)));
@@ -828,6 +1096,8 @@ ASTNode *evaluateExpression(ASTNode *node)
         }
         break;
     case NODE_NE:
+    node->data.children.left = evaluateExpression(node->data.children.left);
+    node->data.children.right = evaluateExpression(node->data.children.right);
         if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 10)
         {
             int val1 = valuetaker(evaluateExpression((node->data.children.left)));
@@ -857,6 +1127,8 @@ ASTNode *evaluateExpression(ASTNode *node)
         }
         break;
     case NODE_LT:
+    node->data.children.left = evaluateExpression(node->data.children.left);
+    node->data.children.right = evaluateExpression(node->data.children.right);
         if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 10)
         {
             int val1 = valuetaker(evaluateExpression((node->data.children.left)));
@@ -886,6 +1158,8 @@ ASTNode *evaluateExpression(ASTNode *node)
         }
         break;
     case NODE_GT:
+    node->data.children.left = evaluateExpression(node->data.children.left);
+    node->data.children.right = evaluateExpression(node->data.children.right);
         if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 10)
         {
             int val1 = valuetaker(evaluateExpression((node->data.children.left)));
@@ -915,6 +1189,8 @@ ASTNode *evaluateExpression(ASTNode *node)
         }
         break;
     case NODE_LE:
+    node->data.children.left = evaluateExpression(node->data.children.left);
+    node->data.children.right = evaluateExpression(node->data.children.right);
         if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 10)
         {
             int val1 = valuetaker(evaluateExpression((node->data.children.left)));
@@ -944,6 +1220,8 @@ ASTNode *evaluateExpression(ASTNode *node)
         }
         break;
     case NODE_GE:
+    node->data.children.left = evaluateExpression(node->data.children.left);
+    node->data.children.right = evaluateExpression(node->data.children.right);
         if ((basetaker(node->data.children.left) == basetaker(node->data.children.right)) && basetaker(node->data.children.left) == 10)
         {
             int val1 = valuetaker(evaluateExpression((node->data.children.left)));
@@ -1034,6 +1312,8 @@ ASTNode *evaluateExpression(ASTNode *node)
         }
         break;
     case NODE_PLUS_ASSIGN:
+        node->data.children.left = evaluateExpression(node->data.children.left);
+        node->data.children.right = evaluateExpression(node->data.children.right);
         if (node->data.children.left->type == NODE_IDENTIFIER)
         {
             Symbol *sym = lookupSymbol(node->data.children.left->data.strValue);
@@ -1078,6 +1358,8 @@ ASTNode *evaluateExpression(ASTNode *node)
         }
         break;
     case NODE_MINUS_ASSIGN:
+    node->data.children.left = evaluateExpression(node->data.children.left);
+    node->data.children.right = evaluateExpression(node->data.children.right);
         if (node->data.children.left->type == NODE_IDENTIFIER)
         {
             Symbol *sym = lookupSymbol(node->data.children.left->data.strValue);
@@ -1122,6 +1404,8 @@ ASTNode *evaluateExpression(ASTNode *node)
         }
         break;
     case NODE_MULT_ASSIGN:
+    node->data.children.left = evaluateExpression(node->data.children.left);
+    node->data.children.right = evaluateExpression(node->data.children.right);
         if (node->data.children.left->type == NODE_IDENTIFIER)
         {
             Symbol *sym = lookupSymbol(node->data.children.left->data.strValue);
@@ -1166,6 +1450,8 @@ ASTNode *evaluateExpression(ASTNode *node)
         }
         break;
     case NODE_DIV_ASSIGN:
+    node->data.children.left = evaluateExpression(node->data.children.left);
+    node->data.children.right = evaluateExpression(node->data.children.right);
         if (valuetaker(evaluateExpression(node->data.children.right)) == 0)
         {
             printf("Runtime Error\n");
@@ -1202,6 +1488,52 @@ ASTNode *evaluateExpression(ASTNode *node)
                     int binval1 = octaltoint(val1);
                     int binval2 = octaltoint(val2);
                     int result = binval1 / binval2;
+                    int binaryresult = inttooctal(result);
+                    sprintf(sym->value, "(%d,8)", binaryresult);
+                    return createStrNode(NODE_INT_LITERAL, sym->value);
+                }
+            }
+            else
+            {
+                printf("Runtime Error\n");
+                exit(1);
+            }
+        }
+        break;
+        case NODE_MOD_ASSIGN:
+    node->data.children.left = evaluateExpression(node->data.children.left);
+    node->data.children.right = evaluateExpression(node->data.children.right);
+        if (node->data.children.left->type == NODE_IDENTIFIER)
+        {
+            Symbol *sym = lookupSymbol(node->data.children.left->data.strValue);
+            if (sym && sym->initialized)
+            {
+                if ((basetaker(node->data.children.left) == 10) && (basetaker(node->data.children.right)) == 10)
+                {
+                    int value = valuetaker(evaluateExpression(node->data.children.left));
+                    int addValue = valuetaker(evaluateExpression(node->data.children.right));
+                    value %= addValue;
+                    sprintf(sym->value, "(%d,10)", value);
+                    return createStrNode(NODE_INT_LITERAL, sym->value);
+                }
+                else if ((basetaker(node->data.children.left) == 2) && (basetaker(node->data.children.right)) == 2)
+                {
+                    int val1 = valuetaker(evaluateExpression(node->data.children.left));
+                    int val2 = valuetaker(evaluateExpression(node->data.children.right));
+                    int binval1 = binarytoint(val1);
+                    int binval2 = binarytoint(val2);
+                    int result = binval1 % binval2;
+                    int binaryresult = inttobinary(result);
+                    sprintf(sym->value, "(%d,2)", binaryresult);
+                    return createStrNode(NODE_INT_LITERAL, sym->value);
+                }
+                else if ((basetaker(node->data.children.left) == 8) && (basetaker(node->data.children.right)) == 8)
+                {
+                    int val1 = valuetaker(evaluateExpression(node->data.children.left));
+                    int val2 = valuetaker(evaluateExpression(node->data.children.right));
+                    int binval1 = octaltoint(val1);
+                    int binval2 = octaltoint(val2);
+                    int result = binval1 % binval2;
                     int binaryresult = inttooctal(result);
                     sprintf(sym->value, "(%d,8)", binaryresult);
                     return createStrNode(NODE_INT_LITERAL, sym->value);
