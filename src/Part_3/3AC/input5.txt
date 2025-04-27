@@ -10,13 +10,13 @@ for i := (10, 10) to (1, 10) dec (2, 10) do
 begin
 print("i = @", i);
 end;
+a := (10, 10);
 if (a < (20, 10))
 begin
 print("a is less than 20");
-end
-
+end;
 k := (3, 10);
-while (k > (0, 10) do 
+while (k > (0, 10)) do 
 begin
 print("@", k);
 k := k - (1, 10);

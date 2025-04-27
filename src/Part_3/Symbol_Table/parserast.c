@@ -1664,10 +1664,7 @@ void freeAST(ASTNode *node)
         freeAST(node->data.io.args);
         break;
     }
-
     ASTNode *next = node->next;
-
     free(node);
-
     freeAST(next);
 }
