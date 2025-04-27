@@ -451,7 +451,7 @@ assignment_expression:
              else if (strcmp($2, "-=") == 0) op = "-";
              else if (strcmp($2, "*=") == 0) op = "*";
              else if (strcmp($2, "/=") == 0) op = "/";
-             else if (strcmp($2, "%=") == 0) op = "%%";
+             else if (strcmp($2, "%=") == 0) op = "%";
              
              printf("%s := %s %s %s\n", temp, $1, op, $3);
              printf("%s := %s\n", $1, temp);
@@ -469,7 +469,7 @@ assignment_expression:
              else if (strcmp($2, "-=") == 0) op = "-";
              else if (strcmp($2, "*=") == 0) op = "*";
              else if (strcmp($2, "/=") == 0) op = "/";
-             else if (strcmp($2, "%=") == 0) op = "%%";
+             else if (strcmp($2, "%=") == 0) op = "%";
              
              printf("%s := %s %s %s\n", temp, $1, op, $3);
              printf("%s := %s\n", $1, temp);
