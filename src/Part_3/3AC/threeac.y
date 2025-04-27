@@ -56,10 +56,26 @@ void print_result() {
         output_printed = 1;
     }
 }
+typedef struct {
+    char *L_else;
+    char *L_end;
+} LabelPair;
+
+LabelPair label_stack[10];
+int label_stack_ptr = -1;
+
+void push_labels(char *L_else, char *L_end) {
+    label_stack[++label_stack_ptr] = (LabelPair){L_else, L_end};
+}
+
+LabelPair pop_labels() {
+    return label_stack[label_stack_ptr--];
+}
 char *F_var, *F_end, *F_inc;
 char *F_Lstart, *F_Lend;
 char *F_tmpcond;
 char *W_Lstart, *W_Lend, *W_tmpcond;
+char* L_else , *L_end;
 %}
 
 %union {
@@ -232,38 +248,44 @@ compound_statement:
     TK_BLOCKBEGIN statement_list TK_END { }
   ;
 selection_statement:
-     TK_IF ifexpr compound_statement TK_SEP %prec IFX
-    | TK_IF ifexpr compound_statement TK_ELSE compound_statement TK_SEP
-    | TK_IF LPAREN expression RPAREN compound_statement TK_SEP  %prec IFX
-    {   
-        if_dum = newlabel();
-        
+   selection_statement:
+    TK_IF LPAREN expression RPAREN 
+    {
+        char *L_else = newlabel();
+        char *L_end = newlabel();
+        push_labels(L_else, L_end);
+
         printf("t1 := %s\n", $3);
-       
-        printf("if t1 == 0 goto %s\n", if_dum);
- 
-        printf("%s:\n", if_dum);
-       }
-  | 
-    TK_IF LPAREN expression RPAREN compound_statement
-    TK_ELSE compound_statement TK_SEP
-    { //  printf("I am in else if\n");
-        char *L1 = newlabel();
-        char *L2 = newlabel();
-        
-        printf("t1 := %s\n", $3);
-        printf("if t1 == 1 goto %s\n", L1);
-       
-        printf("goto %s\n", L2);
-        
-        printf("%s:\n", L1);
-        
-     //   printf("goto %s\n", L2);
-       
-        printf("%s:\n", L2);
-        
+        printf("if t1 == 0 goto %s\n", L_else);
     }
-  ;
+    compound_statement
+    optional_else
+;
+
+optional_else:
+    TK_ELSE 
+    {
+        LabelPair current = label_stack[label_stack_ptr];
+        printf("goto %s\n", current.L_end);
+        printf("%s:\n", current.L_else);
+    }
+    compound_statement
+    {
+        LabelPair current = pop_labels();
+        printf("%s:\n", current.L_end);
+        free(current.L_else);
+        free(current.L_end);
+    }
+  |
+    /* empty */
+    {
+        LabelPair current = pop_labels();
+        printf("%s:\n", current.L_else);
+        free(current.L_else);
+        free(current.L_end);
+    }
+;
+
   
 ifexpr:
     INTEGER_CONST { $$ = $1; }
